@@ -11,6 +11,10 @@ show_header( 'Links', FALSE );
 
 <div class="links">
     <p>
+        <strong><a href="https://netherbox.com.com/">Minecraft Server Hosting</a></strong><br>
+        NetherBox makes it easy to start your own Minecraft PC, or PE server.
+    </p>
+    <p>
         <strong><a href="http://mcpestats.com/">Minecraft PE Servers</a></strong><br>
         A list of the best Minecraft PE Servers.
     </p>
