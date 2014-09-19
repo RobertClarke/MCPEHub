@@ -26,7 +26,7 @@ if ( $page_current != 'map' && $page_current != 'seed' && $page_current != 'text
 
 <div id="footer">
     <div class="wrapper">
-        <p>Copyright &copy; <span class="logo-text"><a href="/">MCPE Hub</a></span> <?php echo date('Y'); ?>. Creations copyright of the creators.</p>
+        <p>Copyright &copy; <span class="logo-text"><a href="index.php">MCPE Hub</a></span> <?php echo date('Y'); ?>. Creations copyright of the creators.</p>
         <p>Part of the <a href="http://cubemotion.com" target="_blank">CubeMotion</a> network.</p>
     </div>
 </div>
@@ -34,23 +34,6 @@ if ( $page_current != 'map' && $page_current != 'seed' && $page_current != 'text
 <?php } ?>
 
 
-<div style="position:fixed;bottom:0;right:0;z-index:99999;opacity:0.7;font-weight:bold;color:#333;background:#ccc;">
-
-<?php
-
-global $db, $user;
-
-$test_db = $db->query("SHOW SESSION STATUS LIKE 'Questions'")->fetch();
-
-?>
-
-<div style="background:red;padding:5px 10px;color:#fff;float:left;">SQL Queries: <?php echo $test_db[0]['Value']; ?></div>
-
-<div style="background:blue;padding:5px 10px;color:#fff;float:left;">Auth: <?php echo ($user->logged_in()) ? 'TRUE' : 'FALSE'; ?></div>
-
-<div style="background:green;padding:5px 10px;color:#fff;float:left;">Exec Time: <?php echo substr( microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"], 0, 7 ) ?>s</div>
-
-</div>
 
 <!-- jQuery -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -430,13 +413,6 @@ $(document).ready(function () {
     });
 });
 </script>
-
-
-<!-- Cloudflare -->
-
-<!-- Google Analytics -->
-
-<!-- GoSquared Analytics -->
 
 </body>
 </html><?php ob_end_flush(); ?>

@@ -56,10 +56,13 @@ switch ( $tab ) { // START: Tabs switch.
 
 default: // Editing general settings.
 
-if ( $user->info('activated') == 0 ) {
-	$error->add( 'NOT_ACTIVATED', '<b>Your account hasn\'t been activated yet!</b><br />We sent an email to <i>'.$user->info('email').'</i> when you signed up with the activation link.<br /><br />&raquo; <a href="/account-resend">Resend activation email</a>', 'warning', 'exclamation-triangle' );
-	$error->set( 'NOT_ACTIVATED' );
-}
+// Set array for additional inputs depending on post type.
+$form_inputs = array(
+	'current_pw'	=> FALSE,
+	'email' 		=> FALSE,
+	'new_pw' 		=> FALSE,
+	'repeat_pw' 	=> FALSE
+);
 
 $post_inputs = array( 'current_pw', 'email', 'new_pw', 'repeat_pw' );
 

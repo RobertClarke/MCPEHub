@@ -6,28 +6,8 @@ $(function() {
 		// Set var for the div which we're working with.
 		var thisconf = $(this).closest('.post').find('.delconf');
 		
-		$(this).closest('.post').find('.rejconf').slideUp(500);
-		
 		// Slide up any confirmations already down.
 		$('.delconf').not(thisconf).slideUp(500);
-		
-		// Slide toggle the confirmation area.
-		$(thisconf).slideToggle(500);
-		
-		event.preventDefault();
-		
-	});
-	
-	// Reject confirmation in dash.
-	$('.dash a.reject').click(function(){
-		
-		// Set var for the div which we're working with.
-		var thisconf = $(this).closest('.post').find('.rejconf');
-		
-		$(this).closest('.post').find('.delconf').slideUp(500);
-		
-		// Slide up any confirmations already down.
-		$('.rejconf').not(thisconf).slideUp(500);
 		
 		// Slide toggle the confirmation area.
 		$(thisconf).slideToggle(500);

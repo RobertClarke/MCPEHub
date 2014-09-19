@@ -1,0 +1,377 @@
+<?php
+
+require_once( 'core.php' );
+show_header( 'Minecraft PE 0.9.0', FALSE );
+
+if ( isset( $_GET['post'] ) ) {
+
+	$post_id = strip_tags( $_GET['post'] );
+	
+	// Check if the map exists in the database & grab info.
+	$query = $db->from( 'update_news' )->where( array( 'slug' => $post_id ) )->fetch();
+	$num = $db->affected_rows;
+	
+	if ( $num == 0 ) redirect( '0.9.0.php' );
+	
+	$post = $query[0];
+	
+	if ( $post['active'] != 1 && !$user->isAdmin() ) redirect( '0.9.0.php' );
+	
+	// Getting number of likes for the post.
+	$db->from( 'likes' )->where( array( 'post_id' => $post['id'], 'post_type' => 'update_news' ) )->fetch();
+	$likes = $db->affected_rows;
+	
+	// Getting number of comments for the post.
+	$comments = $db->from( 'comments' )->where( array( 'post_id' => $post['id'], 'post_type' => 'update_news' ) )->order_by( 'posted', 'DESC' )->fetch();
+	$post_comments = $db->affected_rows;
+	
+	// Determine if user has already liked the post.
+	$db->from( 'likes' )->where( array( 'post_id' => $post['id'], 'user_id' => $user->info()['id'], 'post_type' => 'update_news' ) )->fetch();
+	if ( $db->affected_rows == 1 && $user->loggedIn() ) $liked = TRUE;
+	else $liked = FALSE;
+	
+	$post_tools->updateViews( $post['id'], 'update_new', TRUE );
+	
+	$post['author'] = $user->info( $post['author_id'] );
+	
+	
+	
+?>
+
+<div id="post">
+    
+    <div id="post-title">
+        
+        <div class="likes">
+            <a href="<?php if ( $user->loggedIn() ) echo '#'; else echo 'login.php?redirect=0.9.0.php?post='.$post['slug'].'&authreq=true'; ?>" class="thumb<?php if ( $liked ) echo ' active'; ?>"<?php if ( $user->loggedIn() ) { ?> onClick="toggleLike(<?php echo $post['id']; ?>,'update_news');"<?php } ?>><i class="fa fa-thumbs-up fa-fw"></i></a>
+            <div class="count"><?php echo $likes; ?></div>
+        </div>
+        
+        <div class="title">
+            <h1><?php echo $post['title']; ?></h1>
+            <h2><a href="user/<?php echo $post['author']['username']; ?>"><img src="core/timthumb.php?src=../uploads/avatars/<?php echo $post['author']['avatar_file']; ?>&h=16&w=16&zc=1" /> <span><?php echo $post['author']['username']; ?></span></a></h2>
+        </div>
+        
+        <div class="buttons">
+            <a href="#" class="tip" data-tip="<?php echo $post['views']; ?> Views"><i class="fa fa-eye fa-fw"></i> <?php echo $post['views']; ?></a>
+            <a href="<?php echo $uri; ?>#post-comment" class="tip" data-tip="Post Comment"><i class="fa fa-comments fa-fw"></i> <?php echo $post_comments; ?></a>
+            <a href="<?php if ( $user->loggedIn() ) echo '#'; else echo 'login.php?redirect=0.9.0.php?post='.$post['slug'].'&authreq=true'; ?>" class="like tip<?php if ( $liked ) echo ' active'; ?>" data-tip="<?php echo ( !$liked ) ? 'Like' : 'Unlike'; ?> Post"<?php if ( $user->loggedIn() ) { ?> onClick="toggleLike(<?php echo $post['id']; ?>,'update_news');"<?php } ?>><i class="fa fa-thumbs-up fa-fw"></i></a>
+        </div>
+        
+        <div class="clear"></div>
+        
+    </div>
+    
+    <script src="./assets/js/jquery.bxslider.min.js" type="text/javascript"></script>
+<script>$(document).ready(function() { $('.post-slideshow').bxSlider({ mode: 'fade', captions: true, responsive: false, speed: 800, controls: true, pagerCustom: '.thumbs' }); });</script>
+    
+    
+    <?php if ( !empty( $error ) ) { $m = TRUE; echo '<div class="message '.$errors[$error][1].'"><i class="fa fa-'.$errors[$error][2].' fa-fw"></i> '.$errors[$error][0].'</div>'; } ?>
+    
+    <div id="post-slideshow">
+        
+        <div class="img"><ul class="post-slideshow"><li><img src="./core/timthumb.php?src=../uploads/posts/update_news/<?php echo urlencode( $post['image_file'] ); ?>&h=260&w=710&zc=1" alt="" /></li></ul></div>
+        
+        <div class="thumbs">
+	        
+	        <ul>
+	            <a href="#" data-slide-index="0" class="active"><li><img src="./core/timthumb.php?src=../uploads/posts/update_news/<?php echo urlencode( $post['image_file'] ); ?>&h=60&w=108&zc=1" alt="" /></li></a>
+	        </ul>
+	        
+        </div>
+        
+    </div>
+    
+    <br /><br />
+    <div id="post-user-info">
+        
+        <?php echo ( !empty( $post['content'] ) ) ? html_entity_decode( $post['content'] ) : 'There\'s no content for this post.'; ?>
+        
+    </div>
+    
+<?php //$comment_tools->commentForm( $post['slug'], 'update_news' ); ?>
+<?php //$comment_tools->showComments( $post['id'], 'update_news' ); ?>
+    
+</div>
+
+<?php
+	
+}
+
+else {
+
+
+if ( !isset( $_GET['action'] ) ) $_GET['action'] = '';
+
+switch ( $_GET['action'] ) { // START SWITCH
+
+default: // CASE: Show list of posts.
+
+$page_end = '';
+
+$post_query_params = array( 'active' => 1 );
+$post_order_param = 'submitted desc';
+
+// Set values for pagination.
+$post_list = $db->from( 'update_news' )->where( $post_query_params )->fetch();
+
+// Pagination.
+$posts_per_page = 10;
+$total_pages = ceil( $db->affected_rows / $posts_per_page );
+
+if ( !empty( $_GET['page'] ) && is_numeric( $_GET['page'] ) ) $page = (int)$_GET['page']; else $page = 1;
+if ( $page > $total_pages ) $page = $total_pages;
+if ( $page < 1 ) $page = 1;
+
+$offset = ( $page - 1 ) * $posts_per_page;
+
+// Setup pagination HTML.
+$pagination = '';
+$range = 3;
+
+// Back link.
+if ($page > 1) {
+   $prevpage = $page - 1;
+   $pagination .= "<li><a href='{$_SERVER['PHP_SELF']}?page=".$prevpage.$page_end."'><i class='fa fa-chevron-circle-left'></i></a></li>\n";
+}
+
+// Show "number" links.
+for ($x = ($page - $range); $x < (($page + $range) + 1); $x++) {
+	if (($x > 0) && ($x <= $total_pages)) {
+		
+		// Normal page link.
+		$pagination .= "<li";
+		if ($x == $page) $pagination .= " class='active'";
+		$pagination .= ">";
+		
+		if ($x == $page) $pagination .= "$x";
+		else $pagination .="<a href='{$_SERVER['PHP_SELF']}?page=".$x.$page_end."'>$x</a>";
+		
+		$pagination .= "</li>\n";
+		
+	} 
+} 
+
+// Forward link.
+if ($page != $total_pages && $total_pages != 0) {
+   $nextpage = $page + 1;
+   $pagination .= "<li><a href='{$_SERVER['PHP_SELF']}?page=".$nextpage.$page_end."'><i class='fa fa-chevron-circle-right'></i></a></li>\n";
+}
+
+?>
+
+<div id="page-head">
+    <h2>Minecraft PE 0.9.0</h2>
+    <div class="buttons">
+        <a href="https://play.google.com/store/apps/details?id=com.mojang.minecraftpe" target="_blank"><i class="fa fa-android fa-fw"></i> <strong>Android</strong> Download</a>
+        <a href="https://itunes.apple.com/us/app/minecraft-pocket-edition/id479516143" target="_blank"><i class="fa fa-apple fa-fw"></i> <strong>iOS</strong> Download</a>
+<?php if ( $user->isAdmin() ) { ?>        <a href="0.9.0.php?action=post" class="green"><i class="fa fa-plus fa-fw"></i> New Post</a><?php } ?>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="message info"><i class="fa fa-info-circle fa-fw"></i> MCPE has finally been updated to 0.9.0 ~ Follow the latest news &amp; updates on this page!</div>
+
+<div class="post-sort">
+    <a href="maps.php">0.9.0 <strong>Maps</strong></a>
+    <a href="seeds.php?action=search&version=0.9.0">0.9.0 <strong>Seeds</strong></a>
+    <a href="textures.php?action=search&version=0.9.0">0.9.0 <strong>Textures</strong></a>
+    <a href="mods.php?action=search&version=0.9.0">0.9.0 <strong>Mods</strong></a>
+    <a href="servers.php?action=search&version=0.9.0">0.9.0 <strong>Servers</strong></a>
+</div>
+
+<?php
+
+// Fetch seed list from database.
+$post_list = $db->from( 'update_news' )->limit( (int)$offset, (int)$posts_per_page )->order_by( $post_order_param )->where( $post_query_params )->fetch();
+
+echo '<div class="news-posts">';
+
+if ( $db->affected_rows != 0 ) {
+	
+	foreach( $post_list as $news => $post ) { // START: Seed list foreach.
+		
+		// Getting number of likes for the post.
+		$db->from( 'likes' )->where( array( 'post_id' => $post['id'], 'post_type' => 'update_news' ) )->fetch();
+		$post_likes = $db->affected_rows;
+		
+		// Getting number of comments for the post.
+		$db->from( 'comments' )->where( array( 'post_id' => $post['id'], 'post_type' => 'update_news' ) )->fetch();
+		$post_comments = $db->affected_rows;
+		
+		// Formatting post author for display.
+		$post['author'] = $user->info( $post['author_id'] );
+		
+?>
+
+<div class="post">
+    <div class="img"><a href="0.9.0.php?post=<?php echo $post['slug']; ?>"><img src="./core/timthumb.php?src=../uploads/posts/update_news/<?php echo urlencode( $post['image_file'] ); ?>&h=160&w=230&zc=1" alt="<?php echo $post['title']; ?>" /></a></div>
+    <div class="info">
+        <a href="/user/<?php echo $post['author']['username']; ?>"><img src="./core/timthumb.php?src=../uploads/avatars/<?php echo $post['author']['avatar_file']; ?>&h=36&w=36&zc=1" class="avatar" /></a>
+        <h2><a href="0.9.0.php?post=<?php echo $post['slug']; ?>"><?php echo $post['title']; ?></a></h2>
+        <ul>
+            <li><i class="fa fa-calendar fa-fw"></i> Posted <?php echo time_since( strtotime( $post['submitted'] ) ); ?></li>
+            <li><i class="fa fa-thumbs-up fa-fw"></i> <strong><?php echo $post_likes; ?></strong> Likes</li>
+            <li><i class="fa fa-eye fa-fw"></i> <strong><?php echo $post['views']; ?></strong> Views</li>
+            <li><i class="fa fa-comments fa-fw"></i> <a href="0.9.0.php?post=<?php echo $post['slug']; ?>#comments"><strong><?php echo $post_comments; ?></strong> Comments</a></li>
+        </ul>
+    </div>
+</div>
+
+<?php } echo '</div>'; // End foreach. ?>
+
+	<div class="pagination bottom">
+        <ul>
+            <?php echo $pagination; ?>
+        </ul>
+    </div>
+
+<?php
+	
+} else { // If there are no posts found.
+	
+	echo '<div class="message warning"><i class="fa fa-frown-o fa-fw"></i> <strong>No updates yet.</strong> We\'re working on updating this page and there will be updates soon!</div>';
+	
+}
+
+break; // END: Show list of posts.
+
+case 'post': // CASE: Submitting a post.
+	
+	// Only logged in users can submit.
+	$auth->auth();
+	
+	// Admins only.
+	if ( !$user->isAdmin() ) redirect('0.9.0.php');
+	
+	$errors = array(
+		1 => array( 'Please ensure all inputs are filled in!', 'warning', 'exclamation-triangle' ),
+		2 => array( 'Please upload a featured image!', 'warning', 'exclamation-triangle' ),
+		3 => array( 'Only image files are allowed to be uploaded!', 'warning', 'exclamation-triangle' ),
+		4 => array( 'Featured image couldn\'t be uploaded. Please try submitting your post again.', 'warning', 'exclamation-triangle' ),
+		5 => array( 'The image you uploaded exceeds the maximum upload size. ('.ini_get( 'upload_max_filesize' ).')', 'warning', 'exclamation-triangle' )
+	);
+	
+	// If form has been submitted.
+	if ( !empty( $_POST ) ) {
+		
+		// If the user has an activated account, approve the post automatically.
+		//if ( $user->info()['verified'] == 1 ) $active = 1;
+		//else $active = 0;
+		
+		// All posts must be approved.
+		//$active = 0;
+		
+		// Auto approved.
+		$active = 1;
+		
+		// If user is admin/mod, approve automatically.
+		//if ( $user->isMod() || $user->isAdmin() ) $active = 1;
+		
+		// All posts automatically approved.
+		//$active = 1;
+		
+		// Handling inputs.
+		$required = array( 'title', 'description' );
+		$inputs = array(
+			'title' 		=> strip_tags( $_POST['title'] ),
+			'content' 		=> htmlspecialchars( $_POST['description'], ENT_QUOTES, 'UTF-8' ),
+			//'category' 		=> $_POST['type'],
+			//'version'		=> $_POST['version'],
+			'image_file'	=> '',
+			'author_id'		=> $user->info()['id'],
+			'submitted'		=> date( 'Y-m-d H:i:s' ),
+			'active'		=> $active,
+			'slug'			=> create_slug( strip_tags( $_POST['title'] ), 'seed' )
+		);
+		
+		// If user is admin/mod, approve automatically.
+		//$inputs['published'] = date( 'Y-m-d H:i:s' );
+		
+		$featured = $_FILES['featured'];
+		$upload_dir = MAINPATH . 'uploads/posts/update_news/';
+		
+		// Checking for missing inputs.
+		foreach ( $inputs as $input => $value ) {
+			if ( in_array( $input, $required ) && empty( $value ) ) {
+				$error = 1;
+				break;
+			}
+		}
+		
+		// Only check for image if required inputs already checked.
+		if ( !isset( $error ) ) {
+			if ($featured['error'] == 4) $error = 2; // No image uploaded.
+			else if ($featured['error'] == 1) $error = 5; // Maximum upload size reached.
+			else if (@!getimagesize($featured['tmp_name'])) $error = 3; // Only image files are allowed.
+		}
+		
+		$file_extension = '.' . @strtolower( end( explode( '.', $featured['name'] ) ) );
+		$file_name = uniqid();
+		
+		$inputs['image_file'] = $file_name . $file_extension;
+		
+		// If no errors, continue with submission.
+		if ( !isset( $error ) ) {
+			
+			// Moving the image to the avatar folder, if successful, update database.
+			if ( @move_uploaded_file($featured['tmp_name'], $upload_dir . $file_name . $file_extension ) ) {
+				
+				$id = $db->insert( 'update_news', $inputs );
+				redirect( '0.9.0.php?post='.$inputs['slug'].'&created=true' );
+				
+			} else $error = 4; // Access denied for upload.
+		
+		}
+		
+	}
+	
+?>
+
+<div id="page-head">
+    <h2>Post Update</h2>
+    <div class="buttons">
+        <a href="0.9.0.php"><i class="fa fa-arrow-left fa-fw"></i> Back to Updates</a>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<?php if ( !empty( $error ) ) { $m = TRUE; echo '<div class="message '.$errors[$error][1].'"><i class="fa fa-'.$errors[$error][2].' fa-fw"></i> '.$errors[$error][0].'</div>'; } ?>
+
+<form action="0.9.0.php?action=post" method="POST" class="form" enctype="multipart/form-data">
+    
+    <div class="input">
+        <label for="title"><i class="fa fa-pencil fa-fw"></i> Post Title:</label>
+        <input type="text" name="title" id="title" class="text" value="<?php if ( !empty( $_POST ) ) echo strip_tags( $_POST['title'] ); ?>" />
+    </div>
+    
+    <div class="input no-bottom">
+        <label for="image"><i class="fa fa-picture-o fa-fw"></i> Featured Image:</label>
+        <input type="file" name="featured" id="image" class="file" />
+        <div class="sub-info">Maximum 3MB. Recommended image size: 230px * 160px.</div>
+    </div>
+    
+    <div class="spacer"></div>
+    
+    <div class="input">
+        <label for="description" class="top"><i class="fa fa-file-text fa-fw"></i> Content:</label>
+        <textarea name="description" id="description" class="visual"><?php if ( !empty( $_POST ) ) echo strip_tags( $_POST['description'] ); ?></textarea>
+    </div>
+    
+    <div class="spacer"></div>
+    
+    <input type="submit" name="submit" id="submit" class="submit button" value="Submit Update" />
+    
+</form>
+
+<?php
+	
+break; // END: Submitting a post.
+
+} // END SWITCH
+
+
+} // END ISSET $_GET['post'].
+
+?>
+<?php show_footer(); ?>

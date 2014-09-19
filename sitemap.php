@@ -95,14 +95,6 @@ foreach( $posts as $id => $post ) {
 	$xml .= '</url>';
 }
 
-/*$users = $db->select('username')->from('users')->where('level > "-1"')->fetch();
-
-foreach( $users as $id => $user ) {
-	$xml .= '<url>';
-	$xml .= '<loc>http://mcpehub.com/user/'.$user['username'].'</loc>';
-	$xml .= '</url>';
-}*/
-
 $xml .= '</urlset>';
 
 echo $xml;

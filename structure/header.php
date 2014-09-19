@@ -33,15 +33,13 @@ if ( $user->is_admin() || $user->is_mod() ) {
     <meta name="description" content="<?php echo isset( $page_description ) ? $page_description : ''; ?>">
     <meta name="keywords" content="<?php echo isset( $page_tags ) ? $page_tags : ''; ?>">
     
-    <!--<base href="<?php echo MAINURL; ?>">-->
-    <base href="http://mcpe.dev/">
-    
-    <link rel="shortcut icon" href="/favicon.ico" />
+    <base href="http://mcpehub.com/">
+    <link rel="shortcut icon" href="./favicon.ico" />
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="apple-touch-icon-precomposed.png" />
     <meta name="apple-mobile-web-app-title" content="MCPE Hub">
-    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" media="all" />
+    <link rel="stylesheet" type="text/css" href="./assets/css/main.css" media="all" />
     
-<?php if ( $page_id == 'boxed' ) { ?>    <link rel="stylesheet" type="text/css" href="/assets/css/boxed.css" media="all" /><?php } ?>
+<?php if ( $page_id == 'boxed' ) { ?>    <link rel="stylesheet" type="text/css" href="./assets/css/boxed.css" media="all" /><?php } ?>
     
     <!-- Extra CSS -->
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"  />
@@ -50,6 +48,31 @@ if ( $user->is_admin() || $user->is_mod() ) {
     
     <meta charset="UTF-8">
     
+    <script type="text/javascript">
+//<![CDATA[
+try{if (!window.CloudFlare) {var CloudFlare=[{verbose:0,p:1401845039,byc:0,owlid:"cf",bag2:1,mirage2:0,oracle:0,paths:{cloudflare:"/cdn-cgi/nexp/dokv=abba2f56bd/"},atok:"ffdd644c0cf852107efb78e494a19174",petok:"9bc09865fdc38abc269eca1c8af3c8d17950e012-1402185323-1800",zone:"mcpehub.com",rocket:"0",apps:{}}];CloudFlare.push({"apps":{"ape":"195a63d680ea0b81a0820582ea994b85"}});!function(a,b){a=document.createElement("script"),b=document.getElementsByTagName("script")[0],a.async=!0,a.src="//ajax.cloudflare.com/cdn-cgi/nexp/dokv=97fb4d042e/cloudflare.min.js",b.parentNode.insertBefore(a,b)}()}}catch(e){};
+//]]>
+</script>
+
+<script>
+  !function(g,s,q,r,d){r=g[r]=g[r]||function(){(r.q=r.q||[]).push(
+  arguments)};d=s.createElement(q);q=s.getElementsByTagName(q)[0];
+  d.src='//d1l6p2sc9645hc.cloudfront.net/tracker.js';q.parentNode.
+  insertBefore(d,q)}(window,document,'script','_gs');
+  
+  _gs('GSN-032559-K');
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-8521263-42', 'mcpehub.com');
+  ga('send', 'pageview');
+
+</script>
+    
 </head>
 
 <body>
@@ -57,7 +80,7 @@ if ( $user->is_admin() || $user->is_mod() ) {
 <?php if ( $page_id == 'boxed' ) { // Boxed template. ?>
 
 <div class="wrapper logo">
-    <div class="logo-text"><a href="/">MCPE Hub</a></div>
+    <div class="logo-text"><a href="index.php">MCPE Hub</a></div>
 </div>
 <div id="body" class="wrapper">
 
@@ -77,113 +100,22 @@ if ( $user->is_admin() || $user->is_mod() ) {
         <div class="nav-user">
             <ul>
 <?php if ( $user->logged_in() ) { ?>
-                <li><a href="/dashboard" class="first tip-header" data-tip="Dashboard"><i class="fa fa-tachometer solo"></i></a></li>
-                <li><a href="#" class="notifications tip-header" data-tip="Notifications"><i class="fa fa-globe solo"></i></a></li>
-                <li><a href="/messages" class="tip-header" data-tip="Messages"><i class="fa fa-envelope solo"></i></a></li>
-                <li><a href="/profile" class="tip-header" data-tip="My Profile"><i class="fa fa-male solo"></i></a></li>
-                <li><a href="/account" class="tip-header" data-tip="Account Settings"><i class="fa fa-gears solo"></i></a></li>
-                <li><a href="/login?logout" class="last tip-header" data-tip="Sign Out"><i class="fa fa-lock solo"></i></a></li>
+                <li><a href="dashboard.php" class="first tip-header" data-tip="Dashboard"><i class="fa fa-tachometer solo"></i></a></li>
+                <!--<li><a href="#" class="tip-header" data-tip="Notifications"><i class="fa fa-globe solo"></i></a></li>
+                <li><a href="#" class="tip-header" data-tip="Messages"><i class="fa fa-envelope solo"></i></a></li>-->
+                <li><a href="profile.php" class="tip-header" data-tip="My Profile"><i class="fa fa-male solo"></i></a></li>
+                <li><a href="account.php" class="tip-header" data-tip="Account Settings"><i class="fa fa-gears solo"></i></a></li>
+                <li><a href="login.php?logout" class="last tip-header" data-tip="Sign Out"><i class="fa fa-lock solo"></i></a></li>
 <?php } else { ?>
-                <li><a href="/login" class="first"><i class="fa fa-sign-in"></i> Sign In</a></li>
-                <li><a href="/register" class="last reg"><i class="fa fa-star"></i> Create Account</a></li>
+                <li><a href="login.php" class="first"><i class="fa fa-sign-in"></i> Sign In</a></li>
+                <li><a href="register.php" class="last reg"><i class="fa fa-star"></i> Create Account</a></li>
 <?php } ?>
             </ul>
         </div>
         
-        
-        
-        
-        
-        
-        
-        <div id="notifications" style="background: rgba(0,0,0,0.9);color:#fff;padding:10px;width:450px;text-align:left;position:absolute;top:10px;left:280px;z-index:99999;">
-            
-            
-            <?php
-            
-            $notifications = $db->from( 'notifications' )->where( array( 'user_to' => $user->info('id') ) )->limit(5)->fetch();
-$num = $db->affected_rows;
-
-
-//echo '<b>'.$num.'</b> notifications for <b>'.$user->info('username').'</b><br /><br />';
-
-
-
-foreach ( $notifications as $n ) {
-	
-	
-	$user_from = $user->info('', $n['user_from']);
-	
-	echo '&bull; <b><a href="/user/'.$user_from['username'].'">'.$user_from['username'].'</a></b> ';
-	
-	switch( $n['type'] ) {
-		
-		default:
-			
-			echo 'default';
-			
-		break;
-		
-		case 'like':
-			
-			$ref = explode( '|', $n['ref'] );
-			
-			$type = $ref[0];
-			$post = $ref[1];
-			
-			echo 'liked your '.$type.' ';
-			
-			echo "\"<a href=\"/$type/$post\">$post</a>\".";
-			
-			
-			//echo '"<a href="/'.$type.'/'.$post.'"></a>".';
-			
-		break;
-		
-		case 'sub':
-			
-			echo 'subscribed to you.';
-			
-		break;
-		
-		case 'approve':
-			
-			$ref = explode( '|', $n['ref'] );
-			
-			$type = $ref[0];
-			$post = $ref[1];
-			
-			echo 'approved your '.$type.' ';
-			
-			echo "\"<a href=\"/$type/$post\">$post</a>\".";
-			
-		break;
-		
-	}
-	
-	echo ' ' . time_since( $n['time'] );
-	echo '<br />';
-	
-}
-
-if ( count( $notifications ) == 5 ) echo '<br />View all notifications...';
-
-
-?>
-            
-            
-            
-        </div>
-        
-        
-        
-        
-        
-        
-        
         <div class="tagline">
             <div class="logo-main"><a href="/">MCPE Hub</a></div>
-            <h2><a href="/">The #1 Minecraft PE Community</a></h2>
+            <h2>The #1 Minecraft PE Community</h2>
         </div>
         
     </div>
@@ -196,9 +128,9 @@ $nav_options = array(
 	'maps'		=>	array( 'red',		'/maps',		'map',		'Maps' ),
 	'seeds'		=>	array( 'yellow',	'/seeds',		'seed',		'Seeds' ),
 	'textures'	=>	array( 'green',		'/textures',	'texture',	'Textures' ),
-	'skins'		=>	array( 'pink',		'/skins',		'skin',		'Skins' ),
+	'skins'	    =>	array( 'pink',		'/skins',	    'skin',	    'Skins' ),
 	'mods'		=>	array( 'blue',		'/mods',		'mod',		'Mods' ),
-	'servers'	=>	array( 'purple',	'/servers',		'server',	'Servers' ),
+	'servers'	=>	array( 'purple',	'/servers',	    'server',	'Servers' ),
 );
 
 ?>

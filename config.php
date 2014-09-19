@@ -1,31 +1,21 @@
 <?php
 
-/**
-  * Website Base Configuration
-  *
-  * This file contains all of the important settings used throughout
-  * the entire site. Without it, the site would crumble to pieces.
-  *
-  * WARNING: Don't change any options in this file if you don't know
-  * what they do! This might (probably will) break the entire site!
-**/
-  
-/** MYSQL SETTINGS **/
-
-// MySQL hostname (usually 'localhost')
+// SQL Server
 define( 'DB_HOST', 'localhost' );
 
-// MySQL port (leave blank for default)
-define( 'DB_PORT', '' );
-
-// MySQL database username
+// SQL Username
 define( 'DB_USER', 'root' );
 
-// MySQL database password
-define( 'DB_PASS', 'googleplex123' );
+// SQL Password
+define( 'DB_PASS', 'r3437qlO157m87U' );
 
-// MySQL database name
-define( 'DB_NAME', 'mcpe_newer' );
+// SQL Table
+define( 'DB_NAME', 'mcpehub_new' );
+
+// SQL Port (Optional)
+define( 'DB_PORT', '' );
+
+define( 'MAIN_URL', 'http://mcpehub.com/' );
 
 /**
   * Security Unique Keys & Salts
