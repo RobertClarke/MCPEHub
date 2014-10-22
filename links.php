@@ -23,7 +23,7 @@ show_header( 'Links', FALSE );
         Start your own Minecraft PE server for free.
     </p>
     <p>
-        <strong><a href="http://instantmc.org/">Free Minecraft Server Hosting</a></strong><br>
+        <strong><a href="https://imc.io/">Free Minecraft Server Hosting</a></strong><br>
         Create a Minecraft PC server for free.
     </p>
     <p>
