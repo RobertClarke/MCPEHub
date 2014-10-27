@@ -1,213 +1,184 @@
 <?php
 
-require_once( 'core.php' );
+/**
+  * Texture Post
+**/
 
-// For convenience around the file.
+require_once('core.php');
+
 $type = 'texture';
+if ( !isset($_GET['post']) || empty($_GET['post']) ) redirect( '/'.$type.'s' );
 
-// If post slug missing, redirect back to post list.
-if ( !isset( $_GET['post'] ) || empty( $_GET['post'] ) ) redirect( '/'.$type.'s' );
-
-// Set post slug, if exists.
-$slug = $db->escape( $_GET['post'] );
-
-
-// Modify slug to remove "-" at end.
-if ( substr( $slug, -1) == '-' ) $slug = rtrim( $slug, '-' );
-
-// Modify slug to remove "-" at start.
-if ( substr( $slug, 0, 1 ) == '-' ) $slug = ltrim( $slug, '-');
-
-// Modify slug to lower case.
-$slug = strtolower( $slug );
-
+$slug = $post_tools->cleanSlug($db->escape($_GET['post']));
 
 // Check if post exists + grab info.
-$query = $db->from( 'content_'.$type.'s' )->where( array( 'slug' => $slug ) )->fetch();
+$query = $db->from( 'content_'.$type.'s' )->where('`slug` = \''.$slug.'\' AND `active` <> \'-2\'')->fetch();
 $num = $db->affected_rows;
 
 // If post not found, redirect to post list.
-if ( $num == 0 ) redirect( '/'.$type.'s' );
+if ( $num == 0 ) redirect('/404');
 
-$post = $query[0];
+$p = $query[0];
 
-show_header( $post['title'], FALSE, '', '', 'MCPEHub is the #1 Minecraft PE community in the world, featuring seeds, maps, servers, mods, and more.', 'minecraft pe texture packs, textures, minecraft pe, mcpe' );
+$pg = [
+	'title_main'	=> 'Texture',
+	'title_sub'		=> 'Minecraft PE',
+	//'seo_desc'		=> 'Collection of the best Minecraft PE Maps and game worlds for download including adventure, survival, and parkour maps.',
+	//'seo_keywords'	=> 'minecraft pe maps, survival, parkour, adventure, minecraft pe, mcpe'
+];
 
-// Show post only if: activated (public), author (private), admin/mod.
-if ( $post['active'] == 1 || $post['author'] == $user->info('id') || $user->is_admin() || $user->is_mod() ) {
+show_header($p['title'], FALSE, $pg);
+
+$p_owner = ( $p['author'] == $user->info('id') ) ? TRUE : FALSE;
+
+// Show messages, if user is post author.
+if ( $p_owner ) {
 	
-	// Update view count on post.
-	$post_tools->update_views( $post['id'], $type );
+	$error->add('SUBMITTED',	'You\'ve submitted your '.$type.' for approval! Once a moderator approves it, it\'ll show up on the public website. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'check');
+	$error->add('PENDING',		'Your '.$type.' hasn\'t been approved by a moderator yet and isn\'t shown on the public website yet. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'warning');
+	$error->add('REJECTED',		'Your '.$type.' was rejected by a moderator and won\'t appear on the public website.', 'error');
+	$error->add('EDITED',		'You\'ve edited your '.$type.'. Once your changes are approved by a moderator, your '.$type.' will be visible on the public website again.', 'warning');
 	
-	$post_owned = ( $post['author'] == $user->info('id') ) ? TRUE : FALSE;
+	if 		( $p['active'] == 0 )		$error->set('PENDING');
+	elseif	( $p['active'] == '-1' )	$error->set('REJECTED');
 	
-	$error->add( 'SUBMITTED', 'You\'ve submitted your '.$type.'! Once approved by a moderator, it\'ll be seen on the website.', 'success', 'check' );
-	$error->add( 'PENDING', 'Your '.$type.' hasn\'t been approved by a moderator yet and cannot be seen by the public.', 'warning', 'eye' );
-	$error->add( 'REJECTED', 'Your '.$type.' was rejected by a moderator and won\'t appear on the website.', 'error', 'times' );
-	$error->add( 'EDITED', 'You\'ve edited your '.$type.'. Once your changes are approved, your '.$type.' will be visible again.', 'info', 'pencil' );
+	elseif	( $p['active'] == 0 && $p['edited'] != 0 ) $error->set('EDITED');
 	
-	// Show messages, as needed.
-	if 		( $post['active'] == 0 ) 		$error->set( 'PENDING' );
-	else if ( $post['active'] == '-1' ) 	$error->set( 'REJECTED' );
+	if		( isset($_GET['created']) )	$error->set('SUBMITTED');
+	if		( isset($_GET['edited']) )	$error->set('EDITED');
 	
-	if ( isset( $_GET['created'] ) ) 		$error->force( 'SUBMITTED' );
-	if ( isset( $_GET['edited'] ) )			$error->force( 'EDITED' );
+}
+
+// Update view count on post.
+$post_tools->update_views($p['id'], $type);
+
+// Determine number of likes & comments for post.
+$db_count = $db->query('
+	(SELECT "likes"		AS data, COUNT(*) FROM `likes`		WHERE post="'.$p['id'].'" AND type="'.$type.'") UNION ALL
+	(SELECT "comments" 	AS data, COUNT(*) FROM `comments`	WHERE post="'.$p['id'].'" AND type="'.$type.'")
+')->fetch();
+
+foreach( $db_count as $key ) $p[$key['data']] = $key['COUNT(*)'];
+
+// Check if user has liked or favorited the post already.
+if ( $user->logged_in() ) {
 	
-	if ( $user->is_admin() || $user->is_mod() ) {
-		
-		if ( isset( $_GET['featured'] ) ) {
-			$error->add( 'FEATURED', 'The post has been marked as featured.', 'success', 'star' );
-			$error->force( 'FEATURED' );
-		}
-		
-		if ( isset( $_GET['unfeatured'] ) ) {
-			$error->add( 'UNFEATURED', 'The post has been unmarked as featured.', 'success', 'check' );
-			$error->force( 'UNFEATURED' );
-		}
-		
-	}
-	
-	// Determine number of likes and comments on post.
-	$q_where = 'post_id = "'.$post['id'].'" AND post_type = "'.$type.'"';
-	$count_vars = $db->query('
-		(SELECT "likes"		AS type, COUNT(*) FROM `likes`		WHERE '.$q_where.') UNION ALL
-		(SELECT "comments"	AS type, COUNT(*) FROM `comments`	WHERE '.$q_where.')
+	$q_where = '`post` = \''.$p['id'].'\' AND `type` = \''.$type.'\' AND `user` = \''.$user->info('id').'\'';
+	$us_count = $db->query('
+		(SELECT "liked"		AS data, COUNT(*) FROM `likes`		WHERE '.$q_where.') UNION ALL
+		(SELECT "favorited"	AS data, COUNT(*) FROM `favorites`	WHERE '.$q_where.')
 	')->fetch();
 	
-	foreach( $count_vars as $var ) $post[ $var['type'] ] = $var['COUNT(*)'];
+	foreach( $us_count as $key ) $p[$key['data']] = $key['COUNT(*)'];
 	
-	// Check if user has liked/favorited the post already.
-	if ( $user->logged_in() ) {
-		
-		$q_where = 'post_id = "'.$post['id'].'" AND post_type = "'.$type.'" AND user_id = "'.$user->info('id').'"';
-		$count_stats = $db->query('
-			(SELECT "liked"		AS type, COUNT(*) FROM `likes`		WHERE '.$q_where.') UNION ALL
-			(SELECT "favorited"	AS type, COUNT(*) FROM `favorites`	WHERE '.$q_where.')
-		')->fetch();
-		
-		foreach( $count_stats as $var ) $post[ $var['type'] ] = $var['COUNT(*)'];
-		
-		$post['liked'] = ( $post['liked'] != 0 ) ? TRUE : FALSE;
-		$post['favorited'] = ( $post['favorited'] != 0 ) ? TRUE : FALSE;
-		
-	}
+	$p['liked']		= ( $p['liked'] != 0 ) ? TRUE : FALSE;
+	$p['favorited']	= ( $p['favorited'] != 0 ) ? TRUE : FALSE;
 	
-	// Format published date for display.
-	$post['published'] = ( $post['published'] != 0 ) ? 'Published '.time_since( strtotime($post['published']) ) : 'Post Pending Approval';
+	$q_where = '`following` = \''.$p['author'].'\' AND `user` = \''.$user->info('id').'\'';
+	$p['following'] = $db->query('SELECT COUNT(*) FROM `following` WHERE '.$q_where)->fetch()[0]['COUNT(*)'];
 	
-	$post['author_id'] = $post['author'];
+	$p['following'] = ( $p['following'] != 0 ) ? TRUE : FALSE;
 	
-	// Grab author info.
-	$post['author'] = $user->info('username', $post['author_id']);
-	$post['author_avatar'] = $user->info('avatar_file', $post['author_id']);
-	
-	// Grab all post images + thumbnails.
-	$post['db_images'] = explode( ',', $post['images'] );
-	
-	foreach( $post['db_images'] as $image ) {
-		$post['images_full'][] = '/uploads/690x270/'.$type.'s/'.urlencode($image);
-		$post['images_thumbs'][] = '/uploads/120x70/'.$type.'s/'.urlencode($image);
-	}
-	
-	// Sanitize description for display.
-    require( 'core/htmlpurifier/HTMLPurifier.standalone.php' );
-	$purifier = new HTMLPurifier( HTMLPurifier_Config::createDefault() );
-	
-	$post['description'] = $purifier->purify( $post['description'] );
-	
-// Post not activated (public), author (private), admin/mod - redirect to post list.
-} else redirect( '/'.$type.'s?disabled' );
+}
+
+$p['auth'] 		= $user->info('username', $p['author']);
+$p['url']		= '/'.$type.'/'.$p['slug'];
+$p['url_auth']	= '/user/'.$p['auth'];
+
+$p['thumb_a']	= '/avatar/112x112/'.$user->info('avatar', $p['auth']);
+
+$p['published']	= ( $p['published'] != 0 ) ? 'Posted '.date( 'd/m/Y', strtotime($p['published']) ) : 'Not Approved Yet';
+
+// Slideshow images.
+$p['images']	= explode(',', $p['images']);
+
+foreach( $p['images'] as $img ) {
+	$p['img_full'][]	= '/uploads/690x250/'.$type.'s/'.urlencode($img);
+	$p['img_thumb'][]	= '/uploads/120x70/'.$type.'s/'.urlencode($img);
+}
+
+// Sanitize post description.
+require_once( 'core/htmlpurifier/HTMLPurifier.standalone.php' );
+$purifier = new HTMLPurifier( HTMLPurifier_Config::createDefault() );
+
+$p['description'] = $purifier->purify($p['description']);
+
+if ( $user->logged_in() && $p['liked'] ) {
+	$html['bttn_like'] = '<a href="'.$p['url'].'" class="bttn mini green like"><i class="fa fa-thumbs-up"></i> Liked</a>';
+	$html['bttn_like_top'] = '<a href="'.$p['url'].'" class="bttn mini green like"><i class="fa fa-thumbs-up solo"></i> Liked</a>';
+} else {
+	$html['bttn_like'] = '<a href="'.$p['url'].'" class="bttn mini like"><i class="fa fa-thumbs-up"></i> Like</a>';
+	$html['bttn_like_top'] = '<a href="'.$p['url'].'" class="bttn mini green like"><i class="fa fa-thumbs-up solo"></i> Like</a>';
+}
+
+if ( $user->logged_in() && $p['favorited'] ) $html['bttn_fav'] = '<a href="'.$p['url'].'" class="bttn mini red fav"><i class="fa fa-heart"></i> Favorited</a>';
+else $html['bttn_fav'] = '<a href="'.$p['url'].'" class="bttn mini fav"><i class="fa fa-heart"></i> Favorite</a>';
+
+if ( $user->logged_in() && $p['following'] ) $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub green follow" data-following="'.$p['author'].'"><i class="fa fa-check"></i> Following</a>';
+else $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub follow" data-following="'.$p['author'].'"><i class="fa fa-rss"></i> Follow</a>';
 
 ?>
-<div id="post">
+
+<div id="post" data-id="<?php echo $p['id']; ?>" data-type="<?php echo $type; ?>">
     
-    <div class="title clearfix">
-        <div class="like">
-            <a href="#" class="tip" data-tip="Like Post"><i class="fa fa-thumbs-up"></i></a>
-            <div class="count"><?php echo $post['likes']; ?></div>
-        </div>
-        <div class="info">
-            <h1><?php echo $post['title']; ?></h1>
-            <h4><a href="/user/<?php echo $post['author']; ?>"><img src="/avatar/32x32/<?php echo $post['author_avatar']; ?>" /> <?php echo $post['author']; ?></a></h4>
-        </div>
+    <div id="p-title" class="solo">
+        <h1><?php echo $p['title']; ?></h1>
+        <div class="likes"><?php echo $html['bttn_like_top']; ?> <span><?php echo $p['likes']; ?></span></div>
     </div>
-    
-<?php if ( $user->is_admin() || $user->is_mod() ) { ?>
-    <div class="admin-actions">
-        <h4>Admin &amp; Mod Tools</h4>
-        
-        <a href="/edit?post=<?php echo $post['id']; ?>&type=<?php echo $type; ?>" class="bttn"><i class="fa fa-pencil fa-fw"></i>Edit Post</a>
-        <a href="/moderate?action=feature&post=<?php echo $post['id']; ?>&type=<?php echo $type; ?>" class="bttn<?php if ( $post['featured'] == 1 ) echo ' featured'; ?>"><i class="fa fa-star fa-fw"></i><?php echo ( $post['featured'] == 1 ) ? 'Unfeature' : 'Feature'; ?> Post</a>
-        
-<?php if ( $post['active'] == 1 ) { ?>
-        <a href="/moderate?action=reject&post=<?php echo $post['id']; ?>&type=<?php echo $type; ?>" class="bttn red right"><i class="fa fa-times fa-fw"></i>Unapprove Post</a>
-<?php } else { ?>
-        <a href="/moderate?action=approve&post=<?php echo $post['id']; ?>&type=<?php echo $type; ?>" class="bttn green right"><i class="fa fa-check fa-fw"></i>Approve Post</a>
-<?php } ?>
-        
-        <a href="/moderate?action=delete&post=<?php echo $post['id']; ?>&type=<?php echo $type; ?>" class="bttn right"><i class="fa fa-trash-o fa-fw"></i>Delete Post</a>
-    </div>
-<?php } ?>
     
     <?php $error->display(); ?>
     
-    <div class="slideshow">
-        <div id="post-slider" class="flexslider">
-            <ul class="slides"><?php foreach( $post['images_full'] as $image ) { echo '<li><img src="'.$image.'" /></li>'; } ?></ul>
+    <div id="slideshow">
+        <div id="slider" class="flexslider">
+            <ul class="slides"><?php foreach( $p['img_full'] as $img ) echo '<li><img src="'.$img.'" alt="'.$p['title'].'" width="690" height="250"></li>'; ?></ul>
         </div>
-        <div id="post-carousel" class="thumbs flexslider">
-            <ul class="slides"><?php foreach( $post['images_thumbs'] as $image ) { echo '<li><img src="'.$image.'" /></li>'; } ?></ul>
+        <div id="carousel" class="flexslider carousel">
+            <ul class="slides"><?php foreach( $p['img_thumb'] as $img ) echo '<li><img src="'.$img.'" alt="'.$p['title'].'" width="120" height="70"></li>'; ?></ul>
         </div>
     </div>
     
-    <div class="details clearfix">
-        <div class="section author">
-            <a href="/user/<?php echo $post['author']; ?>"><img src="/avatar/50x50/<?php echo $post['author_avatar']; ?>" class="avatar" /></a>
-            <div class="info">
-                <h3><a href="/user/<?php echo $post['author']; ?>"><?php echo $post['author']; ?></a></h3>
-                <p><?php echo $post['published']; ?></p>
-                <a href="#" class="sub view-bttn silver"><i class="fa fa-bullseye"></i> Subscribe</a>
+<?php
+
+echo '
+    <div id="details" class="section">
+        <div class="author">
+            <a href="'.$p['url_auth'].'"><img src="'.$p['thumb_a'].'" alt="'.$p['auth'].'" width="56" height="56"></a>
+            <p>
+                <span class="poster">
+                    <a href="'.$p['url_auth'].'">'.$p['auth'].'</a>
+                    '.$user->badges($p['author']).'
+                </span>
+                '.$html['bttn_follow'].'
+                <span class="posted">'.$p['views'].' Views ~ '.$p['published'].'</span>
+            </p>
+        </div>
+        <div class="info">
+            <div class="bttn-group">
+                <a href="/download?post='.$p['id'].'&type='.$type.'" class="bttn mid gold dl"><i class="fa fa-download fa-fw"></i> Download <span class="side">'.$p['downloads'].'</span></a>
+                <a href="'.$p['url'].'#queue" class="bttn mid queue tip" data-tip="Save Download For Later" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-cloud-download fa-fw"></i> Add to Queue</a>
             </div>
         </div>
-        <div class="section last">
-            <a href="/download?post=<?php echo $post['id']; ?>&type=<?php echo $type; ?>" target="_blank" class="view-bttn dl"><i class="fa fa-download"></i> Download <?php echo ucwords($type); ?> <span><?php echo $post['downloads']; ?></span></a>
-            <ul class="stats">
-                <li>
-                    <span><?php echo $post['views']; ?></span> Views
-                    <span class="sep"></span>
-                    <span><?php echo $post['comments']; ?></span> Comments
-                    <span class="sep"></span>
-                    <span><?php echo $post['downloads']; ?></span> Downloads
-                </li>
-            </ul>
-            <div class="actions">
-                <a href="#comment-form" class="tip" data-tip="Post Comment"><i class="fa fa-comments"></i></a>
-                <a href="#" class="tip like" data-tip="Like Post"><i class="fa fa-thumbs-up"></i></a>
-                <a href="#" class="tip fav" data-tip="Add to Favorites"><i class="fa fa-heart"></i></a>
-                <a href="#"><i class="fa fa-flag fa-fw"></i> Report <?php echo ucwords($type); ?></a>
-            </div>
-            <div class="actions">
-                <a href="/how-to-install-texture-packs" target="_blank"><i class="fa fa-question fa-fw"></i> How To Install</a>
+        <div class="actions">
+            '.$html['bttn_like'].'
+            '.$html['bttn_fav'].'
+            <a href="#comments" class="bttn mini"><i class="fa fa-comments"></i> '.$p['comments'].' Comments</a>
+            <div class="extra">
+                <a href="/how-to-install-texture-packs" class="bttn mini" target="_blank"><i class="fa fa-mobile"></i> How to Install Textures</a>
+                <a href="'.$p['url'].'#report" class="bttn mini" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-flag"></i> Report '.ucwords($type).'</a>
             </div>
         </div>
     </div>
     
-    <div class="description sec">
-        <?php echo $post['description']; ?>
+    <div id="description" class="section">'.$p['description'].'</div>
+    
+    <div id="avrt-post" class="section">
+        <div class="avrt"><ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="9036676673"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>
     
-    <div class="actions more"><a href="http://mcpehub.com/<?php echo $type.'s'; ?>"><i class="fa fa-magic fa-fw"></i>Minecraft PE <?php echo ucwords( $type ).'s'; ?></a></div>
+'; ?>
+
+<?php $comments->show($p['id'], $type); ?>
     
-    <div class="sec">
-        <center><div class="a-inline">
-            <ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="9036676673"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div></center>
-    </div>
-    
-<?php $comment_tools->comment_form( $post['slug'], $type ); ?>
-<?php $comment_tools->show_comments( $post['id'], $type ); ?>
-  
 </div>
 
 <?php show_footer(); ?>

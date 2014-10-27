@@ -1,8 +1,51 @@
 <?php
 
+/**
+  
+  * Form Class
+  *
+  * Functions for building forms and any form-related functions
+  * are located here.
+  *
+  * post_val();		Echoes safe $_POST HTML input value.
+  * get_val();		Echoes safe $_GET HTML input value.
+  
+**/
+
 class Form {
 	
-	function build_input( $options, $force = null ) {
+	// Echoes safe $_POST HTML input value.
+	public function post_val($input) {
+		if ( isset( $_POST[$input] ) ) echo htmlspecialchars($_POST[$input]);
+		else return FALSE;
+	}
+	
+	// Echoes safe $_GET HTML input value.
+	public function get_val($input) {
+		if ( isset( $_GET[$input] ) ) echo htmlspecialchars($_GET[$input]);
+		else return FALSE;
+	}
+	
+	function alphanum($input) {
+		if ( preg_match('/^[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*$/', $input) ) return TRUE;
+		else return FALSE;
+	}
+	
+	function length($input, $max, $min=0) {
+		
+		if ( $min < 0 ) $min = 0;
+		
+		if ( $min != 0 ) {
+			if ( strlen($input)<$min || strlen($input)>$max ) return FALSE;
+		} else {
+			if ( strlen($input)>$max ) return FALSE;
+		}
+		
+		return TRUE;
+		
+	}
+	
+	public function build_input( $options, $force = null ) {
 		
 		// If $options is empty, return false.
 		if ( empty( $options ) ) return FALSE;
@@ -87,7 +130,7 @@ class Form {
 				$output .= '<select ';
 				$output .= 'name="'.$options['name'].'[]" ';
 				$output .= 'id="'.$options['id'].'" ';
-				$output .= 'class="chosen-select'.$i_class.'" ';
+				$output .= 'class="chosen'.$i_class.'" ';
 				$output .= 'data-placeholder="'.$i_holder.'" ';
 				$output .= $multi;
 				$output .= '>';

@@ -1,0 +1,40 @@
+.badges {
+	margin-left: 1px;
+	position: relative;
+	top: 3px;
+	display: inline-block;
+	
+	span.badge {
+		width: 16px;
+		height: 16px;
+		float: left;
+		margin-right: 4px;
+		display: block;
+		text-align: center;
+		font-size: 11px;
+		cursor: pointer;
+		@include linear-gradient(#FCFCFC, #EEE);
+		@include border-radius(3px);
+		
+		.fa { position: relative; top: -2px; }
+		
+		&.verified {
+			color: #fff;
+			@include linear-gradient(#6BB936, #4BA905);
+		}
+		&.admin, &.mod, &.featured {
+			color: #724A03;
+			@include linear-gradient(#F1E466, #FBC057);
+		}
+		&.youtuber {
+			color: #fff;
+			@include linear-gradient(#E51313, #C20707);
+		}
+		&.post_author {
+			color: #fff;
+			@include linear-gradient(#589CFC, #1675FA);
+		}
+		
+	}
+	
+}

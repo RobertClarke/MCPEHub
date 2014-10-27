@@ -1,139 +1,130 @@
 <?php
 
-require_once( 'core.php' );
-show_header( 'Minecraft PE Texture Packs', FALSE, '', '', 'All kinds of colorful Minecraft PE texture packs, to change the look of Minecraft PE in your game.', 'minecraft pe texture packs, textures, minecraft pe, mcpe' );
+/**
+  * Textures List
+**/
 
-if ( isset( $_GET['disabled'] ) ) {
-	$error->add( 'DISABLED', 'The post you requested is unavailable or disabled at this time.', 'error', 'times' );
-	$error->set( 'DISABLED' );
+require_once('core.php');
+
+$pg = [
+	'title_main'	=> 'Textures',
+	'title_sub'		=> 'Minecraft PE',
+	'seo_desc'		=> 'All kinds of colorful Minecraft PE texture packs, to change the look of Minecraft PE in your game.',
+	'seo_keywords'	=> 'minecraft pe texture packs, textures, minecraft pe, mcpe'
+];
+
+show_header('Minecraft PE Textures', FALSE, $pg);
+
+$current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
+
+// Sort options.
+if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views', 'downloads']) ) {
+	$sort = $_GET['sort'];
+	$url->add('sort', $_GET['sort']);
+	
+	$db_sort = $sort.' DESC';
+	$db->order_by($db_sort);
+	
+} else {
+	$sort = NULL;
+	$db_sort = 'published DESC';
 }
 
-$query_where = array( 'active' => 1 );
-$query_like = array();
+// Set allowed categories.
+$cats = ['Standard', 'Realistic', 'Simplistic', 'Themed', 'Experimental'];
+foreach( $cats as $cat ) $post_cats[$cat] = preg_replace("/[\s_]/", "-", strtolower($cat), 1);
 
-// If the user is searching for something.
-if ( isset( $_GET['search'] ) && !empty( $_GET['search'] ) ) {
+// If user selected a category.
+if ( !empty($_GET['category']) ) {
 	
-	$search = substr( $_GET['search'], 0, 100 );
-	
-	$c_url->add( 'search', urlencode( $search ) );
-	$query_like['title'] = $db->escape( strip_tags( $search ) );
-	
-}
-
-// Sorting options.
-$sort_allowed = array( 'latest', 'views', 'downloads' );
-
-if ( !empty( $_GET['sort'] ) && in_array( $_GET['sort'], $sort_allowed ) ) {
-	
-	if ( $_GET['sort'] == 'latest' ) $query_order = 'published DESC';
-	else {
-		$c_url->add( 'sort', $_GET['sort'] );
-		$query_order = $db->escape( $_GET['sort'] ).' DESC';
+	if ( array_search($_GET['category'], $post_cats) ) {
+		$db->like(['tags' => $_GET['category']]);
+		$url->add('category', $_GET['category']);
 	}
-	
-}
-else {
-	$_GET['sort'] = 'latest';
-	$query_order = 'published DESC';
-}
-
-// Set up pagination.
-$post_count = $db->select('id')->from('content_textures')->like($query_like)->where($query_where)->fetch();
-
-// Set number of posts per page.
-$posts_per_page = 10;
-
-// ** Pagination Setup ** //
-$total_pages = ceil( $db->affected_rows / $posts_per_page );
-
-// Make sure page number requested is valid.
-$page = ( isset( $_GET['page'] ) && is_numeric( $_GET['page'] ) ) ? (int)$_GET['page'] : 1;
-if ( $page > $total_pages ) $page = $total_pages;
-if ( $page < 1 ) $page = 1;
-
-// Set page number for URL.
-if ( $page != 1 ) $c_url->add( 'page', $page );
-
-// Offset for query.
-$offset = ($page - 1) * $posts_per_page;
-
-// ** Pagination HTML Generation ** //
-if ( $total_pages > 1 ) {
-	
-	$pagination_html = '';
-	
-	// Set range of pagination links.
-	$range = 2;
-	
-	// Back link.
-	if ( $page > 1 ) $pagination_html .= '<li><a href="'. $c_url->show('page='.($page - 1)) .'"><i class="fa fa-chevron-circle-left"></i></a></li>';
-	
-	// Page links.
-	for ( $x = ($page - $range); $x < ( ($page + $range) + 1 ); $x++ ) {
-		if ( ($x > 0) && ($x <= $total_pages) ) {
-			$pagination_html .= ( $x == $page ) ? '<li class="active">' : '<li>';
-			$pagination_html .= '<a href="'. $c_url->show('page='.$x) .'">'.$x.'</a></li>';
-		} 
-	}
-	
-	// Forward link.
-	if ( $page != $total_pages ) $pagination_html .= '<li><a href="'. $c_url->show('page='.($page + 1)) .'"><i class="fa fa-chevron-circle-right"></i></a></li>';
-	
-	// Adding final <div> and <ul> tags to HTML markup.
-	$pagination_html = '<div class="pagination"><ul>'. $pagination_html .'</ul></div>';
+	else $_GET['category'] = NULL;
 	
 }
 
-// Fetch posts from database based on page/offset.
-$posts = $db->from( 'content_textures' )->limit( (int)$offset, (int)$posts_per_page )->like( $query_like )->order_by( $query_order )->where( $query_where )->fetch();
-
-$posts_count = $db->affected_rows;
-
-// HTML for sort links (loop for convenience).
-$sort_html = '';
-$sort = array( 'latest' => 'Latest Posts', 'views' => 'Most Viewed', 'downloads' => 'Most Downloaded' );
-foreach( $sort as $key => $display ) {
-	$l_active = ( isset( $_GET['sort'] ) && $_GET['sort'] == $key ) ? ' active' : '';
-	$sort_html .= '<a href="'.$c_url->show('sort='.$key, TRUE).'" class="bttn'.$l_active.'">'.$display.'</a>';
-}
-
-// No posts found, show error messages.
-if ( $posts_count == 0 ) {
-
-	// If search query.
-	if ( isset( $_GET['search'] ) && !empty( $_GET['search'] ) ) $error->add( 'NO_POSTS', 'No textures were found under "<b>'.htmlspecialchars($_GET['search']).'</b>".', 'warning', 'search' );
+// If user searching, add onto query.
+elseif ( !empty($_GET['search']) ) {
 	
-	// If there are just no posts.
-	else $error->add( 'NO_POSTS', 'There are no posts found in this category.', 'warning', 'frown-o' );
+	$search = $_GET['search'];
+	$url->add('search', urlencode($search));
 	
-	$error->set( 'NO_POSTS' );
+	$db->like(['title' => $db->escape(strip_tags($search))]);
 	
 }
 
-// If posts are found, and a search, lets show a message informing of search results.
-else if ( isset( $_GET['search'] ) && !empty( $_GET['search'] ) ) {
-	
-	$error->add( 'SEARCH_RESULT', 'Your search for "<b>'.htmlspecialchars($_GET['search']).'</b>" returned '.$posts_count.' textures.', 'info', 'search' );
-	$error->set( 'SEARCH_RESULT' );
-	
+$count	= $db->select('COUNT(*) AS count')->from('content_textures')->where(['active' => 1])->fetch()[0]['count'];
+$offset	= $pagination->build($count, 10, $current_page);
+
+// Must set this again since SQL class reset itself after fetch above.
+if ( !empty($_GET['category']) && array_search($_GET['category'], $post_cats) ) $db->like(['tags' => $_GET['category']]);
+elseif ( isset($search) ) $db->like(['title' => $db->escape(strip_tags($search))]);
+
+$posts = $db->from('content_textures')->limit($offset, 10)->order_by($db_sort)->where(['active' => 1])->fetch();
+
+// If no posts are found, display an error.
+if ( $count == 0 ) {
+	if ( !empty($_GET['search']) ) $error->add('NULL', 'No posts were found under "<b>'.htmlspecialchars($_GET['search']).'</b>".', 'warning');
+	else $error->add('NULL', 'Sorry, there are no posts found in this category.', 'warning');
+	$error->set('NULL');
 }
+
+// If category search requested, disply a message.
+elseif( !empty($_GET['category']) && $current_page == 1 ) {
+	$error->add('C_RESULT', 'There were '.$count.' textures found under the category <b>'.array_search($_GET['category'], $post_cats).'</b>.', 'info');
+	$error->set('C_RESULT');
+}
+
+// If search results are found, display a message.
+elseif ( !empty($_GET['search']) && $current_page == 1 ) {
+	$error->add('S_RESULT', 'Your search for "<b>'.htmlspecialchars($_GET['search']).'</b>" returned '.$count.' results.', 'info');
+	$error->set('S_RESULT');
+}
+
 
 ?>
 
-<div id="page-title">
-    <h1>Minecraft PE Texture Packs</h1>
-    <ul class="tabs">
-        <a href="/how-to-install-texture-packs" class="bttn"><i class="fa fa-question"></i> How To Install</a>
-        <a href="#search" class="bttn search-toggle"><i class="fa fa-search"></i> Search</a>
-        <a href="/submit?type=texture" class="bttn green"><i class="fa fa-plus"></i> Submit Texture</a>
-    </ul>
+<div id="p-title">
+    <h1>Minecraft PE Textures</h1>
+    <div class="tabs">
+        <div class="bttn-group">
+            <a href="/how-to-install-textures" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>
+            <a href="/textures" class="bttn mid tip search" data-tip="Search Textures"><i class="fa fa-search solo"></i></a>
+        </div>
+        <a href="/submit?type=texture" class="bttn mid green"><i class="fa fa-upload"></i> Submit Texture</a>
+    </div>
 </div>
 
-<div class="post-search<?php if ( isset($_GET['search']) && !empty($_GET['search']) ) echo ' show'; ?>"><form action="<?php echo $c_url->show('', TRUE); ?>" method="GET" class="form">
-    <input type="text" name="search" id="search" class="text" value="<?php echo isset( $_GET['search'] ) ? htmlspecialchars($_GET['search']) : ''; ?>" placeholder="Search Textures..." maxlength="100" />
-    <button type="submit" id="submit">Search</button>
-</form></div>
+<div id="search"<?php if ( !isset($_GET['category']) && !empty($_GET['search']) ) echo ' class="visible"'; ?>>
+    <form action="<?php echo $url->show('', TRUE); ?>" method="GET" class="form">
+        <input type="text" name="search" id="search" placeholder="Search Textures..." value="<?php $form->get_val('search'); ?>" maxlength="150">
+        <button type="submit" id="submit" class="bttn mid gold"><i class="fa fa-search"></i> Search</button>
+    </form>
+</div>
+
+<div class="posts-tools">
+    
+    <select data-placeholder="Choose a Category" class="chosen redirect">
+        <option value=""></option>
+<?php
+if ( !empty($_GET['category']) ) echo '<option value="'.$url->show(NULL, 1).'">All Textures</option>';
+foreach( $post_cats as $title => $id ) {
+	$cat_sel	= ( !empty($_GET['category']) && $_GET['category'] == $id) ? ' selected' : NULL;
+	echo '<option value="'.$url->show('category='.$id, 1).'"'.$cat_sel.'>'.$title.'</option>';
+}
+?>
+    </select>
+<?php if ( $count != 0 ) { ?>
+    <select data-placeholder="Sort By" class="chosen redirect">
+        <option value="<?php echo $url->show('sort=latest'); ?>"<?php if ( empty($sort) ) echo ' selected'; ?>>Latest Textures</option>
+        <option value="<?php echo $url->show('sort=views'); ?>"<?php if ( $sort == 'views' ) echo ' selected'; ?>>Most Viewed</option>
+        <option value="<?php echo $url->show('sort=downloads'); ?>"<?php if ( $sort == 'downloads' ) echo ' selected'; ?>>Most Downloaded</option>
+    </select>
+<?php $pagination->html(); } ?>
+    
+</div>
 
 <?php $error->display(); ?>
 
@@ -141,106 +132,52 @@ else if ( isset( $_GET['search'] ) && !empty( $_GET['search'] ) ) {
     
 <?php
 
-// If posts exist in database according to given criteria.
-if ( $posts_count != 0 ) {
-	
-	if ( !isset( $_GET['search'] ) || empty( $_GET['search'] ) ) {
-	
-?>
-<div class="post-sort"><?php echo $sort_html; ?></div>
-<?php
-	
-	}
-	
-	// Primary post loop.
-	foreach( $posts as $id => $post ) {
-		
-		// Determine number of likes and comments on post.
-		$q_where = 'post_id = "'.$post['id'].'" AND post_type = "texture"';
-		$count_vars = $db->query('
-			(SELECT "likes"		AS type, COUNT(*) FROM `likes`		WHERE '.$q_where.') UNION ALL
-			(SELECT "comments"	AS type, COUNT(*) FROM `comments`	WHERE '.$q_where.')
-		')->fetch();
-		
-		foreach( $count_vars as $var ) $post[ $var['type'] ] = $var['COUNT(*)'];
-		
-		$post['author_username'] = $user->info('username', $post['author']);
-		$post['url'] = 'texture/' . $post['slug'];
-		
-		$post['tags'] = explode( ',', $post['tags'] );
-		$post['tags_html'] = '';
-		
-		// Split tags into their own URLs for display.
-		foreach( $post['tags'] as $tag )
-			$post['tags_html'] .= '<a href="'. $c_url->show('tag='.$tag, TRUE) .'">'. $tag .'</a> ';
-		
-		// Set up HTML for "version" tag in post list.
-		$post['versions'] = explode( ',', $post['versions'] );
-		$post['versions_html'] = '';
-		$post['versions_list'] = '';
-		
-		// If only 0.8.0, set yellow class on versions div.
-		if ( count( $post['versions'] ) == 1 && in_array( '0.8.0', $post['versions'] ) ) $post['versions_html'] .= '<div class="version old">';
-		else $post['versions_html'] .= '<div class="version">';
-		
-		foreach( $post['versions'] as $version ) $post['versions_list'] .= $version.' / ';
-		$post['versions_list'] = trim( $post['versions_list'], ' / ' );
-		
-		$post['versions_html'] .= $post['versions_list'] . "</div>\n";
-		
-		// Grab first image from images for display.
-		$post['images'] = explode( ',', $post['images'] );
-		$post['image'] = urlencode( $post['images'][0] );
-		
-		$post['image_url'] = './uploads/500x200/textures/'.$post['image'];
-		$post['avatar_url'] = './avatar/32x32/'.$user->info('avatar_file', $post['author']);
-		
-		// Set up HTML for "devices" display in post list.
-		$post['devices'] = explode( ',', $post['devices'] );
-		$post['devices_list'] = '';
-		
-		foreach( $post['devices'] as $device ) $post['devices_list'] .= $device.' + ';
-		$post['devices_list'] = trim( $post['devices_list'], ' + ' );
-		
-		$post['devices_html'] = $post['devices_list'] . "\n";
-		
-?>
-    <div class="post">
-        
-        <div class="img">
-            <div class="overlay">
-                <a href="user/<?php echo $post['author_username']; ?>"><img src="<?php echo $post['avatar_url']; ?>" alt="" class="avatar" /></a>
-                <h2><a href="<?php echo $post['url']; ?>"><?php echo $post['title']; ?></a></h2>
-            </div>
-            <?php echo $post['versions_html']; ?>
-            <?php if ( $post['featured'] == 1 ) { ?><div class="featured"><i class="fa fa-star"></i> Featured Texture</div><?php } ?>
-            <a href="<?php echo $post['url']; ?>"><img src="<?php echo $post['image_url']; ?>" /></a>
+// Primary post list.
+foreach( $posts as $i => $p ) {
+
+$p['auth']		= $user->info('username', $p['author']);
+$p['url']		= '/texture/'.$p['slug'];
+$p['url_auth']	= '/user/'.$p['auth'];
+
+// Grab first image for post thumbnail.
+$p['images']	= explode(',', $p['images']);
+$p['thumb']		= '/uploads/700x200/textures/'.urlencode($p['images'][0]);
+$p['thumb_a']	= '/avatar/64x64/'.$user->info('avatar', $p['auth']);
+
+$p['f_html']	= ( $p['featured'] == 1 ) ? '<div class="featured"><i class="fa fa-star fa-fw"></i> Featured Texture</div>' : NULL;
+
+// Determine number of likes & comments for post.
+$db_count = $db->query('
+	(SELECT "likes"		AS data, COUNT(*) FROM `likes`		WHERE post="'.$p['id'].'" AND type="texture") UNION ALL
+	(SELECT "comments" 	AS data, COUNT(*) FROM `comments`	WHERE post="'.$p['id'].'" AND type="texture")
+')->fetch();
+
+foreach( $db_count as $key ) $p[$key['data']] = $key['COUNT(*)'];
+
+echo '
+<div class="post">
+    <div class="img">'.$p['f_html'].'
+        <a href="'.$p['url'].'"><img src="'.$p['thumb'].'" alt="'.$p['title'].'" width="700" height="200"></a>
+        <div class="over">
+            <a href="'.$p['url_auth'].'"><img src="'.$p['thumb_a'].'" alt="'.$p['auth'].'" width="32" height="32" class="avatar"></a>
+            <h2><a href="'.$p['url'].'">'.$p['title'].'</a></h2>
         </div>
-        
-        <div class="side">
-            <ul>
-                <li><i class="fa fa-tags fa-fw"></i> <?php echo $post['tags_html']; ?></li>
-                <li><i class="fa fa-mobile fa-fw"></i> <?php echo $post['devices_html']; ?></li>
-                <li><i class="fa fa-expand fa-fw"></i> <?php echo $post['resolution']; ?></li>
-                <li><i class="fa fa-thumbs-up fa-fw"></i> <span><?php echo $post['likes']; ?></span> likes</li>
-                <li><i class="fa fa-eye fa-fw"></i> <span><?php echo $post['views']; ?></span> views</li>
-                <li><i class="fa fa-comments fa-fw"></i> <span><?php echo $post['comments']; ?></span> comments</li>
-            </ul>
-            <a href="<?php echo $post['url']; ?>#download" class="view-bttn dl"><i class="fa fa-download"></i> Download <span><?php echo $post['downloads']; ?></span></a>
-        </div>
-        
     </div>
-    
-<?php
-	
-	} // END: Primary post loop.
-	
-} // END: If posts exist in database using given criteria.
+    <div class="info">
+        <span><i class="fa fa-thumbs-up"></i> <strong>'.$p['likes'].'</strong> likes</span>
+        <span><i class="fa fa-eye"></i> <strong>'.$p['views'].'</strong> views</span>
+        <span><i class="fa fa-comments"></i> <strong>'.$p['comments'].'</strong> comments</span>
+        <a href="'.$p['url'].'" class="bttn mid gold"><i class="fa fa-download"></i> Download <span class="side">'.$p['downloads'].'</span></a>
+    </div>
+</div>
+';
+
+} // End post foreach loop.
 
 ?>
-    
-    <?php if ( isset( $pagination_html ) ) echo $pagination_html; ?>
 
 </div>
+
+<?php if ( $count != 0 ) $pagination->html(); ?>
 
 <?php show_footer(); ?>

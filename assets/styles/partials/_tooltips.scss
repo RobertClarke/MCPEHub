@@ -1,0 +1,29 @@
+// Tipr button hover heights.
+a.bttn, input[type=submit], input[type=button] {
+	
+	.tipr_cont_bottom { margin-top: 15px; }
+	.tipr_cont_top { margin-top: -65px; }
+	
+	&.mid {
+		.tipr_cont_bottom { margin-top: 17px; }
+		.tipr_cont_top { margin-top: -67px; }
+	}
+	&.mini {
+		.tipr_cont_bottom { margin-top: 12px; }
+		.tipr_cont_top { margin-top: -63px; }
+	}
+	
+	&.tip:active, &.tip-bottom:active { position: static; top: 0; }
+	
+}
+#header #top .sub-nav {
+	> a .tipr_cont_bottom { margin-top: 16px; }
+	&.hideTips .tipr_cont_bottom, &.hideTips .tipr_cont_top { display: none !important; }
+}
+
+// Hide Tipr on dropdown activation.
+a.dropdown-open {
+	.tipr_cont_bottom, .tipr_cont_top {
+		display: none !important;
+	}
+}

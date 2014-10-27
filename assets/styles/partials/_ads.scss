@@ -1,0 +1,26 @@
+.avrt {
+	width: 728px;
+	height: 90px;
+	display: inline-block;
+	background: #fff;
+	border: 1px solid #ccc;
+	overflow: hidden;
+}
+#avrt-wide {
+	width: 100%;
+	padding: 15px 0 10px 0;
+	text-align: center;
+	background: #f3f3f3;
+}
+#sidebar .avrt {
+	width: 300px;
+	height: 600px;
+}
+#avrt-post {
+	text-align: center;
+	padding-bottom: 10px !important;
+	.avrt {
+		width: 340px;
+		height: 280px;
+	}
+}

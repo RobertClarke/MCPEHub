@@ -36,7 +36,7 @@ class Database
 	private $_offset;
 	private $_result;
 	var $error = '';
-	var $debug = FALSE;
+	var $debug = TRUE;
 	var $die_on_error = TRUE;
 	// Script execution will stop if set to TRUE. Default is TRUE ;
 	private $_last_query = '';

@@ -1,21 +1,51 @@
 <?php
 
-// SQL Server
-define( 'DB_HOST', 'localhost' );
+/**
+  
+  * Website Configuration
+  *
+  * This file contains all of the important settings used throughout
+  * the entire site. Without it, bad, bad things would happen.
+  
+**/
 
-// SQL Username
-define( 'DB_USER', 'root' );
 
-// SQL Password
-define( 'DB_PASS', 'r3437qlO157m87U' );
+/**
+  * Debug Mode
+  *
+  * Set value to FALSE if in production. This disables all visible
+  * errors such as sensitive SQL errors that might cause hacking.
+**/
 
-// SQL Table
-define( 'DB_NAME', 'mcpehub_new' );
+define('DEBUG_MODE', TRUE);
 
-// SQL Port (Optional)
-define( 'DB_PORT', '' );
 
-define( 'MAIN_URL', 'http://mcpehub.com/' );
+/**
+  * MySQL Database Settings
+**/
+
+define('DB_HOST', 'localhost');	// Usually 'localhost'.
+define('DB_PORT', '');			// Leave blank for default port.
+
+define('DB_USER', 'root');
+define('DB_PASS', 'googleplex123');
+
+define('DB_NAME', 'mcpe_NEWEST');
+
+
+/**
+  * Mandrill Settings
+  *
+  * These settings are secured and hidden from the public. If all
+  * emails stop sending, DOUBLE CHECK these settings!
+**/
+
+define('MAIL_USER', 'admin@cubemotion.com');
+define('MAIL_PASS', 'eiKnvMUNhH-6IqPHXHdB-A');
+
+define('MAIL_HOST', 'smtp.mandrillapp.com');
+define('MAIL_PORT', 587);
+
 
 /**
   * Security Unique Keys & Salts
@@ -26,6 +56,7 @@ define( 'MAIN_URL', 'http://mcpehub.com/' );
   * cookies. This will force every user to have to log in again.
 **/
 
-define( 'SECRET_KEY', 'eiC^zyqKebthN2n*818RniI4hm*uhR$bEgV:+fh=_%DF|xLZ&W~E8A| na|nwVe+' );
+define('SECRET_KEY', 'eiC^zyqKebthN2n*818RniI4hm*uhR$bEgV:+fh=_%DF|xLZ&W~E8A| na|NwVe+');
+define('AUTH_COOKIE', 'mcpe_auth_cookie_73x*F#f@');
 
 ?>

@@ -1,76 +1,77 @@
 <?php
 
-require_once( 'core.php' );
-show_header( 'Activate Account', FALSE, 'boxed' );
+/**
+  * User Activation
+**/
 
-// Default POST variables.
-$form_code = isset( $_GET['code'] ) ? $_GET['code'] : '';
+require_once('core.php');
+show_header('Activate Account', FALSE, ['body_id' => 'auth_action', 'body_class' => 'boxed']);
 
-// Form error messages.
-$error->add( 'INPUT_MISSING', 'You must enter an activation code.', 'error', 'times' );
-$error->add( 'INCORRECT_CODE', 'The activation code is invalid.', 'error', 'times' );
+$f['code'] = ( isset($_GET['code']) ) ? $_GET['code'] : NULL;
 
-$error->add( 'ACTIVATED', 'Your account is already activated!', 'success', 'check' );
-$error->add( 'SUCCESS', 'Your account has been activated!', 'success', 'check' );
+$error->add('MISSING',	'Activation token is missing.');
+$error->add('ACTIVE',	'Your account is already activated.', 'success');
+$error->add('SUCCESS',	'Your account has been activated!', 'success');
 
-if ( isset( $_GET['success'] ) ) $error->force( 'SUCCESS' );
-if ( isset( $_GET['activated'] ) ) $error->force( 'ACTIVATED' );
+if		( isset( $_GET['success'] ) ) $error->force('SUCCESS');
+elseif	( isset( $_GET['activated'] ) ) $error->force('ACTIVE');
 
-// If activation form is submitted.
-if ( isset( $_GET['code'] ) ) {
+// Check if activation code exists in URL.
+if ( isset($_GET['code']) ) {
 	
-	$error->reset();
-	
-	// Check if code is missing.
-	if ( empty( $_GET['code'] ) ) $error->set( 'INPUT_MISSING' );
+	// Check if activation code missing.
+	if ( empty($_GET['code']) ) $error->force('MISSING');
 	else {
 		
-		$code = $db->escape( $_GET['code'] );
+		$error->add('INVALID',	'Activation token provided is invalid.');
 		
-		// Check if code exists in the database.
-		$db_user = $db->select( 'id,activated' )->from( 'users' )->where( array( 'activate_code' => $code ) )->fetch();
+		$f['code'] = $db->escape($f['code']);
 		
-		if ( !$db->affected_rows ) $error->set( 'INCORRECT_CODE' );
+		$activate = $db->select('id, activated')->from('users')->where(['activate_token' => $f['code']])->limit(1)->fetch();
+		
+		// Check if activation code exists in database.
+		if ( !$db->affected_rows ) $error->set('INVALID');
 		else {
 			
-			$db_user = $db_user[0];
+			$activate = $activate[0];
 			
-			// If the user is already activated.
-			if ( $db_user['activated'] == 1 ) redirect( '/activate?activated' );
+			// If user is already activated, redirect.
+			if ( $activate['activated'] == 1 ) redirect('/activate?activated');
 			else {
 				
-				// Activate the user!
-				$db->where( array( 'id' => $db_user['id'] ) )->update( 'users', array( 'activated' => 1 ) );
-				redirect( '/activate?success' );
+				// Token verified, activate.
+				$db->where(['id' => $activate['id']])->update('users', ['activated' => 1]);
+				redirect('/activate?success');
 				
-			} // END: If user isn't already activated.
+			} // End: If user is already activated, redirect.
 			
-		} // END: Check if code in database.
+		} // End: Check if activation code exists in database.
 		
-	} // END: Activation code not missing.
-	
-} // END: Form submitted.
+	} // End: Check if activation code missing.
+
+} // End: Check if activation code exists in URL.
 
 ?>
 
-<script>window.onload = function() { document.getElementById('code').focus(); };</script>
-
-<h1>Activate Account</h1>
-<?php $error->display(); ?>
-
-<?php if ( !isset( $_GET['success'] ) && !isset( $_GET['activated'] ) ) { ?>
-<form action="/activate" method="GET" class="form">
-    
-    <div class="group">
-        <label for="code">Activation Code</label>
-        <input type="text" name="code" id="code" class="text" value="<?php echo htmlspecialchars($form_code); ?>" autocomplete="off" spellcheck="false" maxlength="25" />
-    </div>
-    
-    <button type="submit" id="submit">Activate Account</button>
-
-</form>
+<div class="header"><h1>Activate Account</h1></div>
+<div class="body">
+    <form action="/activate" method="GET">
+        <?php echo $error->display(); ?>
+<?php if ( !isset($_GET['success']) && !isset($_GET['activated']) ) { // If the activation was successful. ?>
+        <div class="group">
+            <div class="label"><label for="code">Activation Code</label></div>
+            <input type="text" name="code" id="code" class="full" value="<?php $form->get_val('code'); ?>" spellcheck="false">
+        </div>
+        <div class="submit">
+            <button type="submit" class="bttn big green">Activate Account</button>
+        </div>
 <?php } ?>
+    </form>
+</div>
+<div class="footer">
+    <a href="/login" class="bttn mini"><i class="fa fa-long-arrow-left"></i> Back to Sign In</a>
+</div>
 
-<div class="links"><a href="/login">&laquo; Back to Login</a></div>
+<?php if ( empty( $f['code'] ) ) { ?><script>window.onload = function() { document.getElementById('code').focus(); };</script><?php } ?>
 
 <?php show_footer(); ?>

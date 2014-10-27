@@ -1,0 +1,28 @@
+// Main container for grids.
+.grid {
+	
+	width: 1000px;
+	margin-bottom: 15px;
+	
+	[class^=col-] {
+		
+		float: left;
+		margin: 0 10px;
+		
+		background: orange;
+		
+		&:first-child { margin-left: 0; }
+		&:last-child { margin-right: 0; }
+	}
+	
+	.col-full { width: 1000px; }
+	.col-2 { width: 490px; }
+	.col-3 { width: 320px; }
+	.col-4 { width: 235px; }
+	.col-6 { width: 150px; }
+	
+	&.nospace { margin-bottom: 0; }
+	
+	&:after { @include clear-after(); }
+	
+}

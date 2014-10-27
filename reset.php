@@ -1,133 +1,137 @@
 <?php
 
-require_once( 'core.php' );
+/**
+  * Reset Password Page
+**/
 
-// If the user is already logged in.
-if ( $user->logged_in() ) redirect( '/' );
+require_once('core.php');
+if ( $user->logged_in() ) redirect('/dashboard');
 
-show_header( 'Reset Password', FALSE, 'boxed' );
+show_header('Reset Password', FALSE, ['body_class' => 'boxed']);
 
-// Default POST variables.
-if ( isset( $_GET['code'] ) ) $form_code = $_GET['code'];
-else if ( isset( $_POST['code'] ) ) $form_code = $_POST['code'];
-else $form_code = '';
+$error->add('MISSING',	'Reset token is missing in URL.');
 
-// Form error messages.
-$error->add( 'MISSING_CODE', 'URL is missing the reset token.', 'error', 'times' );
-$error->add( 'INCORRECT_CODE', 'The reset token is invalid.', 'error', 'times' );
+// Use POST code over GET code, if POST exists.
+if ( isset($_POST['code']) ) $f['code'] = $_POST['code'];
+elseif ( isset($_GET['code']) ) $f['code'] = $_GET['code'];
+else $f['code'] = NULL;
 
-$error->add( 'INFO', 'Don\'t worry, we forget passwords too! Enter your new password below.', 'info', 'info' );
-$error->add( 'INPUT_MISSING', 'You must fill out both inputs.', 'error', 'times' );
-$error->add( 'PASS_MISMATCH', 'The passwords entered don\'t match.', 'error', 'times' );
-$error->add( 'INVALID_PASSWORD', 'Your password must be between 6-30 characters long.', 'error', 'times' );
-$error->add( 'EXPIRED', 'This reset token has expired.', 'error', 'times' );
-
-$error->add( 'SUCCESS', 'Your password has been changed!', 'success', 'check' );
-
-if ( isset( $_GET['success'] ) ) $error->force( 'SUCCESS' );
-if ( isset( $_GET['activated'] ) ) $error->force( 'ACTIVATED' );
-
-// If reset code is missing.
-if ( empty( $form_code ) ) $error->force( 'MISSING_CODE' );
+// Check if reset code is missing.
+if ( empty($f['code']) ) $error->set('MISSING');
 else {
 	
-	// Check if reset code is valid (in database).
-	$db_reset = $db->select( 'id,user_id,requested_time' )->from( 'resets' )->where( array( 'code' => $form_code ) )->fetch();
+	$error->add('INTRO',	'Don\'t worry, we forget passwords too! Enter your new password below.', 'info');
+	$error->add('INVALID',	'Reset token provided has expired or doesn\'t exist.');
+	$error->add('USED',		'Reset token provided has already been used.');
 	
-	if ( !$db->affected_rows ) $error->set( 'INCORRECT_CODE' );
+	$f['code'] = $db->escape($f['code']);
+	
+	$reset = $db->select('*')->from('resets')->where(['code' => $f['code']])->limit(1)->fetch();
+	
+	// Check if reset code exists in database.
+	if ( !$db->affected_rows ) $error->set('INVALID');
 	else {
 		
-		$db_reset = $db_reset[0];
+		$reset = $reset[0];
 		
-		// Set 2 day expiry time.
-		$expiry = strtotime( $db_reset['requested_time'] ) + ( 60*60*24*2 );
+		// 7 day expiry time on tokens.
+		$expiry = strtotime($reset['request_time']) + (60*60*24*7);
 		
-		// Check if reset code has expired (48 hours).
-		if( $expiry < time() ) $error->set( 'EXPIRED' );
+		// Check if reset code has expired.
+		if ( $expiry < time() || $reset['expired'] == 1 ) $error->set('INVALID');
 		else {
 			
-			// Set variable to show form on page.
-			$code_validated = TRUE;
-			
-			// Show a nice message to the user. We'll reset it later.
-			$error->set( 'INFO' );
-			
-			// If reset form is submitted.
-			if ( !empty( $_POST ) ) {
+			// Check if reset token has been used.
+			if ( $reset['used'] == 1 ) $error->set('USED');
+			else {
 				
-				$error->reset();
+				/*** Token verified ***/
+				$code_valid = TRUE;
+				$error->set('INTRO');
 				
-				// Check if inputs are missing.
-				if ( empty( $_POST['password'] ) || empty( $_POST['password-repeat'] ) ) $error->set( 'INPUT_MISSING' );
-				else {
+				if ( !empty( $_POST ) ) {
 					
-					// Check if password between 6-30 characters.
-					if ( strlen( $_POST['password'] ) < 6 || strlen( $_POST['password'] ) > 30 ) $error->append( 'INVALID_PASSWORD' );
+					$error->reset();
+					
+					$error->add('P_MISSING',	'You must fill out both password inputs.');
+					$error->add('P_MATCH',		'The passwords submitted don\'t match.');
+					$error->add('P_LENGTH',		'Your password must be 6-30 characters long.');
+					$error->add('P_USERNAME',	'Your password can\'t be the same as your username.');
+					
+					$f['password']		= isset( $_POST['password'] ) ? $db->escape($_POST['password']) : NULL;
+					$f['password2']	= isset( $_POST['password2'] ) ? $_POST['password2'] : NULL;
+					
+					// Check if password/repeat missing.
+					if ( empty($f['password']) || empty($f['password2']) ) $error->set('P_MISSING');
 					else {
 						
-						$code = $db->escape( $form_code );
-						$password = $db->escape( $_POST['password'] );
-						$password_repeat = $db->escape( $_POST['password-repeat'] );
+						// Check if password between 6-30 characters.
+						if ( strlen($f['password'])<6 || strlen($f['password'])>30 ) $error->set('P_LENGTH');
 						
-						// Check if passwords match.
-						if ( $password != $password_repeat ) $error->set( 'PASS_MISMATCH' );
-						else {
-							
-							// Set $code_validated to false to hide the form.
-							$code_validated = null;
-							
-							// Delete all other resets for that user. They're invalid now.
-							$db->where( '`user_id`='. $db_reset['user_id'] )->delete('resets')->execute();
-							
-							// Hash the new password.
-							$password_hash = password_hash( $password, PASSWORD_DEFAULT );
-							
-							// Update password in database for user.
-							$db->where( '`id`=' . $db_reset['user_id'] )->update( 'users', array( 'password' => $password_hash ) );
-							
-							$error->set( 'SUCCESS' );
-							
-						} // END: Passwords match.
+						// Check if password equals username.
+						if ( $f['password'] == $user->info('username', $reset['target_user']) ) $error->append('P_USERNAME');
 						
-					} // END: Password between 6-30 characters.
+						if ( !$error->exists() ) {
+							
+							// Check if passwords match.
+							if ( $f['password'] != $f['password2'] ) $error->set('P_MATCH');
+							else {
+								
+								/*** Fields validated ***/
+								$code_valid = NULL;
+								
+								// Set all reset tokens for user to be invalid.
+								$db->where(['target_user'=>$reset['target_user'], 'expired'=>0, 'used'=>0])->update('resets', ['expired' => 1]);
+								
+								// Set current request token to "used" instead of "expired".
+								$db->where(['id'=>$reset['id']])->update('resets', ['expired'=>0, 'used'=>1]);
+								
+								// Hash and store new password.
+								$hash = password_hash($f['password'], PASSWORD_DEFAULT);
+								$db->where(['id' => $reset['target_user']])->update('users', ['password' => $hash]);
+								
+								redirect('/login?reset');
+								
+							} // End: Check if passwords match.
+							
+						} // End: Continue after checking all fields.
+						
+					} // End: Check if password/repeat missing.
 					
-				} // END: Inputs not missing.
+				} // End: Reset form submission.
 				
-			} // END: Code not expired.
+			} // End: Check if reset token has been used.
 			
-		} // END: If form is submitted.
+		} // End: Check if reset code has expired.
 		
-	} // END: If the reset code exists in database.
+	} // End: Check if reset code exists in database.
 	
-} // END: If reset code isn't missing from URL.
+} // End: // Check if reset code is missing.
 
 ?>
 
-<script>window.onload = function() { document.getElementById('code').focus(); };</script>
+<div class="header"><h1>Sign In</h1></div>
+<div class="body">
+    <form action="/reset" method="POST">
+        <?php echo $error->display(); ?>
+<?php if ( isset( $code_valid ) ) { // If the form hasn't been successfully submitted. ?>
+        <div class="group">
+            <label for="password">New Password</label>
+            <input type="password" name="password" id="password" class="full">
+        </div>
+        <div class="group">
+            <label for="password2">Repeat Password</label>
+            <input type="password" name="password2" id="password2" class="full">
+        </div>
+        <div class="submit"><button type="submit" class="bttn big green full">Change Password</button></div>
+        <input type="hidden" name="code" value="<?php echo htmlspecialchars($f['code']); ?>" />
+<?php } // End: If the form hasn't been successfully submitted. ?>
+    </form>
+</div>
+<div class="footer">
+    <a href="/login" class="bttn mini"><i class="fa fa-long-arrow-left"></i> Back to Sign In</a>
+</div>
 
-<h1>Reset Password</h1>
-<?php $error->display(); ?>
-
-<?php if ( isset( $code_validated ) ) { ?>
-<form action="/reset" method="POST" class="form">
-    
-    <div class="group">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" class="text" value="" />
-    </div>
-    
-    <div class="group">
-        <label for="password-repeat">Repeat Password</label>
-        <input type="password" name="password-repeat" id="password-repeat" class="text" value="" />
-    </div>
-    
-    <input type="hidden" name="code" value="<?php echo htmlspecialchars($form_code); ?>" />
-    
-    <button type="submit" id="submit">Change Password</button>
-
-</form>
-<?php } ?>
-
-<div class="links"><a href="/login">&laquo; Back to Login</a></div>
+<?php if ( isset( $code_valid ) ) { ?><script>window.onload = function() { document.getElementById('password').focus(); };</script><?php } ?>
 
 <?php show_footer(); ?>

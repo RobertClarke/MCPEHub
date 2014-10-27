@@ -1,80 +1,84 @@
 <?php
 
+/**
+  
+  * URL Class
+  *
+  * Used around the website to quickly build and modify the
+  * current page URL. Much more flexible than grabbing server
+  * URL using PHP.
+  *
+  * add();		Adds element into the URL.
+  * show();		Returns the (current) URL string.
+  * reset();	Clears all URL parts. Resets the whole URL generation system.
+  
+**/
+
 class Url {
 	
-	public $the_url = '';
-	public $url_ending = '';
-	public $url_parts_temp = '';
-	public $url_parts = array();
+	private $url = '';
+	private $ending = '';
+	private $parts_temp = '';
+	private $parts = [];
 	
-	function __construct() {
+	// Adds element into the URL.
+	public function add($key, $val='') {
 		
-	}
-	
-	function add( $key, $val = '' ) {
+		$val = htmlspecialchars($val);
 		
-		// Clean up value in case user input presented.
-		$val = htmlspecialchars( $val );
-		
-		// Add the url part into the array.
-		$this->url_parts[$key] = $val;
+		// Add the key & value into the URL.
+		$this->parts[$key] = $val;
 		return;
 		
 	}
 	
-	function remove() {
+	// Returns the (current) URL string.
+	public function show($add='', $reset=FALSE) {
 		
-		// TODO: Remove or code, not sure if it's necessary.
-		
-	}
-	
-	// Clears all URL parts. Resets the whole url generation system.
-	function reset() {
-		
-		$this->the_url = NULL;
-		$this->url_ending = NULL;
-		$this->url_parts = array();
-		$this->url_parts_temp = NULL;
-		
-		return;
-		
-	}
-	
-	function show( $add = '', $reset = FALSE ) {
-		
-		// Throw out default URL, if we didn't just reset.
-		//if ( empty( $this->url_parts ) && !$reset ) return $_SERVER['PHP_SELF'];
-		
-		if ( !$reset ) $this->url_parts_temp = $this->url_parts;
-		else $this->url_parts_temp = array();
+		// Setting $reset will just echo out a raw URL.
+		if (!$reset) $this->parts_temp = $this->parts;
+		else $this->parts_temp = [];
 		
 		// If something needs to be added to the URL.
-		if ( !empty( $add ) ) {
+		if ( !empty($add) ) {
 			
-			$add = explode( '&', $add );
+			$add = explode('&', $add);
 			
 			foreach ( $add as $the_add ) {
-				$the_add = explode( '=', $the_add );
-				$this->url_parts_temp[ $the_add[0] ] = $the_add[1];
+				$the_add = explode('=', $the_add);
+				$this->parts_temp[$the_add[0]] = $the_add[1];
 			}
+			
 		}
 		
 		// Build the URL from the array.
-		foreach ( $this->url_parts_temp as $key => $val ) $this->url_ending .= $key.'='.$val.'&';
+		foreach ( $this->parts_temp as $key => $val ) $this->ending .= $key.'='.$val.'&';
 		
 		// Cut off last '&' from URL.
-		$this->url_ending = substr( $this->url_ending , 0, -1 );
+		$this->ending = substr( $this->ending , 0, -1 );
 		
-		$this->the_url = $_SERVER['PHP_SELF'] . '?' . $this->url_ending;
+		$this->url = trim($_SERVER['PHP_SELF'], '.php') . '?' . $this->ending;
 		
 		// Cut off last '?' if no variables.
-		if ( empty( $this->url_ending ) ) $this->the_url = substr( $this->the_url , 0, -1 );
+		if ( empty($this->ending) ) $this->url = substr($this->url , 0, -1);
 		
 		// Reset values for future overwriting.
-		$this->url_ending = NULL;
-		$this->url_parts_temp = NULL;
+		$this->ending = NULL;
+		$this->parts_temp = NULL;
 		
-		return $this->the_url;
+		return $this->url;
+		
+	}
+	
+	// Clears all URL parts. Resets the whole URL generation system.
+	public function reset() {
+		
+		$this->url = NULL;
+		$this->ending = NULL;
+		$this->parts = array();
+		$this->parts_temp = NULL;
+		
+		return;
 		
 	}
 	

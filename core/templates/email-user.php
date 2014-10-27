@@ -3,9 +3,9 @@
 global $email_title, $email_user, $email_content;
 
 // Email default values (to avoid PHP errors in emails).
-$email_title = isset( $email_title ) ? $email_title : 'MCPE Hub';
-$email_user = isset( $email_user ) ? $email_user : '';
-$email_content = isset( $email_content ) ? $email_content : 'This message has no content.';
+$email_title = !empty( $email_title ) ? $email_title : 'MCPE Hub';
+$email_user = !empty( $email_user ) ? $email_user : '';
+$email_content = !empty( $email_content ) ? $email_content : 'This message has no content.';
 
 ?>
 <!DOCTYPE html>

@@ -1,120 +1,111 @@
 <?php
 
-require_once( 'core.php' );
+/**
+  * Forgot Password Form
+**/
 
-// If the user is already logged in.
-if ( $user->logged_in() ) redirect( '/' );
+require_once('core.php');
+if ( $user->logged_in() ) redirect('/dashboard');
 
-show_header( 'Forgot Password', FALSE, 'boxed' );
+show_header('Forgot Password', FALSE, ['body_class' => 'boxed']);
 
-// Default POST variables.
-$form_email = isset( $_POST['email'] ) ? $_POST['email'] : '';
+$error->add('SUCCESS',	'An email was sent to you containing a password reset link.<br><br><i>Emails may take a few minutes to send. Be sure to check your SPAM folder.</i>', 'success');
+if ( isset($_GET['success']) ) $error->force('SUCCESS');
 
-// Form error messages.
-$error->add( 'INPUT_MISSING', 'You must enter your e-mail.', 'error', 'times' );
-$error->add( 'INVALID_EMAIL', 'The e-mail isn\'t in valid email format.', 'error', 'times' );
-$error->add( 'INCORRECT_EMAIL', 'E-mail doesn\'t exist in the database.', 'error', 'times' );
-$error->add( 'SUSPENDED', 'Your account is currently suspended.', 'error', 'times' );
-$error->add( 'EXCEEDED', 'You\'ve made too many reset requests within the past day.', 'warning', 'exclamation-triangle' );
-
-$error->add( 'SUCCESS', 'An email was sent to you containing a password reset link. Emails might take a few minutes to send.', 'success', 'check' );
-
-if ( isset( $_GET['success'] ) ) $error->force( 'SUCCESS' );
-
-// If login form is submitted.
 if ( !empty( $_POST ) ) {
 	
 	$error->reset();
 	
-	// Check if email is missing.
-	if ( empty( $_POST['email'] ) ) $error->set( 'INPUT_MISSING' );
+	$error->add('MISSING',	'You must enter your email.');
+	$error->add('FORMAT',	'The email submitted isn\'t in valid email format.');
+	$error->add('INVALID',	'That email isn\'t associated with an account.');
+	$error->add('SUSPEND',	'Your account is currently suspended and cannot be reset.');
+	$error->add('LIMIT',	'You\'ve made too many reset requests within the past day.');
+	
+	$f['email']	= isset( $_POST['email'] ) ? $db->escape($_POST['email']) : NULL;
+	
+	// Check if email missing.
+	if ( empty($f['email']) ) $error->set('MISSING');
 	else {
 		
-		// Check if email input is vaild email format.
-		if ( !is_email( $_POST['email'] ) ) $error->set( 'INVALID_EMAIL' );
+		// Check if email is valid in format.
+		if ( !is_email($f['email']) ) $error->set('FORMAT');
 		else {
 			
-			$email = $db->escape( $_POST['email'] );
-			
-			// Check if email exists in the database.
-			if ( !$user->check_email( $email ) ) $error->set( 'INCORRECT_EMAIL' );
+			// Check if email exists in database.
+			if ( !$user->check_email($f['email']) ) $error->set('INVALID');
 			else {
 				
-				$db_user = $db->select( 'id,username' )->from( 'users' )->where( array( 'email' => $email ) )->fetch()[0];
+				// Determine users id from database.
+				$user_db = $db->select('id, username')->from('users')->where(['email' => $f['email']])->fetch()[0];
 				
 				// Check if user is suspended.
-				if ( $user->suspended( $db_user['id'] ) ) $error->set( 'SUSPENDED' );
+				if ( $user->suspended($user_db['id']) ) $error->set('SUSPEND');
 				else {
 					
 					$ip = $_SERVER['REMOTE_ADDR'];
-					$today = date( 'Y-m-d' );
+					$today = date('Y-m-d');
 					
-					// Grab resets from database. Max 6.
-					$resets = $db->select( 'id' )->from( 'resets' )->limit(5)->where( '`requested_ip` = "'.$ip.'" AND DATE(`requested_time`) = "'.$today.'"' )->fetch();
+					// Figure out if clients IP has already requested over 5 times today.
+					$db->select('id')->from('resets')->limit(5)->where('`request_ip`="'.$ip.'" AND DATE(`request_time`)="'.$today.'"')->fetch();
 					
-					// Only allow maximum 5 requests per day (per IP address).
-					if ( $db->affected_rows > 4 ) $error->set( 'EXCEEDED' );
+					// User has done over 5 requests in the day.
+					if ( $db->affected_rows > 4 ) $error->set('LIMIT');
 					else {
 						
-						/** RESET SUCCESS **/
+						/*** Reset success! :) ***/
 						
-						$code = random_str( 15 );
+						// Generate code for the reset url.
+						$code = random_str(15);
 						
-						$insert = array( 'code' => $code, 'user_id' => $db_user['id'], 'requested_ip' => $ip, 'requested_time' => date( 'Y-m-d H:i:s' ) );
+						// Insert reset into database.
+						$db->insert('resets', ['code'=>$code, 'target_user'=>$user_db['id'], 'request_ip'=>$ip, 'request_time'=>date('Y-m-d H:i:s')]);
 						
-						// Insert into database.
-						$db->insert( 'resets', $insert );
+						// Email HTML body.
+						$email =	"<p>Sorry to hear you forgot your password! You can reset it by clicking on <a href=\"".MAINURL."reset?code={$code}\">this link</a>. This password reset request expires in 48 hours.</p>\n";
+						$email .=	"<p>If you didn't request a password change, please ignore this email. No changes will be made to your account.</p>\n";
+						$email .=	"<p>Have a great day!</p><p>- MCPE Hub Team</p>\n";
+						$email .=	"<p><i>Follow us on Twitter: <a href=\"http://twitter.com/MCPEHubNetwork\">@MCPEHubNetwork</a> for news, updates, giveaways and more!</i></p>\n";
+						$email .=	"<div class=\"bottom\">If you have issues opening the link above, use the following link: <a href=\"".MAINURL."reset?code={$code}\">".MAINURL."reset?code={$code}</a></div>\n";
 						
-						// Send email to user.
-						$email_content = "<p>Sorry to hear you forgot your password! You can reset your password by clicking on <a href=\"".MAINURL."reset?code=".$code."\">this link</a>. This password reset request expires in 48 hours.</p>\n";
-						$email_content .= "<p>If you didn't request a password change, please ignore this email. No changes will be made to your account.</p>\n";
-						$email_content .= "<p>Have a great day!</p><p>- MCPE Hub Team</p>\n";
-						$email_content .= "<p><i>Follow us on Twitter! <a href='http://twitter.com/MCPEHubNetwork'>@MCPEHubNetwork</a> for news, updates and more!</i></p>\n";
-						$email_content .= "<div class=\"bottom\">If you have issues opening the link above, use the following link: <a href=\"".MAINURL."reset?code=".$code."\">".MAINURL."reset?code=".$code."</a></div>\n";
+						// Format and send email to user.
+						$email = $mail->format($email);
+						$email = $mail->send($f['email'], $user_db['username'], 'Reset Your Password', $email);
 						
-						// Grab our HTML email template.
-						ob_start();
-						require( ABSPATH . 'core/templates/email-user.php' );
-						$message = ob_get_clean();
+						// Redirect user to prevent spam refresh of submission.
+						redirect('/forgot?success');
 						
-						send_email( $email, $db_user['username'], 'Reset Your Password', $message );
-						
-						// Redirect user to success page. We redirect because we don't
-						// want them to spam refresh the page (email spam).
-						redirect( '/forgot?success' );
-						
-					} // END: Check number of requests made today.
+					} // End: User has done over 5 requests in the day.
 					
-				} // END: Check if user suspended.
+				} // End: Check if user is suspended.
 				
-			} // END: Check if email in database.
+			} // End: Check if email exists in database.
 			
-		} // END: Check if valid email format.
+		} // End: Check if email is valid in format.
 		
-	} // END: Input not empty.
+	} // End: Check if email missing.
 	
-} // END: Form submitted.
+} // End: Reset form submission.
 
 ?>
 
-<script>window.onload = function() { document.getElementById('email').focus(); };</script>
-
-<h1>Reset Password</h1>
-<?php $error->display(); ?>
-
-<?php if ( !isset( $_GET['success'] ) ) { ?>
-<form action="/forgot" method="POST" class="form">
-    
-    <div class="group">
-        <label for="email">Your Email</label>
-        <input type="text" name="email" id="email" class="text" value="<?php echo htmlspecialchars($form_email); ?>" autocomplete="off" spellcheck="false" />
-    </div>
-    
-    <button type="submit" id="submit">Reset Password</button>
-
-</form>
+<div class="header"><h1>Forgot Password</h1></div>
+<div class="body">
+    <form action="/forgot" method="POST">
+        <?php echo $error->display(); ?>
+<?php if ( !isset( $_GET['success'] ) ) { // If the form hasn't been successfully submitted. ?>
+        <div class="group">
+            <div class="label"><label for="email">Your Email</label></div>
+            <input type="text" name="email" id="email" class="full" value="<?php $form->post_val('email'); ?>" spellcheck="false">
+        </div>
+        <div class="submit"><button type="submit" class="bttn big green full">Reset Password</button></div>
 <?php } ?>
+    </form>
+</div>
+<div class="footer">
+    <a href="/login" class="bttn mini"><i class="fa fa-long-arrow-left"></i> Back to Sign In</a>
+</div>
 
-<div class="links"><a href="/login">&laquo; Back to Login</a></div>
+<script>window.onload = function() { document.getElementById('email').focus(); };</script>
 
 <?php show_footer(); ?>
