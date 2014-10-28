@@ -7,13 +7,13 @@
 require_once('core.php');
 
 $pg = [
-	'title_main'	=> 'Textures',
+	'title_main'	=> 'Texture Packs',
 	'title_sub'		=> 'Minecraft PE',
 	'seo_desc'		=> 'All kinds of colorful Minecraft PE texture packs, to change the look of Minecraft PE in your game.',
 	'seo_keywords'	=> 'minecraft pe texture packs, textures, minecraft pe, mcpe'
 ];
 
-show_header('Minecraft PE Textures', FALSE, $pg);
+show_header('Minecraft PE Texture Packs', FALSE, $pg);
 
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 

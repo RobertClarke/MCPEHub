@@ -1,1 +1,0 @@
-// @codekit-append "./partials/posts.js", "./partials/forms.js", "./partials/dashboard.js", "./partials/servers.js", "./plugins/chosen.js", "./plugins/tipr.js", "./plugins/dropdown.js", "./plugins/flexslider.js", "./plugins/modal.js";

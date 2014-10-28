@@ -41,6 +41,9 @@ if ( isset($_GET['code']) ) {
 				
 				// Token verified, activate.
 				$db->where(['id' => $activate['id']])->update('users', ['activated' => 1]);
+				
+				$db->delete()->from('activate_resend')->where('user', $activate['id'])->execute();
+				
 				redirect('/activate?success');
 				
 			} // End: If user is already activated, redirect.

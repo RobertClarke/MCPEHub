@@ -50,7 +50,6 @@ if ( !empty($_POST) ) {
 		
 		// PASSWORD field checks.
 		if ( !empty($f['password']) ) {
-			
 			if		( !$form->length($f['password'], 30, 6) )	$error->append('P_LENGTH');
 			elseif	( $f['password'] == $f['username'] )		$error->append('P_USERNAME');
 			elseif	( $f['password'] != $f['password2'] )		$error->append('P_MATCH');
@@ -115,7 +114,7 @@ if ( !empty($_POST) ) {
                 <input type="text" name="username" id="username" value="<?php $form->post_val('username'); ?>">
             </div>
             <div class="group">
-                <div class="label"><label for="email">Email</label></div>
+                <div class="label"><label for="email">Email Address</label></div>
                 <input type="text" name="email" id="email" value="<?php $form->post_val('email'); ?>">
             </div>
         </div>

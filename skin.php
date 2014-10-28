@@ -154,7 +154,7 @@ echo '
         </div>
         <div class="info">
             <div class="bttn-group">
-                <a href="/download?post='.$p['id'].'&type='.$type.'" class="bttn mid gold dl"><i class="fa fa-download fa-fw"></i> Download <span class="side">'.$p['downloads'].'</span></a>
+                <a href="/download?post='.$p['id'].'&type='.$type.'" target="_blank" class="bttn mid gold dl"><i class="fa fa-download fa-fw"></i> Download <span class="side">'.$p['downloads'].'</span></a>
                 <a href="'.$p['url'].'#queue" class="bttn mid queue tip" data-tip="Save Download For Later" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-cloud-download fa-fw"></i> Add to Queue</a>
             </div>
         </div>

@@ -1,3 +1,4 @@
+<?php global $user; ?>
 <?php if ( !strpos($pg['body_class'], 'boxed') ) echo '</div><!-- End #content -->'; ?>
 
 <?php if ( $pg['sidebar'] && !strpos($pg['body_class'], 'boxed') ) include_once(ABS.'structure/sidebar.php'); ?>

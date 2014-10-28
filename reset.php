@@ -110,7 +110,7 @@ else {
 
 ?>
 
-<div class="header"><h1>Sign In</h1></div>
+<div class="header"><h1>Reset Password</h1></div>
 <div class="body">
     <form action="/reset" method="POST">
         <?php echo $error->display(); ?>
