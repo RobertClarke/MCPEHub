@@ -93,6 +93,31 @@ if ( $user->is_admin() || $user->is_mod() ) {
     <meta name="apple-mobile-web-app-title" content="MCPE Hub">
     <meta name="format-detection" content="telephone=no">
     
+<script type="text/javascript">
+//<![CDATA[
+try{if (!window.CloudFlare) {var CloudFlare=[{verbose:0,p:1401845039,byc:0,owlid:"cf",bag2:1,mirage2:0,oracle:0,paths:{cloudflare:"/cdn-cgi/nexp/dokv=abba2f56bd/"},atok:"ffdd644c0cf852107efb78e494a19174",petok:"9bc09865fdc38abc269eca1c8af3c8d17950e012-1402185323-1800",zone:"mcpehub.com",rocket:"0",apps:{}}];CloudFlare.push({"apps":{"ape":"195a63d680ea0b81a0820582ea994b85"}});!function(a,b){a=document.createElement("script"),b=document.getElementsByTagName("script")[0],a.async=!0,a.src="//ajax.cloudflare.com/cdn-cgi/nexp/dokv=97fb4d042e/cloudflare.min.js",b.parentNode.insertBefore(a,b)}()}}catch(e){};
+//]]>
+</script>
+
+<script>
+!function(g,s,q,r,d){r=g[r]=g[r]||function(){(r.q=r.q||[]).push(
+arguments)};d=s.createElement(q);q=s.getElementsByTagName(q)[0];
+d.src='//d1l6p2sc9645hc.cloudfront.net/tracker.js';q.parentNode.
+insertBefore(d,q)}(window,document,'script','_gs');
+
+_gs('GSN-032559-K');
+</script>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-8521263-42', 'mcpehub.com');
+ga('send', 'pageview');
+
+</script>
+    
 </head>
 <body<?php echo $pg['body_id'] . $pg['body_class']; ?>>
 
