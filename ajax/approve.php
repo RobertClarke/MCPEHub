@@ -34,7 +34,7 @@ else {
 			// Post not approved yet.
 			if ( $post['active'] == 0 ) {
 				
-				$db->where(['id' => $p_id])->update('content_'.$p_type.'s', ['active' => 1, 'reviewer_id' => $person, 'published' => time_now()]);
+				$db->where(['id' => $p_id])->update('content_'.$p_type.'s', ['active' => 1, 'reviewer_id' => $person, 'published' => date('Y-m-d H:i:s')]);
 				$return = 'approved';
 				
 			}
