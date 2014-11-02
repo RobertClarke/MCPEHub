@@ -35,6 +35,9 @@ else {
 				$purifier = new HTMLPurifier( HTMLPurifier_Config::createDefault() );
 				
 				$comment = $purifier->purify($_POST['comment']);
+				$comment = str_replace('assets/img/smilies/', '/assets/img/smilies/', $comment);
+				
+				$comment = $db->escape($comment);
 				
 				$person = $user->info('id');
 				
