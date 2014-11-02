@@ -77,7 +77,7 @@ else {
         <a href="/user/<?php echo $c['author']; ?>"><img src="<?php echo $c['author_img']; ?>" alt="<?php echo $c['author']; ?>" width="36" height="36"></a>
         <p>
             <span class="poster"><a href="/user/<?php echo $c['author']; ?>"><?php echo $c['author']; ?></a><?php echo $this->user->badges($c['author']); ?></span>
-            <span class="posted"><?php echo since(strtotime($c['posted'])); ?></span>
+            <span class="posted"><?php echo since($c['posted']); ?></span>
         </p>
     </div>
     <div class="content">
