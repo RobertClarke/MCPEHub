@@ -127,6 +127,7 @@ else $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub follow
     </div>
     
     <?php $error->display(); ?>
+    <?php $post_tools->mod_toolkit($p['id'], $type, $p['featured']); ?>
     
     <div id="slideshow">
         <div id="slider" class="flexslider">

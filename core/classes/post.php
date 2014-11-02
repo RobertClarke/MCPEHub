@@ -102,6 +102,23 @@ class Post {
 		else return FALSE;
 		
 	}
+	
+	public function mod_toolkit($post, $type, $featured=0) {
+		
+		global $user;
+		
+		if ( $user->is_mod() || $user->is_admin() ) {
+		
+?>
+<div id="mod-tools">
+    <h5>Moderation Toolkit</h5>
+    <a href="#feature" class="feature bttn mid<?php echo ( $featured == 1 ) ? ' gold' : NULL; ?>"><?php echo ( $featured == 0 ) ? '<i class="fa fa-star"></i> Feature Post' : '<i class="fa fa-check"></i> Featured'; ?></a>
+</div>
+<?php
+
+		} 
+		
+	}
 		
 }
 
