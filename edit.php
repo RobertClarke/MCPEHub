@@ -20,18 +20,18 @@ $p_type	= $_GET['type'];
 $error->add('INVALID',		'<i class="fa fa-question"></i> The '.$p_type.' you\'re attempting to edit doesn\'t exist.', 'error');
 $error->add('NOT_OWNER',	'<i class="fa fa-lock"></i> You don\'t have permission to edit this '.$p_type.'.', 'error');
 
-$post = $db->select()->from('content_'.$p_type.'s')->where(['id' => $p_id])->fetch();
+$post = $db->select()->from('content_'.$p_type.'s')->where('`id` = \''.$p_id.'\' AND `active` <> \'-2\'')->fetch();
 
 // Check if post exists in database.
 if (!$db->affected_rows) $error->set('INVALID');
 else {
-	
-	$valid = TRUE;
 	$post = $post[0];
 	
 	// Check if user is owner of post.
 	if ( $post['author'] != $user->info('id') ) $error->set('NOT_OWNER');
 	else {
+		
+		$valid = TRUE;
 		
 		$post['type']		= $p_type;
 		$post['author_id']	= $post['author'];
@@ -361,7 +361,7 @@ else {
 				$db_edit = [];
 				foreach( $extras as $input => $value ) $db_edit[$input] = $db->escape($value['clean_val']);
 				
-				$db_edit['description']	= $description;
+				$db_edit['description']	= $db->escape($description);
 				$db_edit['editor_id']	= $user->info('id');
 				$db_edit['edited']		= time_now();
 				$db_edit['active']		= 0;

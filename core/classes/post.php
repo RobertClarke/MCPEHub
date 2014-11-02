@@ -103,7 +103,7 @@ class Post {
 		
 	}
 	
-	public function mod_toolkit($post, $type, $featured=0) {
+	public function mod_toolkit($post, $type, $p) {
 		
 		global $user;
 		
@@ -112,7 +112,12 @@ class Post {
 ?>
 <div id="mod-tools">
     <h5>Moderation Toolkit</h5>
-    <a href="#feature" class="feature bttn mid<?php echo ( $featured == 1 ) ? ' gold' : NULL; ?>"><?php echo ( $featured == 0 ) ? '<i class="fa fa-star"></i> Feature Post' : '<i class="fa fa-check"></i> Featured'; ?></a>
+    <a href="/moderate-edit?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid"><i class="fa fa-pencil"></i> Edit Post</a>
+    <a href="#feature" class="feature bttn mid<?php echo ( $p['featured'] == 1 ) ? ' gold' : NULL; ?>"><?php echo ( $p['featured'] == 0 ) ? '<i class="fa fa-star"></i> Feature Post' : '<i class="fa fa-check"></i> Featured'; ?></a>
+    <div class="side">
+        <a href="/moderate-delete?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid tip" data-tip="Delete Post"><i class="fa fa-trash-o solo"></i></a>
+        <a href="#toggle" class="toggle-approve bttn mid <?php echo ( $p['active'] == 0 ) ? 'green' : 'red'; ?>"><?php echo ( $p['active'] == 0 ) ? '<i class="fa fa-check"></i> Approve Post' : '<i class="fa fa-times"></i> Unapprove Post'; ?></a>
+    </div>
 </div>
 <?php
 

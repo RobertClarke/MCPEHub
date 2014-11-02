@@ -68,8 +68,8 @@ function time_now() {
 // Calculate time since specific point in time.
 function since($ptime) {
 	
-	$etime = time() - $ptime;
-
+	$etime = time() - strtotime($ptime);
+	
 	if ($etime < 1) return 'just now';
 	
 	$a = array( 12 * 30 * 24 * 60 * 60  =>  'year',
