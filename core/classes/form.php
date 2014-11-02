@@ -26,12 +26,12 @@ class Form {
 		else return FALSE;
 	}
 	
-	function alphanum($input) {
+	public function alphanum($input) {
 		if ( preg_match('/^[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*$/', $input) ) return TRUE;
 		else return FALSE;
 	}
 	
-	function length($input, $max, $min=0) {
+	public function length($input, $max, $min=0) {
 		
 		if ( $min < 0 ) $min = 0;
 		
@@ -45,7 +45,7 @@ class Form {
 		
 	}
 	
-	public function build_input( $options, $force = null ) {
+	public function build_input($options, $force=NULL) {
 		
 		// If $options is empty, return false.
 		if ( empty( $options ) ) return FALSE;
@@ -82,7 +82,7 @@ class Form {
 		
 		$c_class 	= isset( $options['class_cont'] ) 	? ' '.$options['class_cont'] : '';
 		
-		$output = '<div class="input'.$c_class.'">';
+		$output = '<div class="group'.$c_class.'">';
 		
 		// Add label, if exists.
 		$output .= $i_label;
@@ -100,7 +100,7 @@ class Form {
 				
 				$output .= 'name="'.$options['name'].'" ';
 				$output .= 'id="'.$options['id'].'" ';
-				$output .= 'class="text'.$i_class.'" ';
+				$output .= 'class="full'.$i_class.'" ';
 				$output .= 'value="'. htmlspecialchars($i_value).'" ';
 				$output .= 'placeholder="'.$i_holder.'" ';
 				$output .= $i_max.$i_auto.$i_spell;
@@ -110,12 +110,6 @@ class Form {
 				
 				// Add helper class, if exists.
 				$output .= $i_helper;
-				
-			break;
-			
-			case 'textarea':
-				
-				// TODO, whenever this actually comes handy.
 				
 			break;
 			
@@ -130,13 +124,10 @@ class Form {
 				$output .= '<select ';
 				$output .= 'name="'.$options['name'].'[]" ';
 				$output .= 'id="'.$options['id'].'" ';
-				$output .= 'class="chosen'.$i_class.'" ';
+				$output .= 'class="chosen full'.$i_class.'" ';
 				$output .= 'data-placeholder="'.$i_holder.'" ';
 				$output .= $multi;
 				$output .= '>';
-				
-				//$output .= '<option value=""></option>';
-				
 				
 				// Check if options array is associative.
 				$assocArr = array_keys($options['options']) !== range(0, count($options['options']) - 1) ? TRUE : FALSE;
@@ -175,10 +166,102 @@ class Form {
 			
 		}
 		
-		$output .= '</div>';
-		$output .= "\n\n";
+		$output .= "</div>\n\n";
 		
 		echo $output;
+		
+	}
+	
+	public function show_inputs($inputs, $options) {
+		
+		$counter = 0;
+		foreach( $inputs as $input ) {
+			
+			$last = ( ($counter+1)%2 != 1 ) ? ' last' : NULL;
+			
+			echo '<div class="half'.$last.'">';
+			$this->build_input($options[$input]);
+			echo '</div>';
+			
+			$counter++;
+			
+		}
+		
+	}
+	
+	public function clean_inputs($options, $f, $submitted) {
+		
+		$return = [];
+		
+		foreach( $options as $input ) {
+			
+			$input['clean_val'] = ( isset($input['value']) ) ? $input['value'] : NULL;
+			
+			if ( $input['type'] == 'text' ) {
+				
+				if ( isset($input['maxlength']) )
+					$input['clean_val'] = substr($input['clean_val'], 0, $input['maxlength']);
+				
+				if ( !isset($input['html_allowed']) )
+					$input['clean_val'] = strip_tags($input['clean_val']);
+				
+				$return[$input['name']] = $input;
+				
+			}
+			elseif ( $input['type'] == 'select' ) {
+				
+				$f_input = ( !empty($f[$input['name']]) ) ? $f[$input['name']] : [];
+				
+				$input['allowed_options'] = [];
+				
+				// Check if allowed options are an associative array.
+				$aArray = array_keys($input['options']) !== range(0, count($input['options'])-1) ? TRUE : FALSE;
+				
+				// Grab all possible allowed options.
+				if ( $aArray ) foreach( $input['options'] as $option => $value ) $input['allowed_options'][] = $option;
+				else
+					$input['allowed_options'] = $input['options'];
+				
+				// Check if each input submitted is valid.
+				foreach( $f_input as $val ) {
+					if ( in_array($val, $input['allowed_options']) )
+						$input['clean_val'] .= $val.',';
+				}
+				
+				$input['clean_val'] = trim($input['clean_val'], ',');
+				
+				$return[$input['name']] = $input;
+				
+			}
+			
+		}
+		
+		return $return;
+		
+	}
+	
+	public function validate_inputs($options, $f, $submitted) {
+		
+		$clean = $this->clean_inputs($options, $f, $submitted); 
+		
+		$missing = NULL;
+		
+		// Check if any required inputs are missing.
+		foreach( $clean as $input ) {
+			
+			if ( isset($input['required']) && empty($input['clean_val']) )
+				$missing .= $input['friendly_name'].', ';
+			
+		}
+		
+		if ( !empty($missing) ) $missing = trim($missing, ', ');
+		
+		$return = [
+			'inputs'	=> $clean,
+			'missing'	=> ( empty($missing) ) ? NULL : $missing
+		];
+		
+		return $return;
 		
 	}
 	

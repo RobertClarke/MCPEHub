@@ -69,6 +69,8 @@ else {
 		
 		$c['comment'] = $purifier->purify($c['comment']);
 		
+		$c['comment'] = str_replace('assets/img/smilies/', '/assets/img/smilies/', $c['comment']);
+		
 ?>
 <div class="comment<?php if ($post_owner) echo ' poster'; ?>">
     <div class="top">

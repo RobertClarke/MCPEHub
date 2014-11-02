@@ -372,7 +372,20 @@ foreach( $sort_url as $id => $p ) {
 		
 		$post['author'] = $user->info( 'username', $post['author'] );
 		
-echo '<div class="post">
+echo '
+
+<div style="margin-bottom: 20px;">
+
+<div style="float: left; display: block; width: 150px; height: 120px; background: red;"></div>
+<div style="float: left; display: block; width: 550px; height: 120px; background: #eee;"></div>
+
+<div style="clear: both;"></div>
+
+</div>
+
+
+
+<div class="post">
     <div class="img">
         <div class="overlay">
             <h2 style="font-weight:400; margin-bottom: 10px;"><a href="/'.$post['type'].'/'.$post['slug'].'">'.$post['title'].'</a></h2>

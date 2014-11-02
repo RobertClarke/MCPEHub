@@ -4,9 +4,8 @@
 *[class*='mce-']{-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none-webkit-border-radius:0 !important;-moz-border-radius:0 !important;border-radius:0 !important}
 .mce-throbber{background:#fff}
 .mce-tinymce button,.mce-panel button{-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none}
-.mce-panel{background:#fff;filter:none;border:0 solid #fff}
+.mce-panel{background:#fff;filter:none;border:0 solid #ddd}
 .mce-in .mce-panel{background:#f3f3f3;border-top:1px solid #ddd}
-.mce-edit-area{border:1px solid #ddd !important}
 .mce-btn-group .mce-first,.mce-btn-group .mce-last{border:0 !important}
 .mce-toolbar .mce-btn button{padding-top:3px;padding-bottom:3px}
 .mce-toolbar .mce-btn i{color:#555}

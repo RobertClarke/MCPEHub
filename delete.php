@@ -1,7 +1,7 @@
 <?php
 
 /**
-  * Deleting Posts
+  * Delete Posts
 **/
 
 require_once('core.php');
@@ -12,7 +12,7 @@ $post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server'];
 if ( empty($_GET['post']) || empty($_GET['type']) ) redirect('/dashboard');
 elseif ( !is_numeric($_GET['post']) || !in_array($_GET['type'], $post_types) ) redirect('/dashboard');
 
-show_header('Delete Post', TRUE, ['title_main' => 'Delete Post', 'title_sub' => 'My Account']);
+show_header('Delete Post', TRUE, ['title_main' => 'Delete Post', 'title_sub' => 'My Submissions']);
 
 $p_id	= $_GET['post'];
 $p_type	= $_GET['type'];
@@ -53,7 +53,7 @@ else {
 <div id="p-title">
     <h1>Delete Post</h1>
     <div class="tabs">
-        <a href="/dashboard" class="bttn mid"><i class="fa fa-tachometer"></i> Back to Dashboard</a>
+        <a href="/dashboard" class="bttn mid"><i class="fa fa-long-arrow-left"></i> Back to Dashboard</a>
     </div>
 </div>
 <?php $error->display(); ?>
