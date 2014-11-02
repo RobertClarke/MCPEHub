@@ -153,6 +153,7 @@ if ( strpos($pg['body_class'], 'boxed') ) {
             </div>
 <?php } else { ?>
             <a href="/dashboard" data-tip="Dashboard"><i class="fa fa-tachometer"></i></a>
+<?php if ( $user->is_admin() || $user->is_mod() ) { ?><a href="/moderate" data-tip="Moderate"><i class="fa fa-gavel"></i><?php echo ($num_unapproved != 0) ? '<span class="badge">'.$num_unapproved.'</span>' : NULL; ?></a><?php } ?>
             <a href="/alerts" data-tip="Notifications" data-dropdown="#drop-notif" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-bullhorn"></i></a>
             <a href="/inbox" data-tip="Messages" data-dropdown="#drop-msgs" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-send"></i></a>
             <div class="user">
