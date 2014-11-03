@@ -36,7 +36,7 @@ show_header($pg_title, FALSE, ['body_id' => 'profile', 'title_main' => 'Profile'
     </div>
     <div class="info">
         <h1><?php echo $u['username']; ?>'s Profile</h1>
-        <h5>@<?php echo $u['username'].' '; echo $user->badges($u['username']); ?><br><span class="active">Last active <?php echo since(strtotime($u['last_active'])); ?></span></h5>
+        <h5>@<?php echo $u['username'].' '; echo $user->badges($u['username']); ?><br><span class="active">Last active <?php echo since($u['last_active']); ?></span></h5>
     </div>
 </div>
 
