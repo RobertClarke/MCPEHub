@@ -43,7 +43,7 @@
 
 <?php } // END: User logged in. ?>
 
-<a href="http://netherbox.com/p/mcpehub" target="_blank"><img src="/assets/img/netherbox.jpg" width="300" height="50" alt="NetherBox MCPE Hosting" style="margin-bottom: 10px;"></a>
+<a href="http://netherbox.com/p/mcpehub" target="_blank"><img src="/assets/img/netherbox.jpg" width="300" height="50" alt="Minecraft PE Server Hosting" style="margin-bottom: 10px;"></a>
     <div class="avrt">
         <ins class="adsbygoogle" style="display:inline-block;width:300px;height:600px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="1513409877"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
