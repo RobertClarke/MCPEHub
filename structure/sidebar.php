@@ -1,7 +1,7 @@
 <?php global $user, $num_unapproved; ?>
 <div id="sidebar">
-    
-    <div class="user"> 
+
+    <div class="user">
 <?php if ($user->logged_in()) { ?>
         <img src="/avatar/96x96/<?php echo $user->info('avatar'); ?>" alt="<?php echo $user->info('username'); ?>" width="48" height="48">
         <p>
@@ -18,13 +18,13 @@
         </p>
 <?php } ?>
     </div>
-    
+
 <?php if ($user->logged_in()) { // User logged in. ?>
 
 <?php if ( $user->info('activated') == 0 ) { ?>
     <div class="alert warning compact verify">You haven't verified your email yet. Verify to unlock <b>full access</b> to community features!<br><a href="/account?tab=resend">Resend Verification Email</a> <a href="/account">Account Settings</a></div>
 <?php } ?>
-    
+
     <div class="links">
         <a href="/dashboard"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a>
         <a href="/dashboard?posts"><i class="fa fa-newspaper-o fa-fw"></i> My Posts</a>
@@ -40,12 +40,13 @@
 	if ($user->is_admin()) echo '<a href="/admin" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-rocket fa-fw"></i> Admin Panel</a>';
 ?>
     </div>
-    
+
 <?php } // END: User logged in. ?>
-    
+
+<a href="http://netherbox.com/p/mcpehub" target="_blank"><img src="/assets/img/netherbox.jpg" width="300" height="50" alt="NetherBox MCPE Hosting" style="margin-bottom: 10px;"></a>
     <div class="avrt">
         <ins class="adsbygoogle" style="display:inline-block;width:300px;height:600px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="1513409877"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
-    
+
 </div><!-- End #sidebar -->
