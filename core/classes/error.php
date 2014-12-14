@@ -21,8 +21,8 @@
 class Error {
 	
 	private $errors = [];
-	private $selected;
 	private $forced = FALSE;
+	public $selected;
 	
 	// Creating an error.
 	public function add($id, $msg, $type='error') {

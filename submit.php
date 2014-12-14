@@ -426,13 +426,18 @@ if ( !empty( $_POST ) && $user->info('activated') == 1 ) {
 		
 		// Show an error for missing inputs.
 		if ( !empty( $inputs_missing ) ) {
-			$error->add( 'INPUT_MISSING', 'The following inputs must be filled out: '.$inputs_missing.'.', 'error', 'times' );
+			$error->add( 'INPUT_MISSING', 'The following inputs must be filled out: '.$inputs_missing.'.', 'error' );
 			$error->append( 'INPUT_MISSING' );
 		}
 		
-		$error->add( 'IMG_MISSING', 'You must upload at least one image for the post.', 'error', 'times' );
-		$error->add( 'IMG_MAX', 'One or more images uploaded exceeded the maximum upload file size.', 'error', 'times' );
-		$error->add( 'IMG_INVALID', 'One or more files uploaded are not valid image files.', 'error', 'times' );
+		if ( strlen($inputs['title']) < 10 ) {
+			$error->add('TITLE_LENGTH', 'The post title must at least 10 characters long.', 'error');
+			$error->append('TITLE_LENGTH');
+		}
+		
+		$error->add( 'IMG_MISSING', 'You must upload at least one image for the post.', 'error' );
+		$error->add( 'IMG_MAX', 'One or more images uploaded exceeded the maximum upload file size.', 'error' );
+		$error->add( 'IMG_INVALID', 'One or more files uploaded are not valid image files.', 'error' );
 		
 		// Check if at least 1 image is uploaded.
 		$uploaded_images = gather_files( $_FILES['images'] );
@@ -601,20 +606,21 @@ tinymce.init({
 });
     </script>
         
-        <br><textarea name="description" id="description" class="visual"><?php echo $form_input['description']; ?></textarea><br><br>
+        <textarea name="description" id="description" class="visual"><?php echo $form_input['description']; ?></textarea>
     </div>
     
     <div class="main-inputs uploads clearfix">
         <div id="uploadInputs" class="clearfix">
             <input type="file" name="images[]" id="image" class="file-upload" />
         </div>
-        <span class="addUpload"><a href="#" id="addUpload"><i class="fa fa-plus"></i> Add More</a></span>
+        <div class="addUpload"><a href="#" id="addUpload" class="bttn mini"><i class="fa fa-plus"></i> Add More</a></div>
     </div>
-    <br>
-    <?php show_extra_inputs(); // Show extra inputs using function created above. ?>
     
-    <div class="buttons-cont">
-        <center><button type="submit" id="submit" class="bttn green mid"><i class="fa fa-upload"></i> Submit <?php echo ucwords($post_type); ?></button></center>
+    <?php show_extra_inputs(); // Show extra inputs using function created above. ?>
+    <br>
+    
+    <div class="submit">
+        <button type="submit" class="bttn big green"><i class="fa fa-upload"></i> Submit <?php echo ucwords($post_type); ?></button>
     </div>
     
 </form>
