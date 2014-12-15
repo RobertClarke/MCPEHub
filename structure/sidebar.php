@@ -28,8 +28,9 @@
     <div class="links">
         <a href="/dashboard"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a>
         <a href="/dashboard?posts"><i class="fa fa-newspaper-o fa-fw"></i> My Posts</a>
-        <a href="/messages" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-send fa-fw"></i> Messages</a>
+        <!--<a href="/messages" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-send fa-fw"></i> Messages</a>-->
         <a href="/profile"><i class="fa fa-smile-o fa-fw"></i> My Profile</a>
+        <a href="/profile_edit"><i class="fa fa-pencil fa-fw"></i> Edit Profile</a>
         <a href="/account?tab=avatar"><i class="fa fa-camera fa-fw"></i> Change Avatar</a>
         <a href="/account"><i class="fa fa-wrench fa-fw"></i> Account Settings</a>
 <?php

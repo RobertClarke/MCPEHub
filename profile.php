@@ -66,7 +66,7 @@ show_header($pg_title, FALSE, ['body_id' => 'profile', 'title_main' => 'Profile'
 </div>
 
 <?php if (!empty($u['twitter']) || !empty($u['youtube']) || !empty($u['devices']) ) { ?>
-<div class="info">
+<div class="info-user">
     <h3>Info</h3>
     <?php if ( !empty($u['twitter']) ) { ?><a href="http://twitter.com/<?php echo $u['twitter']; ?>" class="bttn mini" target="_blank"><i class="fa fa-twitter fa-fw"></i> @<?php echo $u['twitter']; ?></a><?php } ?>
     <?php if ( !empty($u['youtube']) ) { ?><a href="http://youtube.com/<?php echo $u['youtube']; ?>" class="bttn mini" target="_blank"><i class="fa fa-youtube-play fa-fw"></i> <?php echo $u['youtube']; ?></a><?php } ?>

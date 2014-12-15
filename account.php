@@ -8,7 +8,8 @@ require_once('core.php');
 
 $tabs = [
 	'general'	=> [ 'My Account',		$url->show('', TRUE), 'wrench' ],
-	'avatar'	=> [ 'Change Avatar',	$url->show('tab=avatar', TRUE), 'camera' ]
+	'profile_edit'	=> [ 'Edit Profile',	'/profile_edit', 'pencil' ],
+	'avatar'	=> [ 'Change Avatar',	$url->show('tab=avatar', TRUE), 'camera' ],
 ];
 
 // Activation tab for non-activated users.
