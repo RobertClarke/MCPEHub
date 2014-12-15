@@ -35,6 +35,7 @@ if ( $pg['current'] != 'map' && $pg['current'] != 'seed' && $pg['current'] != 't
     <ul class="dropdown-menu">
         <li><a href="/dashboard"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a></li>
         <li><a href="/profile"><i class="fa fa-smile-o fa-fw"></i> My Profile</a></a></li>
+        <?php if ( $user->is_admin() || $user->is_mod() ) { ?><li><a href="/moderate"><i class="fa fa-gavel fa-fw"></i> Moderate Posts</a></li><?php } ?>
         <li><a href="/account"><i class="fa fa-wrench fa-fw"></i> Account Settings</a></a></li>
         <li><a href="/logout"><i class="fa fa-lock fa-fw"></i> Sign Out</a></a></li>
     </ul>
