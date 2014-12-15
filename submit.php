@@ -46,7 +46,7 @@ switch ( $post_type ) {
 	case 'skin': // Skin
 		
 		$post_rules = array( 'author', 'screenshots' );
-		$post_inputs = array( 'dl_link', 'tag_skin' );
+		$post_inputs = array( 'tag_skin' );
 		
 	break;
 	case 'mod': // Mod
@@ -489,6 +489,8 @@ if ( !empty( $_POST ) && $user->info('activated') == 1 ) {
 				
 				$images .= $f_name . $f_ext.',';
 				
+				if ( $post_type == 'skin' ) $dl_link = '/uploads/posts/skins/'.$f_name . $f_ext;
+				
 			}
 			
 			// Generate slug.
@@ -500,6 +502,9 @@ if ( !empty( $_POST ) && $user->info('activated') == 1 ) {
 			
 			// Set final database values.
 			$inputs['images'] 		= trim( $images, ',' );
+			
+			if ( $post_type == 'skin' ) $inputs['dl_link'] = $dl_link;
+			
 			$inputs['author'] 		= $user->info( 'id' );
 			$inputs['submitted'] 	= date( 'Y-m-d H:i:s' );
 			$inputs['slug']			= $slug;
@@ -613,7 +618,7 @@ tinymce.init({
         <div id="uploadInputs" class="clearfix">
             <input type="file" name="images[]" id="image" class="file-upload" />
         </div>
-        <div class="addUpload"><a href="#" id="addUpload" class="bttn mini"><i class="fa fa-plus"></i> Add More</a></div>
+        <?php if ( $post_type != 'skin' ) { ?><div class="addUpload"><a href="#" id="addUpload" class="bttn mini"><i class="fa fa-plus"></i> Add More</a></div><?php } ?>
     </div>
     
     <?php show_extra_inputs(); // Show extra inputs using function created above. ?>
