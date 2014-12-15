@@ -26,7 +26,7 @@ if ( $pg['current'] != 'map' && $pg['current'] != 'seed' && $pg['current'] != 't
 <div id="footer">
     <div class="wrapper">
         <p>&copy; <a href="/"><span>MCPE Hub</span></a> 2014 - Creations copyright of the creators.</p>
-        <p class="side">Part of the CubeMotion network. <span class="links"><a href="/tos">TOS</a> / <a href="/privacy">Privacy Policy</a></span></p>
+        <p class="side">Part of the CubeMotion network. <span class="links"><a href="/tos">Terms</a> / <a href="/privacy">Privacy</a> / <a href="/links">Links</a></span></p>
     </div>
 </div>
 
