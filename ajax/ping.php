@@ -55,7 +55,8 @@ else {
 			
 			foreach( $grab as $i => $server ) {
 				
-				$url = 'http://api.minetools.eu/ping/'.$server['ip'].'/'.$server['port'];
+				//$url = 'http://api.minetools.eu/ping/'.$server['ip'].'/'.$server['port'];
+				$url = 'http://mcpehub.com/core/ping/pingServer?server='.$server['ip'].'&port='.$server['port'].'&k=yqKebthN2n4326dsbd38Nd7s';
 				
 				$ch = curl_init();
 				
@@ -96,18 +97,16 @@ else {
 				
 				$servs[$id]['id'] = $id;
 				
-				// If server is offline, return error for that server.
-				if ( !empty($s['error']) ) {
-					$servs[$id]['status']		= 'offline';
-					$servs[$id]['status_html']	= 'Offline';
-				}
-				else {
+				if ( $s['status'] != 'error' && !empty($s) ) {
 					
 					$servs[$id]['status']		= 'online';
 					$servs[$id]['status_html']	= 'Online';
-					$servs[$id]['players_html']	= '<i class="fa fa-group"></i> <strong>'.$s['players']['online'].'/'.$s['players']['max'].'</strong> players';
-					$servs[$id]['players']		= $s['players']['online'].'/'.$s['players']['max'];
+					$servs[$id]['players_html']	= '<i class="fa fa-group"></i> <strong>'.$s['online'].'/'.$s['max'].'</strong> players';
+					$servs[$id]['players']		= $s['online'].'/'.$s['max'];
 					
+				} else {
+					$servs[$id]['status']		= 'offline';
+					$servs[$id]['status_html']	= 'Offline';
 				}
 				
 				curl_multi_remove_handle($multi, $result);
