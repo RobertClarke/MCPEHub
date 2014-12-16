@@ -37,14 +37,16 @@ else {
 		redirect('/'.$p_type.'/'.$post['slug']);
 		
 	}
+	else if ( $post['active'] == '-2' ) {
+		$error->set('INVALID');
+	}
 	// Deactivate
-	elseif ( $post['active'] == 1 ) {
+	else {
 		
 		$db->where(['id' => $post['id']])->update('content_'.$p_type.'s', ['active' => '-1']);
 		redirect('/'.$p_type.'/'.$post['slug']);
 		
 	}
-	else $error->set('INVALID');
 	
 } // End: Check if post exists in database.
 
