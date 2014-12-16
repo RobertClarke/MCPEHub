@@ -138,8 +138,8 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 	
 ?>
 <li>
-    <img src="/uploads/690x250/<?php echo $post['type']; ?>s/<?php echo urlencode($post['image']); ?>" width="690" height="250" alt="<?php echo $post['title']; ?>">
-    <p class="flex-caption"><?php echo ucwords($post['type']); ?>: <b><?php echo $post['title']; ?></b></p>
+    <a href="/<?php echo $post['type']; ?>/<?php echo $post['slug']; ?>"><img src="/uploads/690x250/<?php echo $post['type']; ?>s/<?php echo urlencode($post['image']); ?>" width="690" height="250" alt="<?php echo $post['title']; ?>"></a>
+    <p class="flex-caption"><a href="/<?php echo $post['type']; ?>/<?php echo $post['slug']; ?>"><?php echo ucwords($post['type']); ?>: <b><?php echo $post['title']; ?></b></a></p>
 </li>
 <?php } // END: Foreach ?>        
         </ul>
