@@ -126,6 +126,31 @@ function show_featured( $type ) {
 
 ?>
 
+<div id="home-slider" class="slider">
+    <div class="flexslider">
+        <ul class="slides">
+<?php
+
+foreach( $db_posts as $map => $post ) { // START: Map list foreach.
+
+	// Formatting post author for display.
+	$post['author'] = $user->info( '', $post['author'] );
+	
+?>
+<li>
+    <img src="/uploads/690x250/<?php echo $post['type']; ?>s/<?php echo urlencode($post['image']); ?>" width="690" height="250" alt="<?php echo $post['title']; ?>">
+    <p class="flex-caption"><?php echo ucwords($post['type']); ?>: <b><?php echo $post['title']; ?></b></p>
+</li>
+<?php } // END: Foreach ?>        
+        </ul>
+    </div>
+</div>
+
+<div class="advrt home-slide">
+    <ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="3678350279"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
 <div id="home-posts">
     <div class="half">
         <div class="box">
