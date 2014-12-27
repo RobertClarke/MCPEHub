@@ -26,6 +26,7 @@ $purifier = new HTMLPurifier( HTMLPurifier_Config::createDefault() );
 // Primary post list.
 foreach( $posts as $i => $p ) {
 	
+	$p['images']			= explode(',', $p['images']);
 	$p['auth']				= $user->info('username', $p['author']);
 	
 	$map['MapTitle']		= $p['title'];
