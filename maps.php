@@ -145,6 +145,10 @@ $p['thumb']		= '/uploads/700x200/maps/'.urlencode($p['images'][0]);
 $p['thumb_a']	= '/avatar/64x64/'.$user->info('avatar', $p['auth']);
 
 $p['f_html']	= ( $p['featured'] == 1 ) ? '<div class="featured"><i class="fa fa-star fa-fw"></i> Featured Map</div>' : NULL;
+$p['t_html']	= ( $p['tested'] == 1 ) ? '<div class="tested"><i class="fa fa-check fa-fw"></i> Tested Map</div>' : NULL;
+
+if ( $p['featured'] == 1 && $p['tested'] == 1 ) $p['badge_class'] = 'multi';
+else $p['badge_class'] = NULL;
 
 // Determine number of likes & comments for post.
 $db_count = $db->query('
@@ -156,7 +160,8 @@ foreach( $db_count as $key ) $p[$key['data']] = $key['COUNT(*)'];
 
 echo '
 <div class="post">
-    <div class="img">'.$p['f_html'].'
+    <div class="img">
+        <div class="badge-cont '.$p['badge_class'].'">'.$p['f_html'].$p['t_html'].'</div>
         <a href="'.$p['url'].'"><img src="'.$p['thumb'].'" alt="'.$p['title'].'" width="700" height="200"></a>
         <div class="over">
             <a href="'.$p['url_auth'].'"><img src="'.$p['thumb_a'].'" alt="'.$p['auth'].'" width="32" height="32" class="avatar"></a>
