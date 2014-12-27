@@ -4,6 +4,8 @@
   * API: List Posts
 **/
 
+header('Content-Type: application/json');
+
 require_once('../../core.php');
 
 ob_start('ob_gzhandler');
