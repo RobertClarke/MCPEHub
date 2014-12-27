@@ -371,7 +371,7 @@ else {
 				
 				$db->where(['id' => $p_id])->update('content_'.$p_type.'s', $db_edit);
 				
-				//redirect('/'.$p_type.'/'.$post['slug'].'?edited');
+				redirect('/'.$p_type.'/'.$post['slug'].'?edited');
 				
 			} // End: If no errors in form, continue.
 			
