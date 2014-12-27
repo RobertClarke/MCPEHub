@@ -366,9 +366,12 @@ else {
 				$db_edit['edited']		= time_now();
 				$db_edit['active']		= 0;
 				
+				// If download link changed, mark post as NOT "tested".
+				if ( $post['type'] == 'map' && $f['dl_link'] != $post['dl_link'] ) $db_edit['tested'] = 0;
+				
 				$db->where(['id' => $p_id])->update('content_'.$p_type.'s', $db_edit);
 				
-				redirect('/'.$p_type.'/'.$post['slug'].'?edited');
+				//redirect('/'.$p_type.'/'.$post['slug'].'?edited');
 				
 			} // End: If no errors in form, continue.
 			
