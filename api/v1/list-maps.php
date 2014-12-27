@@ -11,6 +11,7 @@ ob_start('ob_gzhandler');
 $where['active'] = 1;
 
 if ( isset($_GET['featured']) ) $where['featured'] = 1;
+if ( isset($_GET['tested']) ) $where['tested'] = 1;
 
 $posts = $db->from('content_maps')->order_by('`published` DESC')->where($where)->fetch();
 
