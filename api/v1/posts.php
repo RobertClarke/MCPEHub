@@ -8,7 +8,11 @@ require_once('../../core.php');
 
 ob_start('ob_gzhandler');
 
-$posts = $db->from('content_maps')->order_by('`published` DESC')->where(['active' => 1])->fetch();
+$where['active'] = 1;
+
+if ( isset($_GET['featured']) ) $where['featured'] = 1;
+
+$posts = $db->from('content_maps')->order_by('`published` DESC')->where($where)->fetch();
 
 // Set output array, will be encoded later.
 $output = [];
