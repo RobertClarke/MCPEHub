@@ -35,7 +35,7 @@ foreach( $posts as $i => $p ) {
 	$map['AuthorUri']		= 'http://mcpehub.com/user/'.$p['auth'];
 	
 	$map['MapDownloadUri']	= $p['dl_link'];
-	$map['MapImageUri']		= 'http://cdn.mcpehub.com/uploads/700x200/maps/'.urlencode($p['images'][0]);
+	$map['MapImageUri']		= 'http://mcpehub.com/uploads/700x200/maps/'.urlencode($p['images'][0]);
 	
 	$output['MapList'][] = $map;
 	
