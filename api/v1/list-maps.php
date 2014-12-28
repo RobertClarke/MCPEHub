@@ -42,6 +42,8 @@ foreach( $posts as $i => $p ) {
 	}
 	
 	$map['NumViews']		= $p['views'];
+	$map['Tested']			= $p['tested'];
+	$map['Featured']		= $p['featured'];
 	
 	$output['MapList'][] = $map;
 	
