@@ -15,7 +15,7 @@ show_header('Links', FALSE);
 
 <div id="links">
     <p>
-        <b><a href="https://netherbox.com.com/" target="_blank">Minecraft Server Hosting</a></b>
+        <b><a href="https://netherbox.com/" target="_blank">Minecraft Server Hosting</a></b>
         NetherBox makes it easy to start your own Minecraft PC, or PE server.
     </p>
     <p>
