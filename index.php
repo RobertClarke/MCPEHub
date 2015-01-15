@@ -155,12 +155,30 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 </div>
 
 <div id="home-posts">
-    <div class="half">
+    <div class="half" style="margin:0;">
         <div class="box">
             <h2><i class="fa fa-map-marker fa-fw"></i> Featured Maps</h2>
 <?php show_featured('maps'); ?>
             <div class="bttn-more"><a href="/maps" class="bttn mid gold">Browse Maps (<?php echo $post_count['maps']; ?>)</a></div>
         </div>
+    </div>
+    <div class="half last" style="margin:0;">
+    	<div class="box">
+            <h2><i class="fa fa-leaf fa-fw"></i> Featured Seeds</h2>
+<?php show_featured('seeds'); ?>
+            <div class="bttn-more"><a href="/seeds" class="bttn mid gold">Browse Seeds (<?php echo $post_count['seeds']; ?>)</a></div>
+        </div>
+    </div>
+</div>
+     <div style="padding-bottom:15px;text-align:center;">
+     <ins class="adsbygoogle"
+     style="display:inline-block;width:728px;height:90px"
+     data-ad-client="ca-pub-3736311321196703"
+     data-ad-slot="5159690276"></ins>
+	 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+     </div>
+ <div id="home-posts">
+ 	<div class="half">
         <div class="box">
             <h2><i class="fa fa-gamepad fa-fw"></i> Featured Servers</h2>
 <?php show_featured('servers'); ?>
@@ -173,11 +191,6 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
         </div>
     </div>
     <div class="half last">
-        <div class="box">
-            <h2><i class="fa fa-leaf fa-fw"></i> Featured Seeds</h2>
-<?php show_featured('seeds'); ?>
-            <div class="bttn-more"><a href="/seeds" class="bttn mid gold">Browse Seeds (<?php echo $post_count['seeds']; ?>)</a></div>
-        </div>
         <div class="box">
             <h2><i class="fa fa-magic fa-fw"></i> Featured Textures</h2>
 <?php show_featured('textures'); ?>
