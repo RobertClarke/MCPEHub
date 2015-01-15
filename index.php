@@ -147,8 +147,11 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 </div>
 
 <div class="advrt home-slide">
-    <ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="3678350279"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:250px"
+     data-ad-client="ca-pub-3736311321196703"
+     data-ad-slot="8252757477"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
 <div id="home-posts">

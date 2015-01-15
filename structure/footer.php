@@ -10,18 +10,8 @@
 if ( !strpos($pg['body_class'], 'boxed') ) { // If page NOT boxed template.
 
 global $pg;
-if ( $pg['current'] != 'map' && $pg['current'] != 'seed' && $pg['current'] != 'texture' && $pg['current'] != 'mod' && $pg['current'] != 'server' ) {
 
 ?>
-<div id="avrt-wide">
-    <div class="wrapper">
-        <div class="avrt">
-            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="9724883879"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-    </div>
-</div>
-<?php } ?>
 
 <div id="footer">
     <div class="wrapper">

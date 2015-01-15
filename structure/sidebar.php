@@ -1,6 +1,14 @@
 <?php global $user, $num_unapproved; ?>
 <div id="sidebar">
 
+    <div class="avrt" style="height:250px;margin-bottom:5px;">
+		<ins class="adsbygoogle"
+     style="display:inline-block;width:300px;height:250px"
+     data-ad-client="ca-pub-3736311321196703"
+     data-ad-slot="3678350279"></ins>
+     	<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
     <div class="user">
 <?php if ($user->logged_in()) { ?>
         <img src="/avatar/96x96/<?php echo $user->info('avatar'); ?>" alt="<?php echo $user->info('username'); ?>" width="48" height="48">

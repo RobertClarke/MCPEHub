@@ -167,11 +167,11 @@ echo '
         <div class="server-info">IP: <b>'.strtolower($p['ip']).'</b><div class="spacer"></div>Port: <b>'.$p['port'].'</b></div>
     </div>
     
-    <div id="description" class="section">'.$p['description'].'</div>
-    
     <div id="avrt-post" class="section">
         <div class="avrt"><ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="9036676673"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>
+    
+    <div id="description" class="section">'.$p['description'].'</div>
     
 '; ?>
 

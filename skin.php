@@ -137,7 +137,6 @@ else $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub follow
             <ul class="slides"><?php foreach( $p['img_thumb'] as $img ) echo '<li><img src="'.$img.'" alt="'.$p['title'].'" width="120" height="70"></li>'; ?></ul>
         </div>
     </div>
-    
 <?php
 
 echo '
@@ -169,11 +168,11 @@ echo '
         </div>
     </div>
     
-    <div id="description" class="section">'.$p['description'].'</div>
-    
     <div id="avrt-post" class="section">
         <div class="avrt"><ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="9036676673"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>
+    
+    <div id="description" class="section">'.$p['description'].'</div>
     
 '; ?>
 
