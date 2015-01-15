@@ -1,6 +1,7 @@
-<?php global $user, $num_unapproved; ?>
+<?php global $user, $num_unapproved, $pg; ?>
 <div id="sidebar">
 
+<?php if ( $pg['current'] != 'map' && $pg['current'] != 'seed' && $pg['current'] != 'mod' && $pg['current'] != 'server' && $pg['current'] != 'skin' && $pg['current'] != 'texture' ) { ?>
     <div class="avrt" style="height:250px;margin-bottom:5px;">
 		<ins class="adsbygoogle"
      style="display:inline-block;width:300px;height:250px"
@@ -8,6 +9,7 @@
      data-ad-slot="3678350279"></ins>
      	<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
+<?php } ?>
 
     <div class="user">
 <?php if ($user->logged_in()) { ?>
