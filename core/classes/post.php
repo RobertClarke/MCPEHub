@@ -47,9 +47,9 @@ class Post {
 			// Grab current view count and append by 1 view.
 			$query = $this->db->select( 'views' )->from( 'content_'.$post_type.'s' )->where( array('id' => $post_id) )->fetch();
 			$views = ( $query[0]['views'] + 1 );
-			
+
 			// Update view count.
-			$this->db->where( array( 'id' => $post_id ) )->update( 'content_'.$post_type.'s', array( 'views' => $views ) );
+			$this->db->where( array( 'id' => $post_id ) )->limit(1)->update( 'content_'.$post_type.'s', array( 'views' => $views ) );
 			
 			// Set new views cookie.
 			if ( !empty( $_COOKIE['mcpe_v'] ) ) $cookie_value = $_COOKIE['mcpe_v'] .','. $post_iden . $post_id;
