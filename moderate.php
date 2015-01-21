@@ -59,6 +59,7 @@ $status = [
 <div id="p-title">
     <h1>Moderate Posts</h1>
     <div class="tabs">
+        <a href="/moderate-upload" class="bttn gold mid"><i class="fa fa-cloud-upload"></i> Manual Map Upload</a>
         <a href="/" class="bttn mid"><i class="fa fa-long-arrow-left"></i> Back to Website</a>
     </div>
 </div>
