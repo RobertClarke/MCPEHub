@@ -1,7 +1,7 @@
 <?php
 
 require_once('core.php');
-show_header('Privacy Policy', TRUE, ['title_main' => 'Privacy Policy', 'title_sub' => 'Legal']);
+show_header('Privacy Policy', FALSE, ['title_main' => 'Privacy Policy', 'title_sub' => 'Legal']);
 
 ?>
 

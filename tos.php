@@ -1,7 +1,7 @@
 <?php
 
 require_once('core.php');
-show_header('Terms Of Service', TRUE, ['title_main' => 'Terms Of Service', 'title_sub' => 'Legal']);
+show_header('Terms Of Service', FALSE, ['title_main' => 'Terms Of Service', 'title_sub' => 'Legal']);
 
 ?>
 
