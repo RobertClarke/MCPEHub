@@ -90,7 +90,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
     <h1>Minecraft PE Textures</h1>
     <div class="tabs">
         <div class="bttn-group">
-            <a href="/how-to-install-textures" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>
+            <a href="/how-to-install-texture-packs" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>
             <a href="/textures" class="bttn mid tip search" data-tip="Search Textures"><i class="fa fa-search solo"></i></a>
         </div>
         <a href="/submit?type=texture" class="bttn mid green"><i class="fa fa-upload"></i> Submit Texture</a>
