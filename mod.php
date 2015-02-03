@@ -12,11 +12,12 @@ if ( !isset($_GET['post']) || empty($_GET['post']) ) redirect( '/'.$type.'s' );
 $slug = $post_tools->cleanSlug($db->escape($_GET['post']));
 
 // Check if post exists + grab info.
-$query = $db->from( 'content_'.$type.'s' )->where('`slug` = \''.$slug.'\' AND `active` <> \'-2\'')->fetch();
+$query = $db->from( 'content_'.$type.'s' )->where('`slug` = \''.$slug.'\'')->fetch();
 $num = $db->affected_rows;
 
 // If post not found, redirect to post list.
 if ( $num == 0 ) redirect('/404');
+elseif ( $query[0]['active'] == '-2' ) redirect('/410');
 
 $p = $query[0];
 
