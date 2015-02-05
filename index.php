@@ -112,9 +112,9 @@ function show_featured( $type ) {
             	       <h3><a href="<?php echo $post['url']; ?>"><?php echo substr($post['title'], 0, 35).$dot; ?></a></h3>
             	       <p>by <a href="user/<?php echo $post['author_username']; ?>"><?php echo $post['author_username']; ?></a></p>
             	       <ul>
-	            	       <li><i class="fa fa-thumbs-up"></i> <strong><?php echo $post['likes']; ?></strong> likes</li>
-	            	       <li><i class="fa fa-eye"></i> <strong><?php echo $post['views']; ?></strong> views</li>
-	            	       <li><i class="fa fa-comments"></i> <strong><?php echo $post['comments']; ?></strong> comments</li>
+	            	       <li><i class="fa fa-thumbs-up"></i> <strong><?php echo $post['likes']; ?></strong><span> likes</span></li>
+	            	       <li><i class="fa fa-eye"></i> <strong><?php echo $post['views']; ?></strong><span> views</span></li>
+	            	       <li><i class="fa fa-comments"></i> <strong><?php echo $post['comments']; ?></strong><span> comments</span></li>
             	       </ul>
             	   </div>
             	</div>
@@ -155,14 +155,14 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 </div>
 
 <div id="home-posts">
-    <div class="half" style="margin:0;">
+    <div class="half" style="margin-bottom:0;">
         <div class="box">
             <h2><i class="fa fa-map-marker fa-fw"></i> Featured Maps</h2>
 <?php show_featured('maps'); ?>
             <div class="bttn-more"><a href="/maps" class="bttn mid gold">Browse Maps (<?php echo $post_count['maps']; ?>)</a></div>
         </div>
     </div>
-    <div class="half last" style="margin:0;">
+    <div class="half last" style="margin-bottom:0;">
     	<div class="box">
             <h2><i class="fa fa-leaf fa-fw"></i> Featured Seeds</h2>
 <?php show_featured('seeds'); ?>
@@ -170,12 +170,16 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
         </div>
     </div>
 </div>
-     <div style="padding-bottom:15px;text-align:center;">
-     <ins class="adsbygoogle"
-     style="display:inline-block;width:728px;height:90px"
+     <div class="home-banner-ad">
+     <!-- MCPEHub Homepage Responsive 1 -->
+<ins class="adsbygoogle"
+     style="display:block"
      data-ad-client="ca-pub-3736311321196703"
-     data-ad-slot="5159690276"></ins>
-	 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+     data-ad-slot="5024175479"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
      </div>
  <div id="home-posts">
  	<div class="half">

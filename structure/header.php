@@ -45,7 +45,7 @@ $pg['nav_links'] = [
 
 foreach( $pg['nav_links'] as $id => $n ) {
 	$active = ($pg['current'] == $n[2] || $pg['current'] == $n[2].'s') ? ' active' : NULL;
-	$pg['nav'] .= "<a href=\"{$n[1]}\" class=\"{$n[0]}{$active}\">{$n[3]}</a>";
+	$pg['nav'] .= "<li><a href=\"{$n[1]}\" class=\"{$n[0]}{$active}\">{$n[3]}</a></li>";
 }
 
 // If admin/mod, get number of pending posts.
@@ -91,6 +91,8 @@ if ( $user->is_admin() || $user->is_mod() ) {
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
     <meta name="apple-mobile-web-app-title" content="MCPE Hub">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="format-detection" content="telephone=no">
     
 <script type="text/javascript">
@@ -144,7 +146,8 @@ if ( strpos($pg['body_class'], 'boxed') ) {
 <div id="header">
     <div id="top"><div class="wrapper">
         <a href="/" class="logo">MCPE Hub</a>
-        <div class="nav"><?php echo $pg['nav']; ?></div>
+        <div class="nav"><ul><?php echo $pg['nav']; ?></ul></div>
+        <a href="#" class="menu-responsive"><i class="fa fa-bars"></i></a>
         <div class="sub-nav">
 <?php if ( !$user->logged_in() ) { ?>
             <div class="bttn-group">
@@ -174,8 +177,17 @@ if ( strpos($pg['body_class'], 'boxed') ) {
     <div class="wrapper">
         <div class="avrt">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="8745532678"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<!-- MCPEHub Responsive 1 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3736311321196703"
+     data-ad-slot="3687043070"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+            
+            
         </div>
     </div>
 </div>
