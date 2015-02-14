@@ -21,7 +21,11 @@ $posts = $db->from('content_maps')->order_by('`published` DESC')->where($where)-
 $output = [];
 
 require_once('../../core/htmlpurifier/HTMLPurifier.standalone.php');
-$purifier = new HTMLPurifier( HTMLPurifier_Config::createDefault() );
+
+$htmlconfig = HTMLPurifier_Config::createDefault();
+$htmlconfig->set('AutoFormat.RemoveEmpty', true);
+
+$purifier = new HTMLPurifier( $htmlconfig );
 
 // Primary post list.
 foreach( $posts as $i => $p ) {
@@ -31,6 +35,7 @@ foreach( $posts as $i => $p ) {
 	
 	$map['MapTitle']		= $p['title'];
 	$map['Description']		= $purifier->purify($p['description']);
+	$map['Description']		= str_replace( '<p>'.chr( 194 ) . chr( 160 ).'</p>', '', $map['Description'] );
 	
 	$map['Author']			= $p['auth'];
 	$map['AuthorUri']		= 'http://mcpehub.com/user/'.$p['auth'];
