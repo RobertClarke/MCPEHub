@@ -36,6 +36,7 @@ foreach( $posts as $i => $p ) {
 	$map['MapTitle']		= $p['title'];
 	$map['Description']		= $purifier->purify($p['description']);
 	$map['Description']		= str_replace( '<p>'.chr( 194 ) . chr( 160 ).'</p>', '', $map['Description'] );
+	$map['Description']		= utf8_encode($map['Description']);
 	
 	$map['Author']			= $p['auth'];
 	$map['AuthorUri']		= 'http://mcpehub.com/user/'.$p['auth'];
