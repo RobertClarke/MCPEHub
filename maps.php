@@ -83,6 +83,10 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 	$error->set('S_RESULT');
 }
 
+if ( !$error->exists() ) {
+	$error->add('ANDROID_APP', '<center><i class="fa fa-android"></i> Have an Android device? Check out our new <b>FREE Maps Android App</b>! - <a href="https://play.google.com/store/apps/details?id=com.mcpehub.mcpehubmapslite" target="_blank">Click Here</a></center>', 'success');
+	$error->set('ANDROID_APP');
+}
 
 ?>
 

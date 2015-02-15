@@ -118,6 +118,11 @@ else $html['bttn_fav'] = '<a href="'.$p['url'].'" class="bttn mini fav"><i class
 if ( $user->logged_in() && $p['following'] ) $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub green follow" data-following="'.$p['author'].'"><i class="fa fa-check"></i> Following</a>';
 else $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub follow" data-following="'.$p['author'].'"><i class="fa fa-rss"></i> Follow</a>';
 
+if ( !$error->exists() ) {
+	$error->add('ANDROID_APP', '<center><i class="fa fa-android"></i> Have an Android device? Check out our new <b>FREE Maps Android App</b>! - <a href="https://play.google.com/store/apps/details?id=com.mcpehub.mcpehubmapslite" target="_blank">Click Here</a></center>', 'success');
+	$error->set('ANDROID_APP');
+}
+
 ?>
 
 <div id="post" data-id="<?php echo $p['id']; ?>" data-type="<?php echo $type; ?>">
