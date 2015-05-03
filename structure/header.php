@@ -77,7 +77,7 @@ if ( $user->is_admin() || $user->is_mod() ) {
     <meta name="keywords" content="<?php echo $pg['seo_keywords']; ?>">
     
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Changa+One%7COpen+Sans:300,400,600,700,800">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Changa+One%7COpen+Sans:300,400,600,700,800">
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     
     <link rel="shortcut icon" href="/favicon.png?v=2" />
