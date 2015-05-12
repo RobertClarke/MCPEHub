@@ -19,10 +19,6 @@ show_header('Links', FALSE);
         NetherBox makes it easy to start your own Minecraft PC, or PE server.
     </p>
     <p>
-        <b><a href="http://mcpestats.com/" target="_blank">Minecraft PE Servers</a></b>
-        A list of the best Minecraft PE Servers.
-    </p>
-    <p>
         <b><a href="http://instantmcpe.com/" target="_blank">Free Minecraft PE Hosting</a></b>
         Start your own Minecraft PE server for free.
     </p>
