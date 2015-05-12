@@ -25,6 +25,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 # Turn SSL off everything but /login
 RewriteCond %{HTTP:CF-Visitor} '"scheme":"https"'
 RewriteCond %{REQUEST_URI} !^/login
+RewriteCond %{REQUEST_URI} !^/register
 RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1 [R=301,L]
 
 # deny all .htaccess, .DS_Store $hî†é and ._* (resource fork) files
