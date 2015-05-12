@@ -17,7 +17,7 @@ RewriteCond %{HTTP:CF-Visitor} '"scheme":"http"'
 RewriteCond %{REQUEST_URI} ^/login
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
-# Turn SSL on for /login
+# Turn SSL on for /register
 RewriteCond %{HTTP:CF-Visitor} '"scheme":"http"'
 RewriteCond %{REQUEST_URI} ^/register
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
