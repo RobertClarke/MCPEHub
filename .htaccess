@@ -2,7 +2,7 @@ Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
-ErrorDocument 404 http://mcpehub.com/404.php
+ErrorDocument 404 http://mcpehub.com/404
 
 # www to non www
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
@@ -11,6 +11,16 @@ RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 # redirect IP to website
 RewriteCond %{HTTP_HOST} ^198\.52\.130\.7
 RewriteRule (.*) http://mcpehub.com/$1 [R=301,L]
+
+# Turn SSL on for /login
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/login
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Turn SSL off everything but /login
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} !^/login
+RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1 [R=301,L]
 
 # deny all .htaccess, .DS_Store $hî†é and ._* (resource fork) files
 <Files ~ "^\.([Hh][Tt]|[Dd][Ss]_[Ss]|[_])">
