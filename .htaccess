@@ -8,6 +8,11 @@ ErrorDocument 404 http://mcpehub.com/404.php
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
+# Non SSL to SSL
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
 # redirect IP to website
 RewriteCond %{HTTP_HOST} ^198\.52\.130\.7
 RewriteRule (.*) http://mcpehub.com/$1 [R=301,L]
