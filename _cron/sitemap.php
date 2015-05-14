@@ -17,6 +17,11 @@ $xml = '<?xml version="1.0" encoding="UTF-8"?>
 		<priority>1</priority>
 	</url>
 	<url>
+		<loc>http://mcpehub.com/blog</loc>
+		<changefreq>always</changefreq>
+		<priority>1</priority>
+	</url>
+	<url>
 		<loc>http://mcpehub.com/maps</loc>
 		<changefreq>always</changefreq>
 		<priority>0.8</priority>
