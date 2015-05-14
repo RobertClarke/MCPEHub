@@ -9,8 +9,8 @@ require_once('core.php');
 $pg = [
 	'title_main'	=> 'Blog',
 	'title_sub'		=> 'Minecraft PE',
-	'seo_desc'		=> 'Collection of the best Minecraft PE Maps and game worlds for download including adventure, survival, and parkour maps.',
-	'seo_keywords'	=> 'minecraft pe maps, survival, parkour, adventure, minecraft pe, mcpe'
+	'seo_desc'		=> 'Collection of the best Minecraft PE news and blog posts!',
+	'seo_keywords'	=> 'minecraft pe news, minecraft pe, mcpe, mcpe news, mcpe blog'
 ];
 
 show_header('MCPE Hub Blog', FALSE, $pg);
@@ -119,8 +119,8 @@ else $p['badge_class'] = NULL;
 
 // Determine number of likes & comments for post.
 $db_count = $db->query('
-	(SELECT "likes"		AS data, COUNT(*) FROM `likes`		WHERE post="'.$p['id'].'" AND type="map") UNION ALL
-	(SELECT "comments" 	AS data, COUNT(*) FROM `comments`	WHERE post="'.$p['id'].'" AND type="map")
+	(SELECT "likes"		AS data, COUNT(*) FROM `likes`		WHERE post="'.$p['id'].'" AND type="blog") UNION ALL
+	(SELECT "comments" 	AS data, COUNT(*) FROM `comments`	WHERE post="'.$p['id'].'" AND type="blog")
 ')->fetch();
 
 foreach( $db_count as $key ) $p[$key['data']] = $key['COUNT(*)'];
