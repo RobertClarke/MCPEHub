@@ -9,7 +9,7 @@ require_once('core.php');
 // Redirect if user not admin/mod.
 if ( !$user->is_admin() && !$user->is_mod() ) redirect('/');
 
-$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server'];
+$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server', 'blog'];
 
 // If missing URL variables, redirect right away.
 if ( empty($_GET['post']) || empty($_GET['type']) ) redirect('/moderate');

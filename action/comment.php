@@ -1,6 +1,6 @@
 <?php
 
-$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server'];
+$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server', 'blog'];
 
 require_once('../core/general.php');
 
@@ -28,7 +28,13 @@ else {
 		else {
 			
 			// If no comment input, redirect back to post.
-			if ( empty($_POST['comment']) ) redirect('/'.$p_type.'/'.$count['slug'].'#comments');
+			if ( empty($_POST['comment']) ) {
+				if ( $p_type == 'blog' ) {
+					redirect('/blog-post/'.$count['slug'].'#comments');
+				} else {
+					redirect('/'.$p_type.'/'.$count['slug'].'#comments');
+				}
+			}
 			else {
 				
 				require_once( '../core/htmlpurifier/HTMLPurifier.standalone.php' );
@@ -43,7 +49,11 @@ else {
 				
 				$id = $db->insert('comments', ['user' => $person, 'post' => $p_id, 'type' => $p_type, 'comment' => $comment, 'posted' => time_now(), 'user_ip' => current_ip()]);
 				
-				redirect('/'.$p_type.'/'.$count['slug'].'?cposted#comments');
+				if ( $p_type == 'blog' ) {
+					redirect('/blog-post/'.$count['slug'].'?cposted#comments');
+				} else {
+					redirect('/'.$p_type.'/'.$count['slug'].'?cposted#comments');
+				}
 				
 			}
 			

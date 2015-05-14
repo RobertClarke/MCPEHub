@@ -66,12 +66,17 @@ if ( isset($_GET['unsuspended']) ) {
 	$error->force('UNSUSPENDED');
 }
 
+if ( isset($_GET['del']) ) {
+	$error->set('DEL', 'The post has been deleted.', 'success');
+	$error->force('DEL');
+}
+
 ?>
 <div id="p-title">
     <h1>Moderate Posts</h1>
     <div class="tabs">
         <a href="/moderate-upload" class="bttn gold mid"><i class="fa fa-cloud-upload"></i> Upload Map</a>
-        <a href="/" class="bttn mid"><i class="fa fa-long-arrow-left"></i> Main Website</a>
+        <a href="/moderate-post" class="bttn mid"><i class="fa fa-pencil"></i> New Blog Post</a>
     </div>
 </div>
 

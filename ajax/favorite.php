@@ -1,6 +1,6 @@
 <?php
 
-$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server'];
+$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server', 'blog'];
 
 if ( empty($_GET['post']) || empty($_GET['type']) ) $return = 'error';
 elseif ( !is_numeric($_GET['post']) || !in_array($_GET['type'], $post_types) ) $return = 'error';

@@ -36,7 +36,7 @@ class Post {
 		$current_views = explode( ',', $_COOKIE['mcpe_v'] );
 		
 		// New identifier codes (for shorter cookies).
-		$codes = array( 'map' => 'mp', 'seed' => 'se', 'texture' => 'tx', 'skin' => 'sk', 'mod' => 'md', 'server' => 'sr' );
+		$codes = array( 'map' => 'mp', 'seed' => 'se', 'texture' => 'tx', 'skin' => 'sk', 'mod' => 'md', 'server' => 'sr', 'blog' => 'bl' );
 		
 		// Convert post type to new identifier code.
 		$post_iden = $codes[$post_type];
@@ -113,15 +113,21 @@ class Post {
 <div id="mod-tools">
     <h5>Moderation Toolkit</h5>
     <a href="/moderate-edit?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid"><i class="fa fa-pencil"></i> Edit Post</a>
+    
+<?php if ( $type != 'blog' ) { ?>
     <a href="#feature" class="feature bttn mid<?php echo ( $p['featured'] == 1 ) ? ' gold' : NULL; ?>"><?php echo ( $p['featured'] == 0 ) ? '<i class="fa fa-star"></i> Feature Post' : '<i class="fa fa-check"></i> Featured'; ?></a>
+<?php } ?>
     <div class="side">
+<?php if ( $type != 'blog' ) { ?>
 <?php if ( $type == 'map' ) { ?><a href="#tested" class="tested bttn mid tip<?php echo ( $p['tested'] == 1 ) ? ' green' : NULL; ?>" data-tip="Toggle 'Tested' Status"><i class="fa fa-toggle-<?php echo ( $p['tested'] == 1 ) ? 'on' : 'off'; ?> solo"></i></a><?php } ?>
         <a href="/moderate-suspend?user=<?php echo $author; ?>" class="bttn mid tip" data-tip="Suspend User"><i class="fa fa-gavel solo"></i></a>
-        <a href="/moderate-delete?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid tip" data-tip="Delete Post"><i class="fa fa-trash-o solo"></i></a>
-<?php if ( $p['active'] != '-1' ) { ?>
-        <a href="/moderate-toggle?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid tip" data-tip="Reject Post"><i class="fa fa-times solo"></i></a>
 <?php } ?>
+        <a href="/moderate-delete?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid tip" data-tip="Delete Post"><i class="fa fa-trash-o solo"></i></a>
+<?php if ( $p['active'] != '-1' && $type != 'blog' ) { ?>
+        <a href="/moderate-toggle?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid tip" data-tip="Reject Post"><i class="fa fa-times solo"></i></a>
+<?php } if ( $type != 'blog' ) { ?>
         <a href="#toggle" class="toggle-approve bttn mid <?php echo ( $p['active'] == 0 ) ? 'green' : 'red'; ?>"><?php echo ( $p['active'] == 0 ) ? '<i class="fa fa-check"></i> Approve Post' : '<i class="fa fa-times"></i> Unapprove Post'; ?></a>
+<?php } ?>
     </div>
 </div>
 <?php

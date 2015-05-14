@@ -9,13 +9,15 @@ require_once('core.php');
 // Redirect if user not admin/mod.
 if ( !$user->is_admin() && !$user->is_mod() ) redirect('/');
 
-$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server'];
+$post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server', 'blog'];
 
 // If missing URL variables, redirect right away.
 if ( empty($_GET['post']) || empty($_GET['type']) ) redirect('/moderate');
 elseif ( !is_numeric($_GET['post']) || !in_array($_GET['type'], $post_types) ) redirect('/moderate');
 
 show_header('Edit Post', TRUE, ['title_main' => 'Edit Post', 'title_sub' => 'Moderator Panel']);
+
+$post_type = $_GET['type'];
 
 $p_id	= $_GET['post'];
 $p_type	= $_GET['type'];
@@ -62,6 +64,9 @@ else {
 		case 'server':
 			$post_inputs = ['ip', 'port', 'version'];
 		break;
+		case 'blog':
+			$post_inputs = ['tag_blog'];
+		break;
 	} // End: Switch for different inputs depending on post type.
 	
 	// Setting default POST values for all extra inputs.
@@ -77,7 +82,8 @@ else {
 		'versions'		=> FALSE,
 		'version'		=> FALSE,
 		'dl_link'		=> FALSE,
-		'seed'			=> FALSE
+		'seed'			=> FALSE,
+		'tag_blog'		=> FALSE
 	];
 	
 	foreach( $post_inputs as $input ) {
@@ -181,6 +187,25 @@ else {
 			'friendly_name' => 'Type',
 			'required'		=> TRUE
 		],
+		
+		'tag_blog' => [
+			'type'			=> 'select',
+			'multi'			=> TRUE,
+			'name'			=> 'tags',
+			'class_cont'	=> 'half',
+			'label'			=> '<i class="fa fa-tags fa-fw"></i> Tags',
+			'placeholder'	=> 'Click to add tags',
+			'options'		=> [
+				'minecraft-pe-update' 	=>	'Minecraft PE Update',
+				'news'					=>	'News',
+				'update'				=>	'Update',
+				'community'				=>	'Community'
+			],
+			
+			'friendly_name' => 'Tags',
+			'required'		=> TRUE
+		],
+		
 		'ip' => [
 			'type'			=> 'text',
 			'name'			=> 'ip',
@@ -283,7 +308,7 @@ else {
 	];
 	
 	//$f['tags'] = isset($_POST['tags']) ? $_POST['tags'] : NULL;
-	$tag_types = ['tag_map', 'tag_seed', 'tag_texture', 'tag_skin'];
+	$tag_types = ['tag_map', 'tag_seed', 'tag_texture', 'tag_skin', 'tag_blog'];
 	
 	// Going through tag types and only leaving the type that is required.
 	foreach( $tag_types as $type ) {
@@ -374,7 +399,7 @@ else {
 	
 } // End: Check if post exists in database.
 
-$icons = ['map' => 'map-marker', 'seed' => 'leaf', 'texture' => 'paint-brush', 'skin' => 'male', 'mod' => 'puzzle-piece', 'server' => 'gamepad'];
+$icons = ['map' => 'map-marker', 'seed' => 'leaf', 'texture' => 'paint-brush', 'skin' => 'male', 'mod' => 'puzzle-piece', 'server' => 'gamepad', 'blog' => 'pencil'];
 
 ?>
 <div id="p-title">
