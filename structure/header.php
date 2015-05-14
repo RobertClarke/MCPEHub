@@ -34,7 +34,8 @@ if ( $pg['current'] == 'index' ) $pg['html_title'] .= ' | Minecraft PE Maps, See
 
 // Build main category navigation.
 $pg['nav_links'] = [
-	'home'		=>	['home',		'/',			'index',	'<i class="fa fa-home"></i>'],
+	//'home'		=>	['home',		'/',			'index',	'<i class="fa fa-home"></i>'],
+	'blog'		=>	['blog',		'/blog',		'blog',		'<i class="fa fa-newspaper-o"></i>'],
 	'maps'		=>	['red',			'/maps',		'map',		'Maps'],
 	'seeds'		=>	['yellow',		'/seeds',		'seed',		'Seeds'],
 	'textures'	=>	['green',		'/textures',	'texture',	'Textures'],
