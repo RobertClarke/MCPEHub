@@ -240,7 +240,7 @@ if ( !empty( $_POST ) ) {
 			$db->insert( 'content_'.$post_type.'s', $inputs );
 			
 			// Redirect to post.
-			//( '/blog-post/'.$inputs['slug'] );
+			redirect( '/blog-post/'.$inputs['slug'] );
 			
 		}
 		
