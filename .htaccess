@@ -55,6 +55,7 @@ RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1 [R=301,L]
 #RewriteRule            ^textures/?$    textures.php    [L]
 #RewriteRule            ^mods/?$                mods.php                [L]
 #RewriteRule            ^servers/?$             servers.php             [L]
+#RewriteRule            ^blog/?$             blog.php             [L]
 
 RewriteRule             ^map/([^/]+)?$                  map.php?post=$1                 [NC,QSA]
 RewriteRule             ^seed/([^/]+)?$                 seed.php?post=$1                [NC,QSA]
@@ -62,6 +63,7 @@ RewriteRule             ^texture/([^/]+)?$              texture.php?post=$1     
 RewriteRule             ^skin/([^/]+)?$                 skin.php?post=$1                [NC,QSA]
 RewriteRule             ^mod/([^/]+)?$                  mod.php?post=$1                 [NC,QSA]
 RewriteRule             ^server/([^/]+)?$               server.php?post=$1          [NC,QSA]
+RewriteRule             ^blog-post/([^/]+)?$               blog-post.php?post=$1          [NC,QSA]
 
 RewriteRule ^user/([^/]+)?$ profile.php?user=$1 [L]
 
