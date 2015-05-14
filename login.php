@@ -20,13 +20,14 @@ elseif	( isset( $_GET['reset'] ) )		 $error->force('RESET_DONE');
 
 $f['redirect'] = isset( $_GET['redirect'] ) ? $_GET['redirect'] : NULL;
 
+$error->add('SUSPEND',	'Your account is currently suspended.');
+
 if ( !empty( $_POST ) ) {
 	
 	$error->reset();
 	
 	$error->add('MISSING',	'Both username &amp; password required.');
 	$error->add('INVALID',	'Incorrect username or password.');
-	$error->add('SUSPEND',	'Your account is currently suspended.');
 	
 	$f['username']	=	isset( $_POST['username'] ) ? $db->escape($_POST['username']) : NULL;
 	$f['password']	=	isset( $_POST['password'] ) ? $db->escape($_POST['password']) : NULL;
@@ -69,6 +70,8 @@ if ( !empty( $_POST ) ) {
 	} // End: Check if username or password missing.
 	
 } // End: POST submission.
+
+if ( isset($_GET['suspended']) ) $error->force('SUSPEND');
 
 ?>
 

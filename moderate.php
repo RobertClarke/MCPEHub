@@ -55,12 +55,23 @@ $status = [
 	'1'		=> '<span class="green"><i class="fa fa-check"></i> Approved</span>'
 ];
 
+if ( isset($_GET['suspended']) ) {
+	$usr = ( isset($_GET['user']) ) ? $_GET['user'] : '';
+	$error->add('SUSPENDED', 'The user <b>'.$usr.'</b> has been suspended.', 'success');
+	$error->force('SUSPENDED');
+}
+if ( isset($_GET['unsuspended']) ) {
+	$usr = ( isset($_GET['user']) ) ? $_GET['user'] : '';
+	$error->add('UNSUSPENDED', 'The user <b>'.$usr.'</b> has been unsuspended.', 'success');
+	$error->force('UNSUSPENDED');
+}
+
 ?>
 <div id="p-title">
     <h1>Moderate Posts</h1>
     <div class="tabs">
-        <a href="/moderate-upload" class="bttn gold mid"><i class="fa fa-cloud-upload"></i> Manual Map Upload</a>
-        <a href="/" class="bttn mid"><i class="fa fa-long-arrow-left"></i> Back to Website</a>
+        <a href="/moderate-upload" class="bttn gold mid"><i class="fa fa-cloud-upload"></i> Upload Map</a>
+        <a href="/" class="bttn mid"><i class="fa fa-long-arrow-left"></i> Main Website</a>
     </div>
 </div>
 
@@ -81,6 +92,7 @@ if ( isset($_GET['type']) && in_array($_GET['type'], $post_types) ) {
 	$post['type'] = $type;
 }
 
+$post['author_id']	= $post['author'];
 $post['author']		= $user->info('username', $post['author']);
 $post['url']		= '/'.$post['type'].'/'.$post['slug'];
 
@@ -105,6 +117,7 @@ echo '
         <div class="bttn-group">
             <a href="/moderate-edit?post='.$post['id'].'&type='.$post['type'].'" class="bttn mid tip" data-tip="Edit Post"><i class="fa fa-pencil solo"></i></a>
             <a href="'.$post['url'].'" class="bttn mid tip" data-tip="View Post"><i class="fa fa-eye solo"></i></a>
+            <a href="/moderate-suspend?user='.$post['author_id'].'" class="bttn mid tip" data-tip="Suspend Author"><i class="fa fa-gavel solo"></i></a>
             <a href="/moderate-delete?post='.$post['id'].'&type='.$post['type'].'" class="bttn mid tip" data-tip="Delete Post"><i class="fa fa-trash-o solo"></i></a>
             <a href="#reject" class="reject bttn mid red tip" data-tip="Reject Post"><i class="fa fa-times solo"></i></a>
             <a href="#approve" class="approve bttn mid green tip" data-tip="Approve Post"><i class="fa fa-check solo"></i></a>

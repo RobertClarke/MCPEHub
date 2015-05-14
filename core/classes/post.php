@@ -103,7 +103,7 @@ class Post {
 		
 	}
 	
-	public function mod_toolkit($post, $type, $p) {
+	public function mod_toolkit($post, $type, $p, $author) {
 		
 		global $user;
 		
@@ -116,6 +116,7 @@ class Post {
     <a href="#feature" class="feature bttn mid<?php echo ( $p['featured'] == 1 ) ? ' gold' : NULL; ?>"><?php echo ( $p['featured'] == 0 ) ? '<i class="fa fa-star"></i> Feature Post' : '<i class="fa fa-check"></i> Featured'; ?></a>
     <div class="side">
 <?php if ( $type == 'map' ) { ?><a href="#tested" class="tested bttn mid tip<?php echo ( $p['tested'] == 1 ) ? ' green' : NULL; ?>" data-tip="Toggle 'Tested' Status"><i class="fa fa-toggle-<?php echo ( $p['tested'] == 1 ) ? 'on' : 'off'; ?> solo"></i></a><?php } ?>
+        <a href="/moderate-suspend?user=<?php echo $author; ?>" class="bttn mid tip" data-tip="Suspend User"><i class="fa fa-gavel solo"></i></a>
         <a href="/moderate-delete?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid tip" data-tip="Delete Post"><i class="fa fa-trash-o solo"></i></a>
 <?php if ( $p['active'] != '-1' ) { ?>
         <a href="/moderate-toggle?post=<?php echo $post; ?>&type=<?php echo $type; ?>" class="bttn mid tip" data-tip="Reject Post"><i class="fa fa-times solo"></i></a>

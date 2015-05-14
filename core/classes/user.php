@@ -47,7 +47,7 @@ class User {
 			if ( !$this->check_id( $this->info('id') ) ) $this->logout();
 			
 			// Check if user is suspended.
-			else if ( $this->suspended() ) $this->logout();
+			if ( $this->suspended() ) $this->logout(TRUE);
 			
 			return TRUE;
 			
@@ -75,14 +75,16 @@ class User {
 	}
 	
 	// Log users out.
-	public function logout() {
+	public function logout($suspended = FALSE) {
 		
 		if ( !$this->logged_in() ) return FALSE;
 		
 		// Expire auth cookie.
 		set_cookie(AUTHCOOKIE, $_COOKIE[AUTHCOOKIE], time()-1);
 		
-		redirect('/login?logged_out');
+		if ( !$suspended ) redirect('/login?logged_out');
+		else redirect('/login?suspended');
+		
 		die();
 		
 	}

@@ -14,7 +14,12 @@ if ( empty($p['user']) ) {
 }
 
 // Check if profile exists + user not suspended.
-if ( !empty($p['user']) && !$user->suspended($p['user']) && $u = $user->info('', $p['user']) ) {
+if ( !empty($p['user']) && $u = $user->info('', $p['user']) ) {
+	
+	if ( $user->suspended($p['user']) && !$user->is_admin() && !$user->is_mod() ) {
+		redirect('/404');
+		die();
+	}
 	
 	$url->add('user', $p['user']);
 	$pg_title = $u['username'].'\'s Profile';
@@ -54,7 +59,9 @@ show_header($pg_title, FALSE, ['body_id' => 'profile', 'title_main' => 'Profile'
     </div>
     <div class="actions">
 <?php echo $html['bttn_follow']; ?>
-<?php if ( $owner ) { ?>
+<?php if ( $user->is_admin() || $user->is_mod() ) { ?>
+        <a href="/moderate-suspend?user=<?php echo $u['id']; ?>" class="bttn red"><i class="fa fa-gavel"></i> <?php echo ($user->suspended($p['user']) ) ? 'Unsuspend' : 'Suspend'; ?></a>
+<?php } if ( $owner ) { ?>
         <a href="/profile_edit" class="bttn"><i class="fa fa-pencil fa-fw"></i> Edit Profile</a>
 <?php } ?>
     </div>

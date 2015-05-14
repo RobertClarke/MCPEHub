@@ -47,6 +47,7 @@
 	if ($user->is_mod() || $user->is_admin()) {
 		$unapproved_badge = ( $num_unapproved > 0 ) ? ' <span class="badge">'.$num_unapproved.'</span>' : NULL;
 		echo '<a href="/moderate"><i class="fa fa-gavel fa-fw"></i> Moderate'.$unapproved_badge.'</a>';
+		echo '<a href="/moderate-suspended"><i class="fa fa-ban fa-fw"></i> Suspended Users</a>';
 	}
 	if ($user->is_admin()) echo '<a href="/admin" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-rocket fa-fw"></i> Admin Panel</a>';
 ?>

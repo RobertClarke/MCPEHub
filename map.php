@@ -133,7 +133,7 @@ if ( !$error->exists() ) {
     </div>
     
     <?php $error->display(); ?>
-    <?php $post_tools->mod_toolkit($p['id'], $type, $p); ?>
+    <?php $post_tools->mod_toolkit($p['id'], $type, $p, $p['author']); ?>
     
     <div id="slideshow">
         <div id="slider" class="flexslider">
