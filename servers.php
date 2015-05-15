@@ -10,7 +10,7 @@ $pg = [
 	'title_main'	=> 'Servers',
 	'title_sub'		=> 'Minecraft PE',
 	'seo_desc'		=> 'The best Minecraft PE servers for you to play on your friends. Find MCPE Servers for the latest version of Minecraft PE.',
-	'seo_keywords'	=> 'minecraft pe servers, minecraft pe server, mcpe server, minecraft pe, mcpe'
+	'seo_keywords'	=> 'minecraft pe servers, mcpe servers, minecraft pe server, minecraft pe, mcpe'
 ];
 
 show_header('Minecraft PE Servers', FALSE, $pg);
