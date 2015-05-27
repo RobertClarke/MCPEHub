@@ -270,7 +270,7 @@ $the_inputs = array(
 		'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Versions',
 		'placeholder'	=> 'Click to select versions',
 		'selected'		=> $form_input['versions'],
-		'options'		=> array( '0.9.0', '0.8.0', '0.10.0' ),
+		'options'		=> array( '0.9.0', '0.8.0', '0.10.0', '0.11.0' ),
 		
 		'friendly_name' => 'Versions',
 		'required'		=> TRUE
@@ -283,7 +283,7 @@ $the_inputs = array(
 		'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Version',
 		'placeholder'	=> 'Click to select version',
 		'selected'		=> $form_input['version'],
-		'options'		=> array( '0.9.0', '0.8.0', '0.10.0' ),
+		'options'		=> array( '0.9.0', '0.8.0', '0.10.0', '0.11.0' ),
 		
 		'friendly_name' => 'Version',
 		'required'		=> TRUE

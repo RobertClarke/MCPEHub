@@ -13,7 +13,20 @@ $pg = [
 	'seo_keywords'	=> 'minecraft pe seeds, flat seeds, minecraft pe, mcpe'
 ];
 
-show_header('Minecraft PE Seeds', FALSE, $pg);
+// Set allowed categories.
+$cats = ['Caverns', 'Diamonds', 'Flat', 'Lava', 'Mountain', 'Overhangs', 'Waterfall'];
+$post_cat = [];
+foreach( $cats as $cat ) {
+	$fixed = preg_replace("/[\s_]/", "-", strtolower($cat), 1);
+	$post_cats[$cat] = $fixed;
+	$post_cat[$fixed] = $cat;
+}
+
+$page_head = 'Minecraft PE Seeds';
+if ( !empty($_GET['category']) && array_search($_GET['category'], $post_cats) )
+	$page_head = $post_cat[$_GET['category']].' Minecraft PE Maps';
+
+show_header($page_head, FALSE, $pg);
 
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 
@@ -29,10 +42,6 @@ if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views']) ) {
 	$sort = NULL;
 	$db_sort = 'published DESC';
 }
-
-// Set allowed categories.
-$cats = ['Caverns', 'Diamonds', 'Flat', 'Lava', 'Mountain', 'Overhangs', 'Waterfall'];
-foreach( $cats as $cat ) $post_cats[$cat] = preg_replace("/[\s_]/", "-", strtolower($cat), 1);
 
 // If user selected a category.
 if ( !empty($_GET['category']) ) {
@@ -87,7 +96,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 ?>
 
 <div id="p-title">
-    <h1>Minecraft PE Seeds</h1>
+    <h1><?php echo ( !empty($page_head) ) ? $page_head : 'Minecraft PE Seeds'; ?></h1>
     <div class="tabs">
         <div class="bttn-group">
             <a href="/seeds" class="bttn mid tip search" data-tip="Search Seeds"><i class="fa fa-search solo"></i></a>

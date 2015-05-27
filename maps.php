@@ -13,7 +13,20 @@ $pg = [
 	'seo_keywords'	=> 'minecraft pe maps, survival, parkour, adventure, minecraft pe, mcpe'
 ];
 
-show_header('Minecraft PE Maps', FALSE, $pg);
+// Set allowed categories.
+$cats = ['Survival', 'Creative', 'Adventure', 'Puzzle', 'Horror', 'PVP', 'Parkour', 'Minigame', 'Pixel Art', 'Roller Coaster'];
+$post_cat = [];
+foreach( $cats as $cat ) {
+	$fixed = preg_replace("/[\s_]/", "-", strtolower($cat), 1);
+	$post_cats[$cat] = $fixed;
+	$post_cat[$fixed] = $cat;
+}
+
+$page_head = 'Minecraft PE Maps';
+if ( !empty($_GET['category']) && array_search($_GET['category'], $post_cats) )
+	$page_head = $post_cat[$_GET['category']].' Minecraft PE Maps';
+
+show_header($page_head, FALSE, $pg);
 
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 
@@ -30,9 +43,7 @@ if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views', 'downloads']) ) 
 	$db_sort = 'published DESC';
 }
 
-// Set allowed categories.
-$cats = ['Survival', 'Creative', 'Adventure', 'Puzzle', 'Horror', 'PVP', 'Parkour', 'Minigame', 'Pixel Art', 'Roller Coaster'];
-foreach( $cats as $cat ) $post_cats[$cat] = preg_replace("/[\s_]/", "-", strtolower($cat), 1);
+
 
 // If user selected a category.
 if ( !empty($_GET['category']) ) {
@@ -91,7 +102,7 @@ if ( !$error->exists() ) {
 ?>
 
 <div id="p-title">
-    <h1>Minecraft PE Maps</h1>
+    <h1><?php echo ( !empty($page_head) ) ? $page_head : 'Minecraft PE Maps'; ?></h1>
     <div class="tabs">
         <div class="bttn-group">
             <a href="/how-to-install-maps" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>

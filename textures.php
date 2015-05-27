@@ -13,7 +13,20 @@ $pg = [
 	'seo_keywords'	=> 'minecraft pe texture packs, textures, minecraft pe, mcpe'
 ];
 
-show_header('Minecraft PE Texture Packs', FALSE, $pg);
+// Set allowed categories.
+$cats = ['Standard', 'Realistic', 'Simplistic', 'Themed', 'Experimental'];
+$post_cat = [];
+foreach( $cats as $cat ) {
+	$fixed = preg_replace("/[\s_]/", "-", strtolower($cat), 1);
+	$post_cats[$cat] = $fixed;
+	$post_cat[$fixed] = $cat;
+}
+
+$page_head = 'Minecraft PE Textures';
+if ( !empty($_GET['category']) && array_search($_GET['category'], $post_cats) )
+	$page_head = $post_cat[$_GET['category']].' Minecraft PE Textures';
+
+show_header($page_head, FALSE, $pg);
 
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 
@@ -29,10 +42,6 @@ if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views', 'downloads']) ) 
 	$sort = NULL;
 	$db_sort = 'published DESC';
 }
-
-// Set allowed categories.
-$cats = ['Standard', 'Realistic', 'Simplistic', 'Themed', 'Experimental'];
-foreach( $cats as $cat ) $post_cats[$cat] = preg_replace("/[\s_]/", "-", strtolower($cat), 1);
 
 // If user selected a category.
 if ( !empty($_GET['category']) ) {
@@ -87,7 +96,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 ?>
 
 <div id="p-title">
-    <h1>Minecraft PE Textures</h1>
+    <h1><?php echo ( !empty($page_head) ) ? $page_head : 'Minecraft PE Textures'; ?></h1>
     <div class="tabs">
         <div class="bttn-group">
             <a href="/how-to-install-texture-packs" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>
