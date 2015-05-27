@@ -189,6 +189,6 @@ echo '
 
 <?php if ( $count != 0 ) $pagination->html(); ?>
 
-<p class="tracking">Tracking <?php echo number_format($count); ?> Textures</p>
+<p class="tracking">Tracking <?php echo number_format($count); ?> Texture Packs</p>
 
 <?php show_footer(); ?>
