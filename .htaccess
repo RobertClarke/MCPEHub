@@ -79,9 +79,9 @@ RewriteRule ^avatar/([0-9]+)x([0-9]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image.php?
 rewriteCond %{THE_REQUEST} ^GET\ /([^/]+/)*[^.]+\.php(\?[^\ ]*)?\ HTTP/
 rewriteRule ^(([^/]+/)*[^.]+)\.php$ http://mcpehub.com/$1 [R=301,L]
 
-# Internally rewrite extensionless page URLs to php files
-# if no extension or trailing slash on requested URL
-rewriteCond %{REQUEST_URI} !(\.�/$)
-# and if filename exists when .php is appended
-rewriteCond %{REQUEST_FILENAME}.php -f
-rewriteRule (.+) /$1.php [L]
+# Internally rewrite extensionless page URLs to.php files 
+# if no extension or trailing slash on requested URL 
+RewriteCond %{REQUEST_URI} !(\.¦/$) 
+# and if filename exists when .php is appended 
+RewriteCond %{REQUEST_FILENAME}.php -f 
+RewriteRule (.+) /$1.php [L]
