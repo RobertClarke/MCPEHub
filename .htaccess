@@ -28,11 +28,17 @@ RewriteCond %{HTTP:CF-Visitor} '"scheme":"http"'
 RewriteCond %{REQUEST_URI} ^/assets/css/main.css
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
+# Turn SSL on for /assets/js/main-min.js
+RewriteCond %{HTTP:CF-Visitor} '"scheme":"http"'
+RewriteCond %{REQUEST_URI} ^/assets/js/main-min.js
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
 # Turn SSL off everything but /login
 RewriteCond %{HTTP:CF-Visitor} '"scheme":"https"'
 RewriteCond %{REQUEST_URI} !^/login
 RewriteCond %{REQUEST_URI} !^/register
 RewriteCond %{REQUEST_URI} !^/assets/css/main.css
+RewriteCond %{REQUEST_URI} !^/assets/js/main-min.js
 RewriteCond %{REQUEST_URI} !^/account
 RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1 [R=301,L]
 
