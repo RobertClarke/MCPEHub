@@ -30,7 +30,7 @@ $pg = [
 // Setting <title> value in <head>.
 if ( !empty($pg['title']) ) $pg['html_title'] .= $pg['title'].' | ';
 $pg['html_title'] .= 'MCPE Hub';
-if ( $pg['current'] == 'index' ) $pg['html_title'] .= ' | Minecraft PE Maps, Seeds, Textures, Mods, Servers &amp; More!';
+if ( $pg['current'] == 'index' ) $pg['html_title'] .= ' | The #1 Minecraft PE Community';
 
 // Build main category navigation.
 $pg['nav_links'] = [
