@@ -18,8 +18,19 @@
  * @return string Sanitized username value
 **/
 function sanitize_user( $username ) {
-	return preg_replace('/[^A-Za-z0-9\-]/', '', trim(strtolower($username)) );
+	return preg_replace('/[^\w]/', '', trim(strtolower($username)) );
 }
+
+
+
+function alphanum( $input ) {
+	if ( preg_match('/^[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*$/', $input) ) return true;
+	else return false;
+}
+
+
+
+
 
 /**
  * Sets the value of a cookie

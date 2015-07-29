@@ -46,7 +46,7 @@ if ( submit_POST() ) {
 	else {
 
 		// Username field checks.
-		if 		( $username != sanitize_user($username) )	$errors->append('U_INVALID');
+		if 		( !alphanum($username) )					$errors->append('U_INVALID');
 		elseif	( !length($username, 20, 5) )				$errors->append('U_LENGTH');
 		elseif	( !username_avail($username) )				$errors->append('U_USED');
 
