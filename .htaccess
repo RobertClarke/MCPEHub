@@ -75,15 +75,15 @@ RewriteRule ^user/([^/]+)?$ profile.php?user=$1 [L]
 RewriteRule ^uploads/([0-9]+)x([0-9]+)/([A-Za-z0-9-]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image.php?src=../uploads/posts/$3/$4.$5&w=$1&h=$2 [L]
 
 # mcpehub.com/avatar/250x250/image.ext
-RewriteRule ^avatar/([0-9]+)x([0-9]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image.php?src=../uploads/avatars/$3.$4&w=$1&h=$2 [L]
+RewriteRule ^avatar/([0-9]+)x([0-9]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image?src=/uploads/avatars/$3.$4&w=$1&h=$2 [L]
 
 # Externally redirect direct client requests for .php files to non-.php URLs
 rewriteCond %{THE_REQUEST} ^GET\ /([^/]+/)*[^.]+\.php(\?[^\ ]*)?\ HTTP/
 rewriteRule ^(([^/]+/)*[^.]+)\.php$ http://mcpehub.com/$1 [R=301,L]
 
-# Internally rewrite extensionless page URLs to.php files 
-# if no extension or trailing slash on requested URL 
-RewriteCond %{REQUEST_URI} !(\.¦/$) 
-# and if filename exists when .php is appended 
-RewriteCond %{REQUEST_FILENAME}.php -f 
+# Internally rewrite extensionless page URLs to.php files
+# if no extension or trailing slash on requested URL
+RewriteCond %{REQUEST_URI} !(\.¦/$)
+# and if filename exists when .php is appended
+RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule (.+) /$1.php [L]

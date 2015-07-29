@@ -1,137 +1,144 @@
 <?php
 
 /**
-  * Reset Password Page
+ * Password Reset
+ *
+ * This page processes any password change requests, after the
+ * user clicks the reset link in their email. It will check if
+ * the token is valid, and allow them to change their password.
 **/
 
-require_once('core.php');
-if ( $user->logged_in() ) redirect('/dashboard');
+require_once('loader.php');
 
-show_header('Reset Password', FALSE, ['body_class' => 'boxed']);
+// If user is already logged in, redirect to dashboard
+if ( logged_in() ) redirect('/dashboard');
 
-$error->add('MISSING',	'Reset token is missing in URL.');
+$page->body_id = 'reset';
+$page->body_class = 'boxed';
 
-// Use POST code over GET code, if POST exists.
-if ( isset($_POST['code']) ) $f['code'] = $_POST['code'];
-elseif ( isset($_GET['code']) ) $f['code'] = $_GET['code'];
-else $f['code'] = NULL;
+$page->header('Reset Password');
 
-// Check if reset code is missing.
-if ( empty($f['code']) ) $error->set('MISSING');
+// Get token from $_GET.
+$token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
+
+// Token missing, display error.
+if ( $token == null )
+	$errors->add('MISSING', 'Reset token is missing from URL.')->force();
+
 else {
-	
-	$error->add('INTRO',	'Don\'t worry, we forget passwords too! Enter your new password below.', 'info');
-	$error->add('INVALID',	'Reset token provided has expired or doesn\'t exist.');
-	$error->add('USED',		'Reset token provided has already been used.');
-	
-	$f['code'] = $db->escape($f['code']);
-	
-	$reset = $db->select('*')->from('resets')->where(['code' => $f['code']])->limit(1)->fetch();
-	
-	// Check if reset code exists in database.
-	if ( !$db->affected_rows ) $error->set('INVALID');
+
+	$errors->add('INFO',		'Let\'s get you a new password! Choose a new one below.', 'info');
+	$errors->add('INVALID',		'This reset token is invalid or expired.');
+	$errors->add('USED',		'This reset token has already been used.');
+	$errors->add('SUSPENDED',	'This account is currently suspended and cannot be reset.');
+	$errors->add('BANNED',		'This account has been banned and cannot be reset.');
+
+	// Fetch the token from the database.
+	$token_db = $db->select()->from('resets')->where('token', $token)->fetch_first();
+
+	// Token not found in the database.
+	if ( !$db->affected_rows )
+		$errors->force('INVALID');
+
+	// Check if token has been used already.
+	elseif ( $token_db['status'] == 1 )
+		$errors->force('USED');
+
+	// Check if token status not 0 (unused).
+	elseif ( $token_db['status'] != 0 )
+		$errors->force('INVALID');
+
+	// Check if token has expired beyond 24 hours.
+	elseif ( (strtotime($token_db['created']) + 60*60*24) < time() )
+		$errors->force('INVALID');
+
+	// Fetch user info from the database, to ensure this user still exists.
+	elseif ( !$user = User::get_by('id', $token_db['user_id']) )
+		$errors->force('INVALID');
+
+	// Check if user suspended.
+	elseif ( $user['status'] == '-1' )
+		$errors->force('SUSPENDED');
+
+	// Check if user banned.
+	elseif ( $user['status'] == '-2' )
+		$errors->force('BANNED');
+
+	// All checks passed, move onto allowing a reset.
 	else {
-		
-		$reset = $reset[0];
-		
-		// 7 day expiry time on tokens.
-		$expiry = strtotime($reset['request_time']) + (60*60*24*7);
-		
-		// Check if reset code has expired.
-		if ( $expiry < time() || $reset['expired'] == 1 ) $error->set('INVALID');
-		else {
-			
-			// Check if reset token has been used.
-			if ( $reset['used'] == 1 ) $error->set('USED');
+
+		$token_valid = true;
+		$errors->set('INFO');
+
+		// Token valid, and form submitted for password change.
+		if ( submit_POST() ) {
+
+			$password			= input_POST('password');
+			$password_repeat	= input_POST('password-repeat');
+
+			$errors->reset();
+
+			$errors->add('MISSING',		'Both password fields must be filled in.');
+			$errors->add('MATCH',		'Your passwords didn\'t match.');
+			$errors->add('LENGTH',		'Your password must be 6-30 characters long.');
+			$errors->add('USERNAME',	'Your password can\'t contain your username.');
+
+			// Check if either field is missing.
+			if ( empty($password) || empty($password_repeat) )
+				$errors->force('MISSING');
+
 			else {
-				
-				/*** Token verified ***/
-				$code_valid = TRUE;
-				$error->set('INTRO');
-				
-				if ( !empty( $_POST ) ) {
-					
-					$error->reset();
-					
-					$error->add('P_MISSING',	'You must fill out both password inputs.');
-					$error->add('P_MATCH',		'The passwords submitted don\'t match.');
-					$error->add('P_LENGTH',		'Your password must be 6-30 characters long.');
-					$error->add('P_USERNAME',	'Your password can\'t be the same as your username.');
-					
-					$f['password']		= isset( $_POST['password'] ) ? $db->escape($_POST['password']) : NULL;
-					$f['password2']	= isset( $_POST['password2'] ) ? $_POST['password2'] : NULL;
-					
-					// Check if password/repeat missing.
-					if ( empty($f['password']) || empty($f['password2']) ) $error->set('P_MISSING');
-					else {
-						
-						// Check if password between 6-30 characters.
-						if ( strlen($f['password'])<6 || strlen($f['password'])>30 ) $error->set('P_LENGTH');
-						
-						// Check if password equals username.
-						if ( $f['password'] == $user->info('username', $reset['target_user']) ) $error->append('P_USERNAME');
-						
-						if ( !$error->exists() ) {
-							
-							// Check if passwords match.
-							if ( $f['password'] != $f['password2'] ) $error->set('P_MATCH');
-							else {
-								
-								/*** Fields validated ***/
-								$code_valid = NULL;
-								
-								// Set all reset tokens for user to be invalid.
-								$db->where(['target_user'=>$reset['target_user'], 'expired'=>0, 'used'=>0])->update('resets', ['expired' => 1]);
-								
-								// Set current request token to "used" instead of "expired".
-								$db->where(['id'=>$reset['id']])->update('resets', ['expired'=>0, 'used'=>1]);
-								
-								// Hash and store new password.
-								$hash = password_hash($f['password'], PASSWORD_DEFAULT);
-								$db->where(['id' => $reset['target_user']])->update('users', ['password' => $hash]);
-								
-								redirect('/login?reset');
-								
-							} // End: Check if passwords match.
-							
-						} // End: Continue after checking all fields.
-						
-					} // End: Check if password/repeat missing.
-					
-				} // End: Reset form submission.
-				
-			} // End: Check if reset token has been used.
-			
-		} // End: Check if reset code has expired.
-		
-	} // End: Check if reset code exists in database.
-	
-} // End: // Check if reset code is missing.
+
+				// Check if passwords match.
+				if ( $password != $password_repeat )
+					$errors->append('MATCH');
+
+				// Check if password between 6-30 characters.
+				if ( !length($password, 30, 6) )
+					$errors->append('LENGTH');
+
+				// Check if password contains username.
+				if ( strpos($password, $user['username']) !== false )
+					$errors->append('USERNAME');
+
+				// Fields are valid, reset the password.
+				if ( !$errors->exist() ) {
+
+					// Invalidate any active tokens associated to this user.
+					$db->where(['token' => $token])->update('resets', ['status' => '1']);
+					$db->where(['user_id' => $user['id'], 'status' => 0])->update('resets', ['status' => '-1']);
+
+					// Hash and store new password.
+					$password = password_hash($password, PASSWORD_DEFAULT);
+					$db->where('id', $user['id'])->update('users', ['password' => $password]);
+
+					redirect('/login?m=reset');
+
+				} // END: Fields are valid, reset the password.
+
+			} // END: Check if either field is missing.
+
+		} // END: Token valid, and form submitted for password change.
+
+	} // END: All checks passed, move onto allowing a reset.
+
+}
 
 ?>
-
-<div class="header"><h1>Reset Password</h1></div>
-<div class="body">
-    <form action="/reset" method="POST">
-        <?php echo $error->display(); ?>
-<?php if ( isset( $code_valid ) ) { // If the form hasn't been successfully submitted. ?>
-        <div class="group">
-            <label for="password">New Password</label>
-            <input type="password" name="password" id="password" class="full">
-        </div>
-        <div class="group">
-            <label for="password2">Repeat Password</label>
-            <input type="password" name="password2" id="password2" class="full">
-        </div>
-        <div class="submit"><button type="submit" class="bttn big green full">Change Password</button></div>
-        <input type="hidden" name="code" value="<?php echo htmlspecialchars($f['code']); ?>" />
-<?php } // End: If the form hasn't been successfully submitted. ?>
-    </form>
+<div id="logo"><a href="/">MCPE Hub</a></div>
+<div id="body">
+	<div id="content">
+		<h1>Reset password</h1>
+		<?php $errors->display(); ?>
+<?php if ( isset($token_valid) ) { ?>
+		<form action="/reset?token=<?php echo htmlspecialchars($token); ?>" method="POST">
+			<input type="password" name="password" id="password" maxlength="30" placeholder="Password">
+			<input type="password" name="password-repeat" id="password-repeat" maxlength="30" placeholder="Repeat password">
+			<button type="submit">Change password</button>
+		</form>
+		<script>window.onload = function() { document.getElementById('password').focus(); };</script>
+<?php } ?>
+	</div>
+	<div id="footer"><a href="/login">Back to login</a></div>
 </div>
-<div class="footer">
-    <a href="/login" class="bttn mini"><i class="fa fa-long-arrow-left"></i> Back to Sign In</a>
-</div>
-
-<?php if ( isset( $code_valid ) ) { ?><script>window.onload = function() { document.getElementById('password').focus(); };</script><?php } ?>
-
-<?php show_footer(); ?>
+<?php $page->footer(); ?>

@@ -1,0 +1,10 @@
+# MCPE Hub Gitignore
+
+/assets/styles/
+/assets/scripts/
+
+/config.php
+
+/uploads/
+
+/core/templates_c/*

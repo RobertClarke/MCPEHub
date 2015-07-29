@@ -1,349 +1,401 @@
 <?php
 
 /**
-  
-  * User Class
-  *
-  * Deals with all user-related functions that are needed for
-  * authentication and identification around the website.
-  *
-  * auth();				Verifies or redirects the user, as needed.
-  * logout();			Logs users out of their accounts.
-  * logged_in();		Returns if user is logged in.
-  * info();				Returns user data from database.
-  * update_activity();	Updates user last activity time and ip.
-  * check_id();			Checks if user id exists in users table.
-  * check_username();	Checks if username exists in users table.
-  * check_email();		Checks if email exists in users table.
-  * get_id();			Grab user id from a given username.
-  * suspended();		Returns if user is currently suspended.
-  * is_admin();			Returns if user is an admin.
-  * is_mod();			Returns if user is a mod.
-  * auth_set();			Set authentication cookie.
-  * auth_parse();		Parse authentication cookie.
-  * auth_validate();	Validate authentication cookie.
-  * auth_exprie();		Expire authentication cookie.
-  
+ * User Class
+ *
+ * An object containing all information related to a given user,
+ * including any database values, permissions and authentication
+ * related information.
 **/
 
 class User {
-	
-	function __construct($db) {
-		
-		global $user_data;
-		if ( !isset( $user_data ) ) $user_data = [];
-		
-		$this->db = $db;
-		
-	}
-	
-	// Main user authentication function.
-	public function auth() {
-		
-		// If user logged in, lets verify that they're still a valid user.
-		if ( $this->logged_in() ) {
-			
-			// Check if user still exists in database.
-			if ( !$this->check_id( $this->info('id') ) ) $this->logout();
-			
-			// Check if user is suspended.
-			if ( $this->suspended() ) $this->logout(TRUE);
-			
-			return TRUE;
-			
+
+	// User info
+	public $id = 0;
+	public $username = '';
+
+	// Data container
+	public $data;
+
+	// User's permission level
+	public $level = 0;
+
+	/**
+	 * Constructor
+	 *
+	 * Determines and stores the various variations of the current page value.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int|string $id User identifier. Can be either ID (int) or username (string).
+	**/
+	public function __construct( $id ) {
+
+		// If $id passed isn't numeric, we have to initialize by username.
+		if ( is_numeric($id) ) {
+			$this->id = $id;
+			$data = self::get_by('id', $id);
+		} else {
+			$data = self::get_by('username', $id);
 		}
-		
-		// User isn't logged in, redirect them to the login screen.
+
+		if ( $data ) {
+			$this->id = $data['id'];
+			$this->username = $data['username'];
+			$this->level = $data['permission'];
+
+			$this->data = $data;
+		}
 		else {
-			
-			// Add a redirect URL, if the user is outside of the home/login page.
-			$page = basename( $_SERVER['PHP_SELF'], '.php' );
-			
-			if ( $page != 'index' && $page != 'login' ) {
-				
-				// Convert "&" symbol, build URL and redirect.
-				$redirect = str_replace( '&', '%26', basename( $_SERVER['REQUEST_URI'] ) );
-				redirect('/login?auth_req&r='.$redirect);
-				
-			} else redirect('/login?auth_req');
-			
-			// Make sure we don't let the user load anything else.
-			die();
-			
+			$this->id = 0;
+			return false;
 		}
-		
+
+		// Cache this user object for later use.
+		cache_add($this->id, $this, 'users_objects');
+
 	}
-	
-	// Log users out.
-	public function logout($suspended = FALSE) {
-		
-		if ( !$this->logged_in() ) return FALSE;
-		
-		// Expire auth cookie.
-		set_cookie(AUTHCOOKIE, $_COOKIE[AUTHCOOKIE], time()-1);
-		
-		if ( !$suspended ) redirect('/login?logged_out');
-		else redirect('/login?suspended');
-		
-		die();
-		
-	}
-	
-	// Returns if user is logged in.
-	public function logged_in() {
-		
-		// Check for auth cookie existence.
-		if ( !isset( $_COOKIE[AUTHCOOKIE] ) || empty ( $_COOKIE[AUTHCOOKIE] ) ) return FALSE;
-		
-		// Validate auth cookie.
-		if ( $this->auth_validate() ) return TRUE;
-		else return FALSE;
-		
-	}
-	
-	// Grabs given user data from database.
-	public function info($part='', $user='') {
-		
-		global $user_data;
-		
-		// If no $user, assume we're getting data for logged in user.
-		if ( empty( $user ) ) {
-			if ( $this->logged_in() ) $user = $this->auth_parse()['username'];
-			else return FALSE;
+
+	/**
+	 * Grabs user information from the database
+	 *
+	 * Determines and stores the various variations of the current page value.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $key The field to perform a query with ('id' or 'username')
+	 * @param string|int $value The value to perform the query with
+	**/
+	public static function get_by( $key, $value ) {
+		global $db;
+
+		if ( $key == 'id' ) {
+			if ( !is_numeric($value) || $value < 1 )
+				return false;
+
+			$value = intval($value);
 		}
-		
-		// If $user not numeric, search for username.
-		if ( !is_numeric( $user ) ) {
-			
-			// First, check if username is valid.
-			if ( !$this->check_username($user) ) return FALSE;
-			
-			// Check if username is in array (set $user to id).
-			foreach( $user_data as $id => $u ) {
-				
-				if ( $u['username'] == $user ) {
-					$user = $id;
-					$found = TRUE; // Set variable to say we found the user.
-					break;
-				}
-				
-			}
-			
-			// If username not found in array, find users id.
-			if ( !isset($found) ) $user = $this->get_id($user);
-			
+
+		if ( !$value )
+			return false;
+
+		// Check if valid $key given
+		switch ( $key ) {
+			case 'id':
+				$db_field = 'id';
+				$user_id = $value;
+			break;
+			case 'username':
+				$db_field = 'username';
+				$user_id = cache_get($value, 'users_username');
+			break;
+			case 'email':
+				$db_field = 'email';
+				$user_id = cache_get($value, 'users_email');
+			break;
+			default:
+				return false; // None of the above valid options, return false
+
 		}
-		
-		// If $user numeric, check if its a valid user id.
-		else if ( !$this->check_id($user) ) return FALSE;
-		
-		// User info already in array, return it.
-		if ( isset( $user_data[$user] ) ) {
-			
-			if ( !empty($part) ) return $user_data[$user][$part];
-			else return $user_data[$user];
-			
+
+		// Get from cache if user ID exists to search with.
+		if ( $user_id !== false ) {
+			if ( $user = cache_get($user_id, 'users') )
+				return $user;
 		}
-		
-		// User info isn't in array, grab, store and return.
-		else {
-			
-			// Grab from database.
-			$query = $this->db->from('users')->where( ['id' => $user] )->limit(1)->fetch();
-			if ( !$this->db->affected_rows ) return FALSE;
-			
-			// Store in array.
-			$u = $user_info[$user] = $query[0];
-			
-			if ( !empty($part) ) return $u[$part];
-			else return $u;
-			
-		}
-		
+
+		// Get from database if not found in cache.
+		if ( !$user = $db->from('users')->where([$db_field => $value])->fetch_first() )
+			return false;
+
+		cache_add_user($user);
+
+		return $user;
+
 	}
-	
-	// Update users last activity time and IP address in db.
-	public function update_activity() {
-		
-		if ( !$this->logged_in() ) return FALSE;
-		
-		$update = array(
-			'last_ip'		=> $_SERVER['REMOTE_ADDR'],
-			'last_active'	=> date('Y-m-d H:i:s')
-		);
-		
-		$this->db->where( ['id' => $this->info('id')] )->update('users', $update);
-		return;
-		
+
+	/**
+	 * Returns whether or not user has a given permission level
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $permission The permission value to check
+	 * @return boolean Whether or not the user has the permission
+	**/
+	public function is($level) {
+
+		// Load permissions from cache.
+		$permissions = get_user_permissions();
+
+		// Check if key is valid.
+		if ( !array_key_exists($level, $permissions) )
+			return false;
+
+		// Check if user is at the given permission level.
+		if ( $this->level !== $permissions[$level] )
+			return false;
+
+		return true;
+
 	}
-	
-	// Check if user id exists in users table.
-	public function check_id($id) {
-		$this->db->from('users')->where( ['id' => $id] )->limit(1)->fetch();
-		return ( $this->db->affected_rows ) ? TRUE : FALSE;
-	}
-	
-	// Check if username exists in users table.
-	public function check_username($username) {
-		$this->db->from('users')->where( ['username' => $username] )->limit(1)->fetch();
-		return ( $this->db->affected_rows ) ? TRUE : FALSE;
-	}
-	
-	// Check if user email exists in users table.
-	public function check_email($email) {
-		$this->db->from('users')->where( ['email' => $email] )->limit(1)->fetch();
-		return ( $this->db->affected_rows ) ? TRUE : FALSE;
-	}
-	
-	// Grab user id from a given username.
-	public function get_id($username) {
-		$query = $this->db->select('id')->from('users')->where( ['username' => $username] )->fetch();
-		return ( $this->db->affected_rows ) ? $query[0]['id'] : FALSE;
-	}
-	
-	// Returns if user currently suspended.
-	public function suspended($user='') {
-		return ( $this->info('suspended', $user) == 1 ) ? TRUE : FALSE;
-	}
-	
-	// Returns if user is an admin.
-	public function is_admin($user='') {
-		return ( $this->info('level', $user) == 9 ) ? TRUE : FALSE;
-	}
-	
-	// Returns if user is a mod.
-	public function is_mod($user='') {
-		return ( $this->info('level', $user) == 1 ) ? TRUE : FALSE;
-	}
-	
-	// Set authentication cookie.
-	public function auth_set($username, $remember=FALSE) {
-		
-		// Set expiry to 1 month if remember is set, otherwise session.
-		$expiry = ( $remember ) ? time()+(60*60*24*30) : 0;
-		
-		// Check if user exists in database.
-		if ( !$user_pass = $this->info('password', $username) ) return FALSE;
-		
-		// Get password fragment for auth cookie.
-		$pass_frag = substr( $user_pass, 4, 5 );
-		
-		$exp_time = time()+(60*60*24*30);
-		
-		// Create and encrypt cookie.
-		$enc_key	= hash_hmac('sha256', $username . $pass_frag . '|' . $exp_time, SECRET_KEY);
-		$enc_hash	= hash_hmac('sha256', $username . '|' . $exp_time, $enc_key);
-		
-		set_cookie(AUTHCOOKIE, $username.'|'.$exp_time.'|'.$enc_hash, $expiry);
-		
-	}
-	
-	// Parse authentication cookie.
-	private function auth_parse() {
-		
-		$cookie = $_COOKIE[AUTHCOOKIE];
-		
-		// If cookie isn't set or empty, parse failed.
-		if ( !isset($cookie) || empty($cookie) ) return FALSE;
-		
-		// Explode the cookie... BOOM!
-		$cookie = explode('|', $cookie);
-		
-		// If cookie doesn't have 3 values, parse failed.
-		if ( count($cookie) != 3 ) return FALSE;
-		
-		// Parse success! List & return cookie values.
-		list($username, $expiry, $token) = $cookie;
-		return compact('username', 'expiry', 'token');
-		
-	}
-	
-	// Validate authentication cookie.
-	public function auth_validate() {
-		
-		// Check if cookie is in valid format + set variable.
-		if ( !$cookie = $this->auth_parse() ) return FALSE;
-		
-		// Check if cookie has expired, unset if expired.
-		if ( time() > $cookie['expiry'] && $cookie['expiry'] != 0 ) {
-			$this->auth_expire();
-			return FALSE;
-		}
-		
-		// ** Reverse algoritm magic! ** //
-		
-		// Check if user exists in database.
-		if ( !$user_pass = $this->info('password', $cookie['username']) ) {
-			$this->auth_expire();
-			return FALSE;
-		}
-		
-		// Get password fragment for auth cookie.
-		$pass_frag = substr( $user_pass, 4, 5 );
-		
-		$enc_key	= hash_hmac('sha256', $cookie['username'] . $pass_frag . '|' . $cookie['expiry'], SECRET_KEY);
-		$enc_hash	= hash_hmac('sha256', $cookie['username'] . '|' . $cookie['expiry'], $enc_key);
-		
-		// Check if calculated value matches cookie value.
-		if ( $enc_hash != $cookie['token'] ) {
-			$this->auth_expire();
-			return FALSE;
-		}
-		
-		// Success, auth cookie valid.
-		return TRUE;
-		
-	}
-	
-	// Expire authentication cookie.
-	private function auth_expire() {
-		set_cookie( AUTHCOOKIE, $_COOKIE[AUTHCOOKIE], time()-1);
-		return;
-	}
-	
-	
-	public function is_verified( $user = '' ) {
-		
-		if ( $this->info( 'verified', $user ) == 1 ) return TRUE;
-		else return FALSE;
-		
-	}
-	
-	public function badges( $user = '' ) {
-		
-		// Check if user exists.
-		if ( !$this->info('', $user) ) return FALSE;
-		
-		$badges = [
-			'admin'		=> ['Admin', 'star'],
-			'mod'		=> ['Mod', 'gavel'],
-			'youtuber'	=> ['YouTuber', 'youtube-play'],
-			'verified'	=> ['Verified', 'check'],
-			//'author'	=> ['Author', 'pencil'],
-			'featured'	=> ['Featured', 'trophy']
-		];
-		
-		if ( $this->is_admin( $user ) ) $badge[] = 'admin';
-		else if ( $this->is_mod( $user ) ) $badge[] = 'mod';
-		
-		if ( $this->info('featured', $user) == 1 ) $badge[] = 'featured';
-		if ( $this->info('verified', $user) == 1 ) $badge[] = 'verified';
-		if ( $this->info('youtuber', $user) == 1 ) $badge[] = 'youtuber';
-		
-		if ( empty( $badge ) ) return FALSE;
-		
-		$return = '';
-		
-		foreach( $badge as $b ) {
-			
-			$tb = $badges[$b];
-			$return .= '<span class="badge '.$b.' tip" data-tip="'.$tb[0].'"><i class="fa fa-'.$tb[1].'"></i></span>';
-		}
-		
-		return '<span class="badges">'.$return.'</span>';
-		
-	}
-	
+
 }
 
-?>
+/**
+ * Adds a user to the user cache
+ *
+ * @since 3.0.0
+ *
+ * @param object $user The user object to be cached
+**/
+function cache_add_user( $user ) {
+	cache_add($user['id'], $user, 'users');
+	cache_add($user['username'], $user['id'], 'users_username');
+}
+
+/**
+ * Loads core database permission values to cache
+ *
+ * Permissions will be grabbed from the database table and will be stored in
+ * the cache if they don't already exist.
+ *
+ * @since 3.0.0
+ *
+ * @return array Array containing permissions and order
+**/
+function get_user_permissions() {
+	global $db;
+
+	if ( $cache = cache_get('permissions', 'core') )
+		return $cache;
+
+	$permissions = [];
+
+	foreach( $db->from('permissions')->fetch() as $id => $val )
+	    $permissions[$val['key']] = $val['position'];
+
+	cache_add('permissions', $permissions, 'core');
+	return $permissions;
+}
+
+/**
+ * User authentication
+ *
+ * Can authenticate a user using the credentials passed through an array
+ * containing 'username', 'password' and 'remember' (optional) values.
+ * If the $login array is missing, the $_POST values will be assumed.
+ *
+ * @since 3.0.0
+ *
+ * @param array $login Optional - User info passed in array to login
+ * @return User|Error Objects depending on success/fail
+**/
+function login( $login=[] ) {
+
+	// $login empty, use $_POST values instead
+	if ( empty($login) ) {
+		$login['username'] = filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW);
+		$login['password'] = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
+		$login['remember'] = filter_input(INPUT_POST, 'remember', FILTER_VALIDATE_BOOLEAN);
+	}
+
+	$user = authenticate($login['username'], $login['password']);
+
+	if ( !is_error($user) )
+		auth_set($user->username, $login['remember']);
+
+	return $user;
+
+}
+
+
+
+
+
+
+function authenticate( $username, $password ) {
+
+	if ( empty($username) || empty($password) )
+		return new Error('AUTH_MISSING', 'Both username &amp; password required.');
+
+	// Get user information required + check if valid user
+	if ( !$user = User::get_by('username', $username) )
+		return new Error('AUTH_FAILED', 'Incorrect username or password.');
+
+	// Verify password validity
+	if ( !password_verify( $password, $user['password'] ) )
+		return new Error('AUTH_FAILED', 'Incorrect username or password.');
+
+	// Check if user is suspended or banned
+	if ( $user['status'] == '-1' )
+		return new Error('AUTH_SUSPENDED', 'Your account is currently suspended.');
+
+	if ( $user['status'] == '-2' )
+		return new Error('AUTH_BANNED', 'Your account has been banned.');
+
+	// Everything checks out, user is authenticated
+	return new User($user['id']);
+
+}
+
+
+
+
+/**
+ * Login check
+ *
+ * Will check if the user is logged in. Used for pages that require part
+ * of the page be accessible to users only.
+ *
+ * @since 3.0.0
+ *
+ * @return User|Error Objects depending on success/fail
+**/
+function logged_in() {
+	return auth_validate();
+}
+
+/**
+ * Login check + redirect
+ *
+ * Will check if the user is logged in. If they are, the page can resume
+ * to load, otherwise redirect to login.php and prevent the page from
+ * loading any further. Used on pages that require logged in users.
+ *
+ * @since 3.0.0
+**/
+function login_redirect() {
+	if ( !logged_in() ) {
+
+		$curent_page = basename(filter_input(INPUT_SERVER, 'PHP_SELF'), '.php');
+
+		if ( $current_page != 'login' ) {
+			$redirect = str_replace('&', '%26', basename(filter_input(INPUT_SERVER, 'REQUEST_URI')));
+			redirect('/login?m=auth&redirect='.$redirect);
+		}
+		else redirect('/login?m=auth');
+	}
+}
+
+
+
+function logout() {
+
+	if ( !logged_in() )
+		return false;
+
+	auth_expire();
+	redirect('/login?m=logout');
+
+}
+
+
+
+function auth_cookie() {
+	return filter_input(INPUT_COOKIE, 'mcpehub_a');
+}
+
+function auth_parse() {
+
+	$cookie = auth_cookie();
+
+	// Check if the cookie exists
+	if ( !isset($cookie) || empty($cookie) )
+		return false;
+
+	// Explode values in cookie into an array
+	if ( !$cookie = explode('|', $cookie) )
+		return false;
+
+	// Check # of fields in cookie
+	if ( count($cookie) != 3 )
+		return false;
+
+	list($user, $expiry, $token) = $cookie;
+	return compact('user', 'expiry', 'token');
+
+}
+
+function auth_validate() {
+
+	$cookie = auth_cookie();
+
+	// Verify if cookie is in valid format
+	if ( !$cookie = auth_parse($cookie) )
+		return false;
+
+	// Check if cookie is expired
+	if ( time() > $cookie['expiry'] && $cookie['expiry'] != 0 ) {
+		auth_expire();
+		return false;
+	}
+
+	// Get user information required for decrypt + check if valid user
+	if ( !$user = User::get_by('username', $cookie['user']) ) {
+		auth_expire();
+		return false;
+	}
+
+	$fragment = substr($user['password'], 10, 12);
+
+	// Create cookie hashes
+	$key = hash_hmac('sha1', $cookie['user'] .'|'. $fragment .'|'. $cookie['expiry'], KEY_SECRET);
+	$hash = hash_hmac('sha1', $cookie['user'] .'|'. $cookie['expiry'], $key);
+
+	// Check if computed hash matches cookie hash
+	if ( $hash != $cookie['token'] ) {
+		auth_expire();
+		return false;
+	}
+
+	// All checks passed, cookie is valid
+	return $user;
+
+}
+
+function auth_expire() {
+	cookie_expire('mcpehub_a');
+	return;
+}
+
+function auth_set( $username, $remember=false ) {
+
+	// Default expiry time is 3 months for 'remember me' feature
+	$expiry = ( $remember ) ? time()+(60*60*24*30*3) : 0;
+
+	// Get user information required for decrypt + check if valid user
+	if ( !$user = User::get_by('username', $username) )
+		return false;
+
+	$fragment = substr($user['password'], 10, 12);
+
+	// Create cookie hashes
+	$key = hash_hmac('sha1', $username .'|'. $fragment .'|'. $expiry, KEY_SECRET);
+	$hash = hash_hmac('sha1', $username .'|'. $expiry, $key);
+
+	cookie_set('mcpehub_a', $username .'|'. $expiry .'|'. $hash, $expiry);
+	return;
+
+}
+
+
+
+
+
+function username_avail( $username ) {
+
+	if ( !User::get_by('username', $username) )
+		return true;
+
+	return false;
+
+}
+
+function email_avail( $email ) {
+
+	if ( !User::get_by('email', $email) )
+		return true;
+
+	return false;
+
+}

@@ -1,220 +1,202 @@
 <?php
 
 /**
-  * Dashboard
-  *
-  * Allows logged in users to manage their accounts and
-  * submitted content all from one place.
+ * Dashboard
+ *
+ * The user dashboard is used to give users an overview of their
+ * posts and account.
 **/
 
-require_once('core.php');
-show_header('Dashboard', TRUE, ['body_id' => 'dashboard', 'title_main' => 'Dashboard', 'title_sub' => 'My Account']);
+require_once('loader.php');
 
-$error->add('WELCOME',			'<i class="fa fa-star-o"></i> Welcome back to MCPE Hub, <b>'.$user->info('username').'</b>!', 'info');
-$error->add('DELETED',			'<i class="fa fa-trash-o"></i> Your post has been successfully deleted from the website.', 'success');
+$page->auth = true;
+$page->body_id = 'dashboard';
+$page->alt_body = true;
+$page->title_h1 = 'Dashboard';
+$page->title_h2 = 'An overview of your account';
 
-$error->add('P_MISSING',		'You haven\'t made any submissions yet. Contribute to the community by sharing your MCPE content!', 'warning');
-$error->add('P_MISSING_TYPE',	'You haven\'t made any submissions in this category yet. Contribute to the community by sharing your MCPE content!', 'warning');
+$page->header('Dashboard');
 
-if ( isset($_GET['welcome']) ) $error->set('WELCOME');
-elseif ( isset($_GET['deleted']) ) $error->set('DELETED');
-
-$current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
-$post_types = ['maps','seeds','textures','skins','mods','servers'];
-
-// Showing specific type of posts on request.
-if ( isset($_GET['type']) && in_array($_GET['type'], $post_types) ) {
-	
-	$type = $_GET['type'];
-	$url->add('type', $type);
-	
-	$db_where = '`author` = \''.$user->info('id').'\' AND `active` <> \'-2\'';
-	
-	$count	= $db->select('COUNT(*) AS count')->from('content_'.$type)->where($db_where)->fetch()[0]['count'];
-	$offset	= $pagination->build($count, 5, $current_page);
-	
-	$posts	= $db->from('content_'.$type)->limit($offset, 5)->order_by('published DESC')->where($db_where)->fetch();
-	
-	if ( $count == 0 ) $error->set('P_MISSING_TYPE');
-	
-} else { // Show all posts, no post type requested.
-	
-	$q_cols		= 'id,title,slug,author,images,active,views,edited,submitted,featured';
-	$q_where	= '`author`=\''.$user->info('id').'\' AND `active` <> \'-2\'';
-	
-	$posts = $db->query('
-		(SELECT "map"	 	AS type, '.$q_cols.' FROM `content_maps` 	 WHERE '.$q_where.') UNION ALL
-		(SELECT "seed" 		AS type, '.$q_cols.' FROM `content_seeds` 	 WHERE '.$q_where.') UNION ALL
-		(SELECT "texture" 	AS type, '.$q_cols.' FROM `content_textures` WHERE '.$q_where.') UNION ALL
-		(SELECT "skin" 		AS type, '.$q_cols.' FROM `content_skins` 	 WHERE '.$q_where.') UNION ALL
-		(SELECT "mod" 		AS type, '.$q_cols.' FROM `content_mods` 	 WHERE '.$q_where.') UNION ALL
-		(SELECT "server" 	AS type, '.$q_cols.' FROM `content_servers`  WHERE '.$q_where.')
-	')->fetch();
-	
-	$count = count($posts);
-	$offset	= $pagination->build($count, 10, $current_page);
-	
-	if ( $count != 0 ) {
-		
-		$slice = [];
-		foreach ( $posts as $key => $col ) $slice[$key] = $col['submitted'];
-		array_multisort($slice, SORT_DESC, $posts);
-		
-		$posts = array_slice($posts, $offset, 10);
-		
-	} else $error->set('P_MISSING');
-	
-} // End: Show all posts, no post type requested.
-
-$icns = [
-	'map'		=> 'map-marker',
-	'seed'		=> 'leaf',
-	'texture'	=> 'paint-brush',
-	'skin'		=> 'male',
-	'mod'		=> 'puzzle-piece',
-	'server'	=> 'gamepad'
+// Post types for counters
+$types = [
+	'map'		=> 1,
+	'seed'		=> 2,
+	'texture'	=> 3,
+	'skin'		=> 4,
+	'mod'		=> 5,
+	'server'	=> 6
 ];
 
+// Post status codes
 $status = [
-	'-1'	=> '<span class="red"><i class="fa fa-times"></i> Rejected</span>',
-	'0'		=> '<span class="yellow"><i class="fa fa-clock-o"></i> Under Review</span>',
-	'1'		=> '<span class="green"><i class="fa fa-check"></i> Approved</span>'
+	-1		=> 'rejected',
+	0		=> 'pending',
+	1		=> 'approved'
 ];
 
-// Post kind dropdown HTML generation.
-$dd_cats = ['maps', 'seeds', 'textures', 'skins', 'mods', 'servers'];
-$dd_cats_html = '<option value=""></option>';
+// URL parameters for filtering
+$url_type = filter_input(INPUT_GET, 'type');
+$url_page = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT);
 
-if ( isset($_GET['type']) && in_array($_GET['type'], $dd_cats) )
-	$dd_cats_html .= '<option value="'.$url->show('', TRUE).'">All Posts</option>';
+// Showing one specific post type on $_GET request
+if ( !empty($url_type) && array_key_exists($url_type, $types) )
+	$types = [$url_type => $types[$url_type]];
 
-foreach( $dd_cats as $cat ) {
-	$selected = ( isset($_GET['type']) && $_GET['type'] == $cat ) ? ' selected' : NULL;
-	$dd_cats_html .= '<option value="'.$url->show('type='.$cat, TRUE).'"'.$selected.'>'.ucwords($cat).'</option>';
+$query_posts = $query_count = 'SELECT * FROM (';
+
+// Build query statement depending on types being fetched
+foreach( $types as $name => $id ) {
+
+	// Tag for querying the database for download counts
+	$dl_tag = ( $name == 'server' || $name == 'seed' ) ? 'NULL' : 'post.downloads';
+
+	$query_count .= '
+	(
+		SELECT "'.$name.'" AS type, COUNT(*) AS count, GROUP_CONCAT(id) AS ids
+		FROM content_'.$name.' post
+		WHERE post.author_id = 1 AND post.status <> "-2"
+	) UNION ALL';
+
+	$query_posts .= '
+	(
+		SELECT
+			"'.$name.'" AS type,
+			post.id, post.title, post.slug, post.author_id, post.status, post.views, post.submitted,
+			'.$dl_tag.' AS downloads,
+			(SELECT COUNT(*) FROM likes where post_id = post.id AND post_type = '.$id.') AS likes,
+			(SELECT COUNT(*) FROM comments where post_id = post.id AND post_type = '.$id.' AND status = 1) AS comments,
+			(SELECT COUNT(*) FROM content_featured where post_id = post.id AND post_type = '.$id.') AS featured,
+			GROUP_CONCAT(filename ORDER BY img.post_id) AS images
+		FROM content_'.$name.' post
+		LEFT OUTER JOIN content_images img ON
+			img.post_id = post.id AND
+			img.post_type = '.$id.'
+		WHERE post.author_id = 1 AND post.status <> "-2"
+		GROUP BY post.id
+	) UNION ALL';
+
 }
 
-// Status dropdown HTML generation.
-/*$dd_stat = ['approved', 'pending', 'rejected'];
-$dd_stat_html = '<option value=""></option>';
+// Trim off last UNION ALL from statements
+$query_count = rtrim($query_count, ' UNION ALL');
+$query_posts = rtrim($query_posts, ' UNION ALL');
 
-if ( isset($_GET['status']) && in_array($_GET['status'], $dd_stat) )
-	$dd_stat_html .= '<option value="'.$url->show('status=').'">All Posts</option>';
+// Determine # of each type of post
+$query_count = $query_count . ') AS posts';
+$posts_count_db = $db->query($query_count)->fetch();
 
-foreach( $dd_stat as $stat ) {
-	$selected = ( isset($_GET['status']) && $_GET['status'] == $stat ) ? ' selected' : NULL;
-	$dd_stat_html .= '<option value="'.$url->show('status='.$stat).'"'.$selected.'>'.ucwords($stat).'</option>';
-}*/
+$posts_total = 0;
+$posts_count = [];
+$posts_id = [];
 
-
-
-?>
-
-<div id="p-title">
-    <h1>My Submissions</h1>
-    <div class="tabs">
-        <a href="/account" class="bttn mid tip" data-tip="Account Settings"><i class="fa fa-wrench solo"></i></a>
-        <a href="/submit" class="bttn mid green"><i class="fa fa-upload"></i> Submit Content</a>
-    </div>
-</div>
-
-<div class="posts-tools">
-    
-    <select data-placeholder="Post Type" class="chosen redirect"><?php echo $dd_cats_html; ?></select>
-<?php if ( $count != 0 ) $pagination->html(); ?>
-</div>
-
-<?php $error->display(); ?>
-
-<div id="posts">
-    
-<?php
-
-foreach ( $posts as $post ) {
-
-if ( isset($_GET['type']) && in_array($_GET['type'], $post_types) ) {
-	if ( substr($type, -1) == 's' ) $type = substr($type, 0, -1);
-	$post['type'] = $type;
+foreach ( $posts_count_db as $c ) {
+	$posts_count[$c['type']] = $c['count'];
+	$posts_id[ $types[$c['type']] ] = $c['ids'];
+	$posts_total += $c['count'];
 }
 
-$post['author']		= $user->info('username', $post['author']);
-$post['url']		= '/'.$post['type'].'/'.$post['slug'];
+// Grab posts with pagination offset
+$offset = pagination_offset($posts_total, 10, $url_page);
 
-$post['images']		= explode(',', $post['images']);
-$post['image']		= '/uploads/700x80/'.$post['type'].'s/'.urlencode($post['images'][0]);
+$query_posts = $query_posts . ') AS posts ORDER BY submitted DESC LIMIT '.$offset.', 10';
+$posts = $db->query($query_posts)->fetch();
 
-$post['f_html']		= ( $post['featured'] == 1 ) ? '<div class="featured"><i class="fa fa-star fa-fw"></i> Featured</div>' : NULL;
-$post['type_html'] = '<span><i class="fa fa-'.$icns[$post['type']].'"></i> '.ucwords($post['type']).'</span>';
+if ( $posts_total != 0 ) {
 
-// Compute number of likes and comments on post.
-$q_where = '`post` = \''.$post['id'].'\' AND `type` = \''.$post['type'].'\'';
-$count_vars = $db->query('
-	(SELECT "likes"		AS type, COUNT(*) FROM `likes`		WHERE '.$q_where.') UNION ALL
-	(SELECT "comments"	AS type, COUNT(*) FROM `comments`	WHERE '.$q_where.')
-')->fetch();
+	// Get user stats from the database
+	$query_stats = '
+	(
+		SELECT SUM(views) AS views, SUM(downloads) AS downloads FROM (
+			SELECT views, downloads FROM content_map WHERE author_id = 1 AND status <> "-2" UNION ALL
+			SELECT views, downloads FROM content_mod WHERE author_id = 1 AND status <> "-2" UNION ALL
+			SELECT views, 0 AS downloads FROM content_seed WHERE author_id = 1 AND status <> "-2" UNION ALL
+			SELECT views, 0 AS downloads FROM content_server WHERE author_id = 1 AND status <> "-2" UNION ALL
+			SELECT views, downloads FROM content_skin WHERE author_id = 1 AND status <> "-2" UNION ALL
+			SELECT views, downloads FROM content_texture WHERE author_id = 1 AND status <> "-2"
+		) AS stats
+	)';
 
-foreach( $count_vars as $var ) $post[$var['type']] = $var['COUNT(*)'];
+	// Build query for fetching total likes count
+	$query_likes = '';
+	foreach ( $posts_id as $type => $ids ) {
+		if ( !empty($ids) )
+			$query_likes .= 'SELECT COUNT(*) AS likes FROM likes WHERE post_id IN ('.$ids.') AND post_type = '.$type.' UNION ALL ';
+	}
+	$query_likes = rtrim($query_likes, ' UNION ALL ');
+	$query_likes = 'SELECT SUM(likes) AS count FROM ('.$query_likes.') AS likes';
 
-echo '
-<div class="post" data-post="'.$post['id'].'" data-slug="'.$post['slug'].'" data-type="'.$post['type'].'">
-    <div class="img">
-        <div class="status">'.$post['type_html'].$status[$post['active']].'</div>'.$post['f_html'].'
-        <img src="'.$post['image'].'" alt="'.$post['title'].'" width="700" height="80">
-        <div class="over">
-            <h2><a href="'.$post['url'].'">'.$post['title'].'</a></h2>
-        </div>
-    </div>
-    <div class="info">
-        <span><i class="fa fa-thumbs-up"></i> <strong>'.$post['likes'].'</strong> likes</span>
-        <span><i class="fa fa-eye"></i> <strong>'.$post['views'].'</strong> views</span>
-        <span><i class="fa fa-comments"></i> <strong>'.$post['comments'].'</strong> comments</span>
-        <div class="bttn-group">
-            <a href="'.$post['url'].'" class="bttn mid tip" data-tip="View Post"><i class="fa fa-eye solo"></i></a>
-            <a href="#link" class="bttn mid tip actn_link" data-tip="Get Post Link" data-toggle="modal" data-target="#actn_link"><i class="fa fa-link solo"></i></a>
-            <a href="#delete" class="bttn mid tip actn_del" data-tip="Delete Post" data-toggle="modal" data-target="#actn_del"><i class="fa fa-trash-o solo"></i></a>
-            <a href="/edit?post='.$post['id'].'&type='.$post['type'].'" class="bttn mid tip" data-tip="Edit Post"><i class="fa fa-pencil solo"></i></a>
-        </div>
-    </div>
-</div>
-';
+	// Get stat counters from database
+	$stats = $db->query($query_stats)->fetch_first();
+	$likes = $db->query($query_likes)->fetch_first();
 
-} // End post foreach loop.
+} else {
+
+	$stats['views'] = $stats['downloads'] = $likes['count'] = 0;
+
+}
+
+// Get follower count
+$query_followers = 'SELECT COUNT(*) AS count FROM following WHERE user_following = 1';
+$followers = $db->query($query_followers)->fetch_first();
 
 ?>
+<div id="stats">
+	<p><b><?php echo number_format($stats['views']); ?></b> Post Views</p>
+	<p><b><?php echo number_format($likes['count']); ?></b> Post Likes</p>
+	<p><b><?php echo number_format($stats['downloads']); ?></b> Downloads</p>
+	<p><b><?php echo number_format($followers['count']); ?></b> Followers</p>
+</div>
 
-</div>
-<?php if ( $count != 0 ) { ?>
-<?php $pagination->html(); ?>
-<div id="actn_link" class="modal fade modal-md msg">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4><i class="fa fa-link"></i> Post Link</h4>
-                <button class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <form><input type="text" id="link_copy" value="http://mcpehub.com" readonly="true"></form>
-                <a href="/dashboard" class="bttn mid full" data-dismiss="modal">Close Window</a>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="actn_del" class="modal fade modal-sm msg">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4><i class="fa fa-trash-o"></i> Delete Post</h4>
-                <button class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <span class="title"><i class="fa fa-trash-o"></i><p>Are you sure you want to delete this post?</p></span>
-                <div class="bttn-group">
-                    <a href="/delete?post=&type=" class="bttn mid red del">Yes, Delete Post</a>
-                    <a href="/dashboard" class="bttn mid" data-dismiss="modal">Cancel</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+</div></section>
+
+<section id="content">
+	<div class="wrapper">
+<?php if ( $posts_total != 0 ) { // If posts exist ?>
+		<header class="main_title">
+			<h1>My Posts</h1>
+			<nav>
+				<ul>
+					<li><a href="/submit" class="bttn green"><i class="icon-upload"></i> Submit Content</a></li>
+				</ul>
+			</nav>
+		</header>
+		<div id="posts">
+<?php foreach ( $posts as $post ) { echo '
+	<article>
+		<header>
+			<div class="title">
+				<p class="type '.$post['type'].'">'.ucwords($post['type']).'</p>
+				<a href="#"><h1>'.$post['title'].'</h1></a>
+				<div class="status">
+					'.( ($post['featured'] == 1) ? '<span class="featured"><i class="icon-trophy"></i> Featured</span>' : '' ).'
+					<span class="'.$status[$post['status']].'"><i class="icon-'.$status[$post['status']].'"></i> '.ucwords( $status[$post['status']] ).'</span>
+				</div>
+			</div>
+			<img src="/assets/img/DEMO_IMAGE.jpg" alt="" width="700" height="100" class="screen">
+		</header>
+		<div class="info">
+			<div class="stats'.( (!isset($post['downloads'])) ? ' triple' : '' ).'">
+				<span><b>'.number_format($post['views']).'</b> Views</span>
+				'.( (isset($post['downloads'])) ? '<span><b>'.number_format($post['downloads']).'</b> Downloads</span>' : '' ).'
+				<span><b>'.number_format($post['likes']).'</b> Likes</span>
+				<span><b>'.number_format($post['comments']).'</b> Comments</span>
+			</div>
+			<div class="actions">
+				<a href="/'.$post['type'].'/'.$post['slug'].'"><i class="icon-link"></i> Share</a>
+				<a href="/dashboard-edit?post='.$post['id'].'&type='.$post['type'].'"><i class="icon-pencil"></i> Edit Post</a>
+				<a href="/dashboard-delete?post='.$post['id'].'&type='.$post['type'].'" class="right delete"><i class="icon-trash"></i> Delete</a>
+			</div>
+		</div>
+	</article>
+'; } // End post foreach ?>
+		</div>
+<?php } else { // If no posts ?>
+	<div class="fullmessage">
+		<h2>You haven't posted</h2>
+		<p>Contribute to the community by sharing your MCPE content!</p>
+		<a href="/submit" class="bttn green xl">Submit Content Now</a>
+	</div>
 <?php } ?>
-
-<?php show_footer(); ?>
+	</div>
+</section>
+<?php $page->footer(); ?>

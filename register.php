@@ -1,142 +1,132 @@
 <?php
 
 /**
-  * User Registration
+ * User Registration
+ *
+ * This page handles new user registrations for the website.
+ * Sends an activation email to the user upon a successful
+ * form submission.
 **/
 
-require_once('core.php');
-if ( $user->logged_in() ) redirect('/dashboard');
+require_once('loader.php');
 
-show_header('Register', FALSE, ['body_id' => 'register', 'body_class' => 'boxed wide']);
+// If user is already logged in, redirect to dashboard
+if ( logged_in() ) redirect('/dashboard');
 
-if ( !empty($_POST) ) {
-	
-	$error->add('MISSING',		'You must fill in all the inputs in the form.');
-	
-	$error->add('U_LENGTH',		'Your username must be 5-20 characters long.');
-	$error->add('U_INVALID',	'Your username must start with a letter and contain "A-Z, 0-9, _" characters only.');
-	$error->add('U_USED',		'Your username is already in use by another member.');
-	
-	$error->add('E_LENGTH',		'Your email cannot be longer than 50 characters.');
-	$error->add('E_INVALID',	'Your email isn\'t in valid email format.');
-	$error->add('E_USED',		'Your email is already in use by another member.');
-	
-	$error->add('P_LENGTH',		'Your password must be 6-30 characters long.');
-	$error->add('P_USERNAME',	'Your password can\'t be the same as your username.');
-	$error->add('P_MATCH',		'Your passwords didn\'t match.');
-	
-	$f['username']		= isset( $_POST['username'] )	? $db->escape($_POST['username']) : NULL;
-	$f['email']			= isset( $_POST['email'] )		? $db->escape($_POST['email']) : NULL;
-	$f['password']		= isset( $_POST['password'] )	? $db->escape($_POST['password']) : NULL;
-	$f['password2']		= isset( $_POST['password2'] )	? $_POST['password2'] : NULL;
-	
-	// Check if any inputs missing.
-	if ( empty($f['username']) || empty($f['email']) || empty($f['password']) || empty($f['password2']) ) $error->set('MISSING');
+$page->body_id = 'register';
+$page->body_class = 'boxed';
+
+$page->header('Register');
+
+$username			= input_POST('username');
+$email				= input_POST('email');
+$password			= input_POST('password');
+$password_repeat	= input_POST('password-repeat');
+
+if ( submit_POST() ) {
+
+	$errors->add('MISSING',		'You must fill in all inputs in the form.');
+
+	$errors->add('U_INVALID',	'Username must start with a letter and contain "a-z, 0-9, _" characters only.');
+	$errors->add('U_LENGTH',	'Username must be 5-20 characters long.');
+	$errors->add('U_USED',		'Username is already in use by another member.');
+
+	$errors->add('E_INVALID',	'Email you entered isn\'t a valid email address.');
+	$errors->add('E_LENGTH',	'Email cannot be more than 50 characters long.');
+	$errors->add('E_USED',		'Email is already in use by another member.');
+
+	$errors->add('P_USERNAME',	'Password can\'t contain your username.');
+	$errors->add('P_LENGTH',	'Password must be 6-30 characters long.');
+	$errors->add('P_MATCH',		'Your passwords didn\'t match.');
+
+	// Check if any form fields missing.
+	if ( empty($username) || empty($email) || empty($password) || empty($password_repeat) )
+		$errors->force('MISSING');
+
 	else {
-		
-		// USERNAME field checks.
-		if ( !empty($f['username']) ) {
-			if		( !$form->length($f['username'], 20, 5) )	$error->append('U_LENGTH');
-			elseif	( !$form->alphanum($f['username']) )		$error->append('U_INVALID');
-			elseif	( $user->check_username($f['username']) )	$error->append('U_USED');
-		}
-		
-		// EMAIL field checks.
-		if ( !empty($f['email']) ) {
-			if		( !$form->length($f['email'], 50) )			$error->append('E_LENGTH');
-			elseif	( !is_email($f['email']) )					$error->append('E_INVALID');
-			elseif	( $user->check_email($f['email']) )			$error->append('E_USED');
-		}
-		
-		// PASSWORD field checks.
-		if ( !empty($f['password']) ) {
-			if		( !$form->length($f['password'], 30, 6) )	$error->append('P_LENGTH');
-			elseif	( $f['password'] == $f['username'] )		$error->append('P_USERNAME');
-			elseif	( $f['password'] != $f['password2'] )		$error->append('P_MATCH');
-		}
-		
-		if ( !$error->exists() ) {
-			
-			// Select a random avatar for user.
-			$avatar = ['cow', 'creeper', 'pig', 'skeleton', 'zombie', 'zombiepig'];
-			$avatar = 'default_'.$avatar[rand(0,5)].'.png';
-			
-			// Generate activation code.
-			$token = random_str(15);
-			
-			$u = [
-				'username'			=> $f['username'],
-				'password'			=> password_hash($f['password'], PASSWORD_DEFAULT),
-				'email'				=> $f['email'],
-				'joined'			=> time_now(),
-				'last_ip'			=> current_ip(),
-				'avatar'			=> $avatar,
-				'activate_token'	=> $token
+
+		// Username field checks.
+		if 		( $username != sanitize_user($username) )	$errors->append('U_INVALID');
+		elseif	( !length($username, 20, 5) )				$errors->append('U_LENGTH');
+		elseif	( !username_avail($username) )				$errors->append('U_USED');
+
+		// Email field checks.
+		if 		( !is_email($email) )						$errors->append('E_INVALID');
+		elseif	( !length($email, 50) )						$errors->append('E_LENGTH');
+		elseif	( !email_avail($email) )					$errors->append('E_USED');
+
+		// Password field checks.
+		if 		( !length($password, 30, 6) )				$errors->append('P_LENGTH');
+		elseif	( strpos($password, $username) !== false )	$errors->append('P_USERNAME');
+		elseif	( $password != $password_repeat )			$errors->append('P_MATCH');
+
+		if ( !$errors->exist() ) {
+
+			// Generate activation token.
+			$token = random_string(15);
+
+			// Pick an avatar for the new user.
+			$avatar = ['cow', 'creeper', 'enderman', 'pig', 'skeleton', 'slime', 'zombie', 'zombiepig'];
+			$avatar = 'default_' . $avatar[rand(0,7)] . '.png';
+
+			// Insert user into the database.
+			$insert_user = [
+				'username'		=> $username,
+				'email'			=> $email,
+				'password'		=> password_hash($password, PASSWORD_DEFAULT),
+				'status'		=> 0,
+				'permission'	=> 0,
+				'avatar'		=> $avatar,
+				'joined'		=> $now,
+				'last_ip'		=> filter_input(INPUT_SERVER, 'REMOTE_ADDR')
 			];
-			
-			// Insert user to database.
-			$db->insert('users', $u);
-			
-			// Send welcome email to user with activation instructions.
-			$e_body	 = "<p>Welcome to MCPE Hub! We can't wait to see what you have to contribute to our growing community, but first you need to activate your account.</p>\n";
-			$e_body .= "<p>Activate your account by clicking on <a href=\"".MAINURL."activate?code={$token}\">this link</a>.</p>\n";
-			$e_body .= "<p>Once you've activated your account, you'll be able to publish content, comment and participate in our growing community.</p>\n";
-			$e_body .= "<p>Thanks for joining our community!</p><p>- MCPE Hub Team</p>\n";
-			$e_body .= "<p><i>Follow us on Twitter: <a href=\"http://twitter.com/MCPEHubNetwork\">@MCPEHubNetwork</a> for news, updates, giveaways and more!</i></p>\n";
-			$e_body .= "<div class=\"bottom\">If you have issues opening the link above, use the following link: <a href=\"".MAINURL."activate?code={$token}\">".MAINURL."activate?code={$token}</a></div>\n";
-			
-			$email = $mail->format($e_body);
-			$email = $mail->send($f['email'], $f['username'], 'Activate Your Account', $email);
-			
+			$user_id = $db->insert('users', $insert_user);
+
+			// Create activation token for user.
+			$insert_activation = [
+				'user_id'		=> $user_id,
+				'token'			=> $token,
+				'status'		=> 0
+			];
+			$db->insert('activations', $insert_activation);
+
+			// Create profile for user.
+			$db->insert('users_profiles', ['user_id' => $user_id]);
+
+			// Create Smarty instance for email.
+			$smarty = new Smarty;
+
+			$smarty->assign('username', $username);
+			$smarty->assign('link', SITEURL.'/activate?token='.$token);
+
+			// Generate and send email.
+			$sender = new Email( $email, 'Activate Your Account', $username );
+			$sender->add_smarty($smarty)->set_template('activate')->send();
+
 			redirect('/welcome');
-			
-		} // End: No errors found in inputs.
-		
-	} // End: Check if any inputs missing
-	
-} // End: POST submission.
+
+		} // END: Check if any form fields missing.
+
+	} // END: Check if any form fields missing.
+
+}
 
 ?>
-
-<div class="header"><h1>Create an Account</h1></div>
-<div class="body">
-    <div class="features">
-        <span><i class="fa fa-upload"></i> Upload Content</span>
-        <span><i class="fa fa-comments"></i> Join Discussions</span>
-        <span><i class="fa fa-thumbs-up"></i> Like Posts</span>
-        <span><i class="fa fa-magic"></i> + Much More!</span>
-    </div>
-    <form action="/register" method="POST">
-        <?php echo $error->display(); ?>
-        <div class="half">
-            <div class="group">
-                <div class="label"><label for="username">Username</label></div>
-                <input type="text" name="username" id="username" value="<?php $form->post_val('username'); ?>">
-            </div>
-            <div class="group">
-                <div class="label"><label for="email">Email Address</label></div>
-                <input type="text" name="email" id="email" value="<?php $form->post_val('email'); ?>">
-            </div>
-        </div>
-        <div class="half last">
-            <div class="group">
-                <div class="label"><label for="password">Password</label></div>
-                <input type="password" name="password" id="password">
-            </div>
-            <div class="group">
-                <div class="label"><label for="password2">Repeat Password</label></div>
-                <input type="password" name="password2" id="password2">
-            </div>
-        </div>
-        <div class="submit">
-            <button type="submit" class="bttn big green"><i class="fa fa-check"></i> Create Account</button>
-        </div>
-    </form>
+<div id="logo"><a href="/">MCPE Hub</a></div>
+<div id="body">
+	<div id="content">
+		<h1>Create an account</h1>
+		<?php $errors->display(); ?>
+		<form action="/register" method="POST">
+			<input type="text" name="username" id="username" maxlength="20" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>" spellcheck="false">
+			<input type="text" name="email" id="email" maxlength="50" placeholder="Email address" value="<?php echo htmlspecialchars($email); ?>" spellcheck="false">
+			<input type="password" name="password" id="password" maxlength="30" placeholder="Password">
+			<input type="password" name="password-repeat" id="password-repeat" maxlength="30" placeholder="Repeat password">
+			<button type="submit">Create Account</button>
+			<p class="accept">You accept our <a href="/tos" target="_blank">terms</a> and <a href="/privacy" target="_blank">privacy policy</a></p>
+		</form>
+	</div>
+	<div id="footer"><a href="/login">I already have an account</a></div>
 </div>
-<div class="footer">
-    <a href="/login" class="bttn mini">Already Have An Account?</a>
-</div>
-
-<?php if ( empty( $f['username'] ) ) { ?><script>window.onload = function() { document.getElementById('username').focus(); };</script><?php } ?>
-
-<?php show_footer(); ?>
+<?php if ( empty($username) ) { ?><script>window.onload = function() { document.getElementById('username').focus(); };</script><?php } ?>
+<?php $page->footer(); ?>

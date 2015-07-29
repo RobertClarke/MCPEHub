@@ -1,174 +1,290 @@
 <?php
 
 /**
-  
-  * Error Class
-  *
-  * Allows for easy management of error messages.
-  *
-  * add();			Creates an error.
-  * display();		Displays error message(s).
-  * set();			Sets an error to display.
-  * append();		Appends an error to the errors list.
-  * force();		Forces a specific error.
-  * unforce();		Unlocks the error class, if locked.
-  * reset();		Resets selected & forced variables.
-  * clear();		Same as reset(); except clears $errors array.
-  * isset();		Returns boolean if an error is set or not.
-  
+ * Error Class
+ *
+ * An object containing an error message and all necessary
+ * options & values. Combined with the ErrorContainer class,
+ * allows for errors to be easily created & displayed.
 **/
 
 class Error {
-	
+
+	public $id = '';
+	public $text = '';
+	public $type = '';
+
+	/**
+	 * Constructor
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int|string $id Unique error identifier
+	 * @param string $text Error message text
+	 * @param string $type Type of error message
+	**/
+	public function __construct( $id, $text, $type='error' ) {
+
+		$this->id = $id;
+		$this->text = $text;
+
+		// Check if valid type
+		if ( in_array($type, ['error', 'warning', 'success', 'info']) )
+			$this->type = $type;
+		else
+			$this->type = 'error';
+
+	}
+
+}
+
+/**
+ * Error Container
+ *
+ * This class acts as a wrapper for any errors displayed
+ * around the website. It allows to display & combine
+ * error messages for simple & easy display.
+**/
+
+class ErrorContainer {
+
 	private $errors = [];
-	private $forced = FALSE;
-	public $selected;
-	
-	// Creating an error.
-	public function add($id, $msg, $type='error') {
-		
-		// Make sure type is valid.
-		$type = ( in_array( $type, array('error','warning','success','info') ) ) ? $type : 'error';
-		
-		$error = array(
-			'id'	=> $id,
-			'msg'	=> $msg,
-			'type'	=> $type
-		);
-		
-		// Push out error to array.
-		$this->errors[$id] = $error;
-		
-		return;
-		
+
+	private $selected;
+	private $type;
+	private $forced = false;
+
+	/**
+	 * Creates and adds an error to the container
+	 *
+	 * Note: use add_object() to add an Error object if it already exists.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $id The unique idenitifier for the error message
+	 * @param string $text The message to display for the error
+	 * @param string $type The type of error (error|warning|success|info)
+	**/
+	public function add( $id, $text, $type='error' ) {
+		$this->errors[$id] = new Error($id, $text, $type);
+		return $this;
 	}
-	
-	// Display error messages.
-	public function display() {
-		
-		// Show messages only if there's at least one message to show.
-		if ( empty( $this->selected ) ) return FALSE;
-		
-		// For single error display:
-		if ( !is_array( $this->selected ) ) {
-			
-			$e = $this->errors[$this->selected];
-			
-			echo '<div class="alert '.$e['type'].'">';
-			echo $e['msg'];
-			echo '</div>';
-			
-		}
-		
-		// For multiple error display:
-		else {
-			
-			echo '<div class="alert '.$this->errors[end($this->selected)]['type'].'"><ul class="list">';
-			
-			foreach ( $this->selected as $error ) {
-				
-				$e = $this->errors[$error];
-				
-				echo '<li>'.$e['msg'].'</li>';
-				
-			}
-			
-			echo '</ul></div>';
-			
-		}
-		
-		return;
-		
+
+	/**
+	 * Adds an Error object to the container
+	 *
+	 * Note: use add() to add to the container if an Error object doesn't already exist.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param Error $error The error object to add to the container
+	**/
+	public function add_object( $error ) {
+		if ( is_error($error) )
+			$this->errors[$error->id] = $error;
+
+		return $this;
 	}
-	
-	// Set the error to display.
-	public function set($id) {
-		
-		// Prevent setting an error if one is already forced.
-		if ( $this->forced ) return FALSE;
-		
-		// Check if error exists.
-		if ( array_key_exists( $id, $this->errors ) ) {
-			
-			// Set the error, overwrites old errors.
+
+	/**
+	 * Sets the message to display in the container
+	 *
+	 * Note: running set() after running an append() call will change the selected
+	 * value from an array to a string, effectively forgetting all other errors.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $id The unique identifier of the error to display (optional)
+	 * @return boolean Returns false if error couldn't be set
+	**/
+	public function set( $id='' ) {
+
+		if ( $this->forced )
+			return false;
+
+		// If no $id given, assume setting the last added error.
+		if ( empty($id) && !empty($this->errors) ) {
+			$this->selected = end($this->errors)->id;
+			return $this;
+		}
+
+		// Check if error id exists.
+		else if ( array_key_exists( $id, $this->errors ) ) {
 			$this->selected = $id;
-			return;
-			
-		} else return FALSE;
-		
+			return $this;
+		}
+
+		else return false;
+
 	}
-	
-	// Appends an error (useful for displaying multiple messages at once).
-	public function append($id) {
-		
-		// Prevent adding an error if one is already forced.
-		if ( $this->forced ) return FALSE;
-		
-		// Check if error exists.
+
+	/**
+	 * Appends an error message to the error container
+	 *
+	 * Note: if no errors exist in the container, it will simply set the first
+	 * error to the container, just like set() does.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $id The unique identifier of the error to display
+	 * @return boolean Returns false if error couldn't be set
+	**/
+	public function append( $id ) {
+
+		if ( $this->forced )
+			return false;
+
+		// Check if error id exists.
 		if ( array_key_exists( $id, $this->errors ) ) {
-			
-			// Only append if an error is already set.
-			if ( !empty( $this->selected ) ) {
-				
-				if ( !is_array( $this->selected ) ) $this->selected = [$this->selected];
-				
-				// Only append if current error isn't the same.
-				if ( !in_array( $id, $this->selected ) ) {
-					
+
+			// If no errors set yet, set the first error.
+			if ( empty( $this->selected ) )
+				$this->set($id);
+
+			// Error is already set, append onto the error list.
+			else {
+
+				// Convert non-array variable into an array, if needed.
+				if ( !is_array( $this->selected ) )
+					$this->selected = [$this->selected];
+
+				// Append only if current error isn't the same as appended.
+				if ( !in_array( $id, $this->selected ) )
 					array_push( $this->selected, $id );
-					
-				}
-				
+
 			}
-			
-			// No errors set, just set this as first error.
-			else $this->set($id);
-			
-		} else return FALSE;
-		
+
+			return $this;
+
+		}
+		else return false;
+
 	}
-	
-	// Forces an error. All other set()'s will be ignored.
-	public function force($id) {
-		
-		// Check if error exists.
+
+	/**
+	 * Forces the container to display a specific error
+	 *
+	 * This will prevent any other errors from displaying, until the unforce() function
+	 * is run to reset the container's forced state.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $id The unique identifier of the error to display (optional)
+	 * @return boolean Returns false if error couldn't be set
+	**/
+	public function force( $id='' ) {
+
+		// If no $id given, assume setting the last added error.
+		if ( empty($id) && !empty($this->errors) ) {
+			$this->forced = true;
+			$this->selected = end($this->errors)->id;
+			return $this;
+		}
+
+		// Check if error id exists.
 		if ( array_key_exists( $id, $this->errors ) ) {
-			
-			// Set and force the error, overwrites old errors.
+			$this->forced = true;
 			$this->selected = $id;
-			$this->forced = TRUE;
-			return;
-			
-		} else return FALSE;
-		
+			return $this;
+		}
+		else return false;
+
 	}
-	
-	// Unforces errors. This unlocks the error class, if locked.
+
+	/**
+	 * Resets the forced state of the container
+	 *
+	 * @since 3.0.0
+	**/
 	public function unforce() {
-		$this->forced = FALSE;
-		return;
+		$this->forced = false;
+		return $this;
 	}
-	
-	// Resets all set variables. Does NOT delete errors.
+
+	/**
+	 * Displays error messages within the container
+	 *
+	 * Note: if there is more than one error, an HTML list will be created
+	 * for all error messages.
+	 *
+	 * @since 3.0.0
+	**/
+	public function display() {
+
+		if ( empty($this->selected) )
+			return false;
+
+		// Single error display
+		if ( !is_array($this->selected) ) {
+
+			$error = $this->errors[$this->selected];
+			echo '<div class="alert '.$error->type.'">'.$error->text.'</div>';
+
+		}
+
+		// Multiple error display (array format)
+		else {
+
+			// Populate HTML list of errors.
+			$list = '';
+			foreach ( $this->selected as $e ) {
+				$list .= '<li>'.$this->errors[$e]->text.'</li>';
+			}
+
+			// Last error added defines the error type.
+			$type = $this->errors[ end($this->selected) ]->type;
+
+			echo '<div class="alert '.$type.'"><ul>'.$list.'</ul></div>';
+
+		}
+
+	}
+
+	/**
+	 * Returns whether or not error(s) are selected in the container
+	 *
+	 * @since 3.0.0
+	**/
+	public function exist() {
+		return ( !empty($this->selected) ? true : false );
+	}
+
+	/**
+	 * Resets the containers forced & selected values
+	 *
+	 * Note: use clear() to reset the container AND clear all errors.
+	 *
+	 * @since 3.0.0
+	**/
 	public function reset() {
-		$this->forced = FALSE;
-		$this->selected = NULL;
-		return;
+		$this->forced = false;
+		$this->selected = null;
+		return $this;
 	}
-	
-	// Clears the errors class and resets the variables.
+
+	/**
+	 * Resets the containers forced & selected values and clears all errors
+	 *
+	 * @since 3.0.0
+	**/
 	public function clear() {
 		$this->errors = [];
 		$this->reset();
-		return;
+		return $this;
 	}
-	
-	// Returns boolean if an error is set or not.
-	public function exists() {
-		if ( empty($this->selected) ) return FALSE;
-		return TRUE;
-	}
-	
+
 }
 
-?>
+/**
+ * Error object check
+ *
+ * Checks whether or not the given $check value is an instance of Error.
+ *
+ * @since 3.0.0
+ *
+ * @param Object $string The object to check the instance of
+ * @return boolean True if is Error object, false otherwise
+**/
+function is_error( $check ) {
+	return ( $check instanceof Error );
+}
