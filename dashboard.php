@@ -63,9 +63,9 @@ foreach( $types as $name => $id ) {
 			"'.$name.'" AS type,
 			post.id, post.title, post.slug, post.author_id, post.status, post.views, post.submitted,
 			'.$dl_tag.' AS downloads,
-			(SELECT COUNT(*) FROM likes where post_id = post.id AND post_type = '.$id.') AS likes,
-			(SELECT COUNT(*) FROM comments where post_id = post.id AND post_type = '.$id.' AND status = 1) AS comments,
-			(SELECT COUNT(*) FROM content_featured where post_id = post.id AND post_type = '.$id.') AS featured,
+			(SELECT COUNT(*) FROM likes WHERE post_id = post.id AND post_type = '.$id.') AS likes,
+			(SELECT COUNT(*) FROM comments WHERE post_id = post.id AND post_type = '.$id.' AND status = 1) AS comments,
+			(SELECT COUNT(*) FROM content_featured WHERE post_id = post.id AND post_type = '.$id.') AS featured,
 			GROUP_CONCAT(filename ORDER BY img.post_id) AS images
 		FROM content_'.$name.' post
 		LEFT OUTER JOIN content_images img ON

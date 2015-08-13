@@ -8,7 +8,6 @@
  * and scripts around the website.
 **/
 
-
 /**
  * Sanitizes usernames for database checks
  *
@@ -27,8 +26,6 @@ function alphanum( $input ) {
 	if ( preg_match('/^[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)*$/', $input) ) return true;
 	else return false;
 }
-
-
 
 
 
@@ -136,6 +133,11 @@ function is_email($value) {
 }
 
 
+function is_url($url) {
+	return ( filter_var($url, FILTER_VALIDATE_URL) === false ) ? false : true;
+}
+
+
 function random_string($length=10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $randomString = '';
@@ -160,61 +162,33 @@ function length($input, $max, $min=0) {
 }
 
 
+function generate_slug( $str, $replace=array(), $delimiter='-' ) {
+	if( !empty($replace) )
+		$str = str_replace((array)$replace, ' ', $str);
 
-/*
-class Pagination {
+	$clean = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
+	$clean = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $clean);
+	$clean = strtolower(trim($clean, '-'));
+	$clean = preg_replace("/[\/_|+ -]+/", $delimiter, $clean);
 
-	private $html = '';
+	$clean = ltrim( $clean, '-' );
+	$clean = rtrim( $clean, '-' );
 
-	function __construct($url) {
-		$this->url = $url;
-	}
+	return $clean;
+}
 
-	// Builds pagination, outputs offset.
-	public function build($total_posts, $per_page, $current_page='') {
+function clean_slug( $slug ) {
+	global $db;
 
-		//$total_pages = ceil($total_posts / $per_page);
+	$slug = strtolower($db->escape($slug));
 
-		//$page = ( !empty($current_page) && is_numeric($current_page) ) ? (int)$current_page : 1;
+	// Remove dashes from beginning and end of slug
+	if ( substr( $slug, -1) == '-' )
+		$slug = rtrim( $slug, '-' );
 
-		//if ( $page > $total_pages ) $page = $total_pages;
-		//if ( $page < 1 ) $page = 1;
+	if ( substr( $slug, 0, 1 ) == '-' )
+		$slug = ltrim( $slug, '-');
 
-		// Set page number through URL class.
-		if ( $page != 1 ) $this->url->add('page', $page);
+	return $slug;
 
-		//$offset = ($page - 1) * $per_page;
-
-		$range = 2;
-
-		if ( $total_pages > 1 ) {
-
-			// Back link.
-			if ( $page>1 ) $this->html .= '<a href="'.$this->url->show('page='.($page-1)).'" class="bttn"><i class="fa fa-angle-double-left solo"></i></a>';
-
-			for ( $i = ($page - $range); $i < ($page + $range + 1); $i++ ) {
-
-				if ( ($i > 0) && ($i <= $total_pages) ) {
-
-					if ( $i == $page ) $this->html .= '<a href="'.$this->url->show('page='.$i).'" class="bttn active">'.$i.'</a>';
-					else $this->html .= '<a href="'.$this->url->show('page='.$i).'" class="bttn">'.$i.'</a>';
-
-				}
-
-			}
-
-			// Forward link.
-			if ($page != $total_pages) $this->html .= '<a href="'.$this->url->show('page='.($page+1)).'" class="bttn"><i class="fa fa-angle-double-right solo"></i></a>';
-
-		}
-
-		return $offset;
-
-	}
-
-	// Echoes HTML version of pagination links.
-	public function html($container_class='') {
-		if ( !empty($this->html) ) echo '<div class="pagination bttn-group '.$container_class.'"><div class="pages">'.$this->html.'</div></div>';
-	}
-
-}*/
+}

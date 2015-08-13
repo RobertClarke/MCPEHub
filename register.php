@@ -119,7 +119,7 @@ if ( submit_POST() ) {
 		<?php $errors->display(); ?>
 		<form action="/register" method="POST">
 			<input type="text" name="username" id="username" maxlength="20" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>" spellcheck="false">
-			<input type="text" name="email" id="email" maxlength="50" placeholder="Email address" value="<?php echo htmlspecialchars($email); ?>" spellcheck="false">
+			<input type="email" name="email" id="email" maxlength="50" placeholder="Email address" value="<?php echo htmlspecialchars($email); ?>" spellcheck="false">
 			<input type="password" name="password" id="password" maxlength="30" placeholder="Password">
 			<input type="password" name="password-repeat" id="password-repeat" maxlength="30" placeholder="Repeat password">
 			<button type="submit">Create Account</button>

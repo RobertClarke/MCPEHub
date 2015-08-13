@@ -4,13 +4,14 @@
 		<meta charset="utf-8">
 		<title><?php echo $this->title; ?></title>
 
-		<link rel="stylesheet" href="./assets/css/main.css" type="text/css">
+		<link rel="stylesheet" href="/assets/css/main.css" type="text/css">
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300" type="text/css">
 
-<link rel="stylesheet" href="https://i.icomoon.io/public/temp/24ab602770/UntitledProject1/style.css">
+
+<link rel="stylesheet" href="https://i.icomoon.io/public/temp/55b6c1444e/UntitledProject1/style.css">
 
 
-		<link rel="shortcut icon" href="http://mcpehub.com/favicon.png">
+		<link rel="shortcut icon" href="/favicon.png">
 		<meta name="description" content="<?php echo $this->seo_desc; ?>">
 		<meta name="keywords" content="<?php echo $this->seo_tags; ?>">
 		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
@@ -107,6 +108,7 @@
 						echo '<h1>'. $this->title_h1 .'</h1>';
 
 					if ( !empty($this->title_h2) ) echo '<h2>'.$this->title_h2.'</h2>';
+					if ( !empty($this->title_bttn) ) echo '<div class="bttn-container">'.$this->title_bttn.'</div>';
 
 				?>
 			</div>

@@ -2,7 +2,8 @@ Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
-ErrorDocument 404 http://mcpehub.com/404
+ErrorDocument 404 /404.php
+ErrorDocument 410 /410.php
 
 # www to non www
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
@@ -75,7 +76,7 @@ RewriteRule ^user/([^/]+)?$ profile.php?user=$1 [L]
 RewriteRule ^uploads/([0-9]+)x([0-9]+)/([A-Za-z0-9-]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image.php?src=../uploads/posts/$3/$4.$5&w=$1&h=$2 [L]
 
 # mcpehub.com/avatar/250x250/image.ext
-RewriteRule ^avatar/([0-9]+)x([0-9]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image?src=/uploads/avatars/$3.$4&w=$1&h=$2 [L]
+RewriteRule ^avatar/([0-9]+)x([0-9]+)/(.*)\.(j2pg|jpeg|png|gif)$ /core/image?src=/uploads/avatars/$3.$4&w=$1&h=$2 [L]
 
 # Externally redirect direct client requests for .php files to non-.php URLs
 rewriteCond %{THE_REQUEST} ^GET\ /([^/]+/)*[^.]+\.php(\?[^\ ]*)?\ HTTP/

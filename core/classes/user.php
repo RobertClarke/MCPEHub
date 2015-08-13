@@ -109,7 +109,6 @@ class User {
 			return false;
 
 		cache_add_user($user);
-
 		return $user;
 
 	}
@@ -249,10 +248,19 @@ function authenticate( $username, $password ) {
  *
  * @since 3.0.0
  *
- * @return User|Error Objects depending on success/fail
+ * @param string $field Field to return if logged in user exists
+ * @return User|bool false depending on success/fail
 **/
-function logged_in() {
-	return auth_validate();
+function logged_in( $field='' ) {
+
+	$user = auth_validate();
+
+	if ( $user !== false && !empty($field) && array_key_exists($field, $user) )
+		return $user[$field];
+
+	else
+		return $user;
+
 }
 
 /**
@@ -287,6 +295,19 @@ function logout() {
 	auth_expire();
 	redirect('/login?m=logout');
 
+}
+
+
+/**
+ * Returns whether or not current user is activated
+ *
+ * @since 3.0.0
+ *
+ * @return boolean Whether or not the user is activated
+**/
+function activated() {
+	global $u;
+	return ( $u->data['status'] == 1 ) ? true : false;
 }
 
 

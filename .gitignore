@@ -10,3 +10,5 @@
 /core/templates_c/*
 
 /config.codekit
+
+/.codekit-cache/

@@ -43,4 +43,8 @@ $page = new Page;
 
 require_once( CORE . 'classes/email.php' );
 
+require_once( CORE . 'classes/form.php' );
+
 require_once( CORE . 'smarty/Smarty.class.php' );
+
+require_once( CORE . 'classes/post.php' );

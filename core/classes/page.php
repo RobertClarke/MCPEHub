@@ -56,6 +56,9 @@ class Page {
 	// Google+ Platform API
 	public $api_google	= false;
 
+	// Enqueued scripts
+	public $scripts = [];
+
 	/**
 	 * Constructor
 	 *
@@ -118,6 +121,28 @@ class Page {
 	**/
 	public function footer() {
 		include_once('core/structure/footer.php');
+	}
+
+	/**
+	 * Enqueue a given script to the footer of a page
+	 *
+	 * $script must be the filename, EXCLUDING the .js ending of the
+	 * enqueued script. Accepts an array for multiple scripts.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string|array $script String or array of scripts to include (without .js extensions)
+	**/
+	public function enqueue( $script ) {
+
+		if ( !is_array($script) )
+			$this->scripts[] = $script;
+
+		else
+			$this->scripts = array_merge( $this->scripts, $script );
+
+		return;
+
 	}
 
 }
