@@ -8,7 +8,7 @@
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300" type="text/css">
 
 
-<link rel="stylesheet" href="https://i.icomoon.io/public/temp/4891d40a53/UntitledProject1/style.css">
+<link rel="stylesheet" href="https://i.icomoon.io/public/temp/4af000c83f/UntitledProject1/style.css">
 
 
 		<link rel="shortcut icon" href="/favicon.png">
