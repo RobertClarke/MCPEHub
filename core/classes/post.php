@@ -137,11 +137,11 @@ function post_type_code( $key='' ) {
 	else {
 
 		$codes = [];
-		$codes_db = $db->select(['key', 'value'])->from('content_types')->fetch();
+		$codes_db = $db->select(['code', 'value'])->from('content_types')->fetch();
 
 		// Sort and store values in cache
 		foreach ( $codes_db as $val ) {
-			$codes[ $val['value'] ] = $val['key'];
+			$codes[ $val['value'] ] = $val['code'];
 		}
 
 		cache_add( 'post_type_codes', $codes, 'core' );
@@ -177,7 +177,7 @@ function get_categories( $post_type='' ) {
 
 		// Sort and store values in cache
 		foreach ( $codes_db as $val ) {
-			$codes[ $val['post_type'] ][ $val['key'] ] = $val;
+			$codes[ $val['post_type'] ][ $val['code'] ] = $val;
 		}
 
 		cache_add( 'post_categories', $codes, 'core' );
