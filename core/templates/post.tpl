@@ -9,7 +9,7 @@
 	<section class="slider">
 		<ul class="bxslider">
 {foreach from=$images item=img}
-			<li><img src="/uploads/700x300/maps/{$img}" alt="" width="700" height="300"></li>
+			<li><img src="/uploads/700x300/{$type}/{$img}" alt="" width="700" height="300"></li>
 {/foreach}
 		</ul>
 	</section>
@@ -35,7 +35,7 @@
 		</div>
 	</section>
 	<section class="description">
-		<h2>Map Description</h2>
+		<h2>{$type|capitalize} Description</h2>
 		{$description}
 	</section>
 	<section class="comments">

@@ -22,7 +22,7 @@ $page->header('Forgot Password');
 if ( input_GET('success') !== null )
 	$errors->add('SUCCESS', 'We sent you an email with instructions on how to reset your password.', 'success')->force();
 
-$email = input_POST('email');
+$email = $db->escape(input_POST('email'));
 
 // Check number of times user has requested for the day.
 $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');

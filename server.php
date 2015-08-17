@@ -3,7 +3,8 @@
 /**
  * Server Post Page
  *
- * This is the page used to display individual server posts.
+ * Any changes to the output of this content page are to be made
+ * in /core/classes/post.php in the PostPage class.
 **/
 
 require_once('loader.php');

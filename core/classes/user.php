@@ -69,6 +69,8 @@ class User {
 	public static function get_by( $key, $value ) {
 		global $db;
 
+		$value = $db->escape($value);
+
 		if ( $key == 'id' ) {
 			if ( !is_numeric($value) || $value < 1 )
 				return false;
@@ -178,7 +180,7 @@ function get_user_permissions() {
 }
 
 /**
- * User authentication
+ * User login
  *
  * Can authenticate a user using the credentials passed through an array
  * containing 'username', 'password' and 'remember' (optional) values.
@@ -190,12 +192,17 @@ function get_user_permissions() {
  * @return User|Error Objects depending on success/fail
 **/
 function login( $login=[] ) {
+	global $db;
 
 	// $login empty, use $_POST values instead
 	if ( empty($login) ) {
 		$login['username'] = filter_input(INPUT_POST, 'username', FILTER_UNSAFE_RAW);
 		$login['password'] = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
 		$login['remember'] = filter_input(INPUT_POST, 'remember', FILTER_VALIDATE_BOOLEAN);
+	}
+
+	foreach ( $login as $input => $val ) {
+		$login[$input] = $db->escape($val);
 	}
 
 	$user = authenticate($login['username'], $login['password']);
@@ -207,11 +214,18 @@ function login( $login=[] ) {
 
 }
 
-
-
-
-
-
+/**
+ * User authentication
+ *
+ * Authenticates a user given a $username and $password value. Used in
+ * the login(); function to check the validity of a username/password.
+ *
+ * @since 3.0.0
+ *
+ * @param string $username Users usernames
+ * @param string $password Users password
+ * @return User|Error Objects depending on success/fail
+**/
 function authenticate( $username, $password ) {
 
 	if ( empty($username) || empty($password) )
@@ -236,9 +250,6 @@ function authenticate( $username, $password ) {
 	return new User($user['id']);
 
 }
-
-
-
 
 /**
  * Login check
@@ -285,8 +296,14 @@ function login_redirect() {
 	}
 }
 
-
-
+/**
+ * Logout
+ *
+ * Will log out the currrent user and redirect them to the login page.
+ * If no user is logged in, will return false.
+ *
+ * @since 3.0.0
+**/
 function logout() {
 
 	if ( !logged_in() )
@@ -296,7 +313,6 @@ function logout() {
 	redirect('/login?m=logout');
 
 }
-
 
 /**
  * Returns whether or not current user is activated
@@ -310,12 +326,25 @@ function activated() {
 	return ( $u->data['status'] == 1 ) ? true : false;
 }
 
-
-
+/**
+ * Returns the current authentication cookie from $_COOKIE
+ *
+ * @since 3.0.0
+ *
+ * @return string|boolean depending on success/fail from filter_input()
+**/
 function auth_cookie() {
 	return filter_input(INPUT_COOKIE, 'mcpehub_a');
 }
 
+/**
+ * Parses the current auth cookie found in the users browser. If it's
+ * invalid or missing parts, returns false.
+ *
+ * @since 3.0.0
+ *
+ * @return array|boolean Dependong on success/fail, will return array or false
+**/
 function auth_parse() {
 
 	$cookie = auth_cookie();
@@ -337,6 +366,15 @@ function auth_parse() {
 
 }
 
+/**
+ * Validates the current cookie in the users browser to see if it's
+ * valid and genuine. Expires the users authentication if the cookie
+ * is invalid or fradulent.
+ *
+ * @since 3.0.0
+ *
+ * @return User|boolean Dependong on success/fail, will return User object or false
+**/
 function auth_validate() {
 
 	$cookie = auth_cookie();
@@ -374,11 +412,23 @@ function auth_validate() {
 
 }
 
+/**
+ * Expires the current auth cookie, logging the user out.
+ *
+ * @since 3.0.0
+**/
 function auth_expire() {
 	cookie_expire('mcpehub_a');
 	return;
 }
 
+/**
+ * Sets the current auth cookie, done when authenticating users.
+ *
+ * @since 3.0.0
+ *
+ * @return boolean false on failiure, if user not found in database
+**/
 function auth_set( $username, $remember=false ) {
 
 	// Default expiry time is 3 months for 'remember me' feature
@@ -399,10 +449,13 @@ function auth_set( $username, $remember=false ) {
 
 }
 
-
-
-
-
+/**
+ * Returns whether or not a username is available
+ *
+ * @since 3.0.0
+ *
+ * @return boolean Whether or not the username is available in database
+**/
 function username_avail( $username ) {
 
 	if ( !User::get_by('username', $username) )
@@ -412,6 +465,13 @@ function username_avail( $username ) {
 
 }
 
+/**
+ * Returns whether or not an email is available
+ *
+ * @since 3.0.0
+ *
+ * @return boolean Whether or not the email is available in database
+**/
 function email_avail( $email ) {
 
 	if ( !User::get_by('email', $email) )

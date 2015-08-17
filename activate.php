@@ -23,7 +23,7 @@ switch( input_GET('m') ) {
 }
 
 // Get token from $_GET.
-$token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
+$token = $db->escape(filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING));
 
 // Token missing, display error.
 if ( $token == null && input_GET('m') != 'success' )

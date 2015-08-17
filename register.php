@@ -18,9 +18,9 @@ $page->body_class = 'boxed';
 
 $page->header('Register');
 
-$username			= input_POST('username');
-$email				= input_POST('email');
-$password			= input_POST('password');
+$username			= $db->escape(input_POST('username'));
+$email				= $db->escape(input_POST('email'));
+$password			= $db->escape(input_POST('password'));
 $password_repeat	= input_POST('password-repeat');
 
 if ( submit_POST() ) {
@@ -80,6 +80,11 @@ if ( submit_POST() ) {
 				'joined'		=> $now,
 				'last_ip'		=> filter_input(INPUT_SERVER, 'REMOTE_ADDR')
 			];
+
+			foreach ( $insert_user as $input => $val ) {
+				$insert_user[$input] = $db->escape($val);
+			}
+
 			$user_id = $db->insert('users', $insert_user);
 
 			// Create activation token for user.

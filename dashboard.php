@@ -18,14 +18,7 @@ $page->title_h2 = 'An overview of your account';
 $page->header('Dashboard');
 
 // Post types for counters
-$types = [
-	'map'		=> 1,
-	'seed'		=> 2,
-	'texture'	=> 3,
-	'skin'		=> 4,
-	'mod'		=> 5,
-	'server'	=> 6
-];
+$types = post_type_code();
 
 // Post status codes
 $status = [
@@ -48,7 +41,7 @@ $query_posts = $query_count = 'SELECT * FROM (';
 foreach( $types as $name => $id ) {
 
 	// Tag for querying the database for download counts
-	$dl_tag = ( $name == 'server' || $name == 'seed' ) ? 'NULL' : 'post.downloads';
+	$dl_tag = ( in_array($name, ['server', 'seed', 'blog']) ) ? 'NULL' : 'post.downloads';
 
 	$query_count .= '
 	(
@@ -71,7 +64,7 @@ foreach( $types as $name => $id ) {
 		LEFT OUTER JOIN content_images img ON
 			img.post_id = post.id AND
 			img.post_type = '.$id.'
-		WHERE post.author_id = 1 AND post.status <> "-2"
+		WHERE post.author_id = '.logged_in('id').' AND post.status <> "-2"
 		GROUP BY post.id
 	) UNION ALL';
 

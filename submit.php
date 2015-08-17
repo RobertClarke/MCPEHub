@@ -259,6 +259,11 @@ if ( $type !== null && activated() ) {
 			// Replace category with category ID from DB
 			$submit['category'] = category_type_code($submit['category'], $type);
 
+			// Escape every input being submitted
+			foreach ( $submit as $input => $val ) {
+				$submit[$input] = $db->escape($val);
+			}
+
 			$id = $db->insert('content_'.$type, $submit);
 
 			// Build query for inserting images into their table

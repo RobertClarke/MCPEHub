@@ -19,7 +19,7 @@ $page->body_class = 'boxed';
 $page->header('Reset Password');
 
 // Get token from $_GET.
-$token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
+$token = $db->escape(filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING));
 
 // Token missing, display error.
 if ( $token == null )
