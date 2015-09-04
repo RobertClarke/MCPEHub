@@ -119,6 +119,14 @@ _atrk_opts = { atrk_acct:"urwtl1agWBr1N8", domain:"mcpehub.com",dynamic: true};
 </script>
 <noscript><img src="https://d5nxst8fruw4z.cloudfront.net/atrk.gif?account=urwtl1agWBr1N8" style="display:none" height="1" width="1" alt="" /></noscript>
     
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-3736311321196703",
+    enable_page_level_ads: true
+  });
+</script>
+
 </head>
 <body<?php echo $pg['body_id'] . $pg['body_class']; ?>>
 
