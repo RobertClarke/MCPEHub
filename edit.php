@@ -216,7 +216,7 @@ else {
 				'class_cont'	=> 'half',
 				'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Versions',
 				'placeholder'	=> 'Click to select versions',
-				'options'		=> ['0.11.0', '0.10.0', '0.9.0', '0.8.0'],
+				'options'		=> ['0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
 				
 				'friendly_name' => 'Versions',
 				'required'		=> TRUE
@@ -227,7 +227,7 @@ else {
 				'class_cont'	=> 'half',
 				'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Version',
 				'placeholder'	=> 'Click to select version',
-				'options'		=> ['0.10.0', '0.9.0', '0.8.0'],
+				'options'		=> ['0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
 				
 				'friendly_name' => 'Version',
 				'required'		=> TRUE
