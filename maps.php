@@ -200,6 +200,6 @@ echo '
 
 <?php if ( $count != 0 ) $pagination->html(); ?>
 
-<p class="tracking">Tracking <?php echo number_format($count); ?> Maps</p>
+<p class="tracking">Tracking <?php echo number_format($count); ?> MCPE Maps</p>
 
 <?php show_footer(); ?>
