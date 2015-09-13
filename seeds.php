@@ -187,6 +187,6 @@ echo '
 
 <?php if ( $count != 0 ) $pagination->html(); ?>
 
-<p class="tracking">Tracking <?php echo number_format($count); ?> Seeds</p>
+<p class="tracking">Tracking <?php echo number_format($count); ?> MCPE Seeds</p>
 
 <?php show_footer(); ?>
