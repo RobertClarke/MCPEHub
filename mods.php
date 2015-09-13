@@ -10,7 +10,7 @@ $pg = [
 	'title_main'	=> 'Mods',
 	'title_sub'		=> 'Minecraft PE',
 	'seo_desc'		=> 'Complete Minecraft PE mods make it easy to change the look and feel of your game. Updated often with the best mods for MCPE.',
-	'seo_keywords'	=> 'minecraft pe mods, minecraft pe, mcpe'
+	'seo_keywords'	=> 'minecraft pe mods, mcpe mods, minecraft pe, mcpe'
 ];
 
 show_header('Minecraft PE Mods', FALSE, $pg);
