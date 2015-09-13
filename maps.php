@@ -10,7 +10,7 @@ $pg = [
 	'title_main'	=> 'Maps',
 	'title_sub'		=> 'Minecraft PE',
 	'seo_desc'		=> 'Collection of the best Minecraft PE Maps and game worlds for download including adventure, survival, and parkour maps.',
-	'seo_keywords'	=> 'minecraft pe maps, survival, parkour, adventure, minecraft pe, mcpe'
+	'seo_keywords'	=> 'minecraft pe maps, mcpe maps, minecraft pe, mcpe'
 ];
 
 // Set allowed categories.
