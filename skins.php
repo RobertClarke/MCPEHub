@@ -10,7 +10,7 @@ $pg = [
 	'title_main'	=> 'Skins',
 	'title_sub'		=> 'Minecraft PE',
 	'seo_desc'		=> 'All kinds Minecraft PE skins, to change the look of your Minecraft PE player in your game.',
-	'seo_keywords'	=> 'minecraft pe skins, skins, minecraft pe, mcpe'
+	'seo_keywords'	=> 'minecraft pe skins, mcpe skins, minecraft pe, mcpe'
 ];
 
 // Set allowed categories.
