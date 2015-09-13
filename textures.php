@@ -10,7 +10,7 @@ $pg = [
 	'title_main'	=> 'Texture Packs',
 	'title_sub'		=> 'Minecraft PE',
 	'seo_desc'		=> 'All kinds of colorful Minecraft PE texture packs, to change the look of Minecraft PE in your game.',
-	'seo_keywords'	=> 'minecraft pe texture packs, textures, minecraft pe, mcpe'
+	'seo_keywords'	=> 'minecraft pe texture packs, mcpe texture packs, minecraft pe, mcpe'
 ];
 
 // Set allowed categories.
