@@ -10,7 +10,7 @@ $pg = [
 	'title_main'	=> 'Seeds',
 	'title_sub'		=> 'Minecraft PE',
 	'seo_desc'		=> 'MCPE\'s largest collection of Minecraft PE seeds. The most up to date list of MCPE seeds in Minecraft.',
-	'seo_keywords'	=> 'minecraft pe seeds, flat seeds, minecraft pe, mcpe'
+	'seo_keywords'	=> 'minecraft pe seeds, mcpe seeds, minecraft pe, mcpe'
 ];
 
 // Set allowed categories.
