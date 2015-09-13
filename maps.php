@@ -9,7 +9,7 @@ require_once('core.php');
 $pg = [
 	'title_main'	=> 'Maps',
 	'title_sub'		=> 'Minecraft PE',
-	'seo_desc'		=> 'Collection of the best Minecraft PE Maps and game worlds for download including adventure, survival, and parkour maps.',
+	'seo_desc'		=> 'Collection of the best Minecraft PE Maps and game worlds for download including adventure, survival, and parkour MCPE maps.',
 	'seo_keywords'	=> 'minecraft pe maps, mcpe maps, minecraft pe, mcpe'
 ];
 
