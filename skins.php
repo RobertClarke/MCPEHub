@@ -9,7 +9,7 @@ require_once('core.php');
 $pg = [
 	'title_main'	=> 'Skins',
 	'title_sub'		=> 'Minecraft PE',
-	'seo_desc'		=> 'All kinds Minecraft PE skins, to change the look of your Minecraft PE player in your game. Find new MCPE skins to use today.',
+	'seo_desc'		=> 'All kinds Minecraft PE skins, to change the look of your Minecraft PE player in your game. Find new MCPE skins to use in-game.',
 	'seo_keywords'	=> 'minecraft pe skins, mcpe skins, minecraft pe, mcpe'
 ];
 
