@@ -3,14 +3,8 @@
 	<head>
 		<meta charset="utf-8">
 		<title><?php echo $this->title; ?></title>
-
 		<link rel="stylesheet" href="/assets/css/main.css" type="text/css">
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300" type="text/css">
-
-
-<link rel="stylesheet" href="https://i.icomoon.io/public/temp/4af000c83f/UntitledProject1/style.css">
-
-
 		<link rel="shortcut icon" href="/favicon.png">
 		<meta name="description" content="<?php echo $this->seo_desc; ?>">
 		<meta name="keywords" content="<?php echo $this->seo_tags; ?>">

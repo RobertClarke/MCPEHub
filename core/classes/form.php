@@ -127,14 +127,15 @@ class Form {
 class Input {
 
 	// Default options for newly created inputs.
-	public $id				= '';
+	public $id				= null;
 	public $type			= 'text';
-	public $label			= '';
-	public $placeholder		= '';
+	public $label			= null;
+	public $placeholder		= null;
 	public $maxlength		= 0;
 	public $autocomplete	= false;
 	public $spellcheck		= false;
 	public $options			= [];
+	public $value			= null;
 
 	/**
 	 * Constructor
@@ -154,8 +155,7 @@ class Input {
 		if ( !empty($options) ) {
 
 			// Array of fields to fetch into this Input object.
-			$fields = ['type', 'label', 'placeholder', 'maxlength', 'autocomplete', 'spellcheck', 'options'];
-
+			$fields = ['type', 'label', 'placeholder', 'maxlength', 'autocomplete', 'spellcheck', 'options', 'value'];
 
 			foreach ( $fields as $field ) {
 				if ( isset($options[$field]) && !empty($options[$field]) )
@@ -194,16 +194,22 @@ class Input {
 
 				$assoc = array_keys($this->options) !== range(0, count($this->options) - 1) ? true : false;
 
+				// Determine whether or not to display POST value or given value
+				if ( input_POST($this->id) !== null )
+					$val = input_POST($this->id);
+				else
+					$val = $this->value;
+
 				// If $options array is associative
 				if ( $assoc ) {
-					foreach ( $this->options as $option => $val )
-						$result .= '<option value="'.$option.'"'.( ( (input_POST($this->id) !== null) && $option == input_POST($this->id) ) ? ' selected' : '' ).'>'.$val.'</option>';
+					foreach ( $this->options as $option => $label )
+						$result .= '<option value="'.$option.'"'.( ( $option == $val ) ? ' selected' : '' ).'>'.$label.'</option>';
 				}
 
 				// If $options array is sequential
 				else {
 					foreach ( $this->options as $option )
-						$result .= '<option value="'.$option.'"'.( ( (input_POST($this->id) !== null) && $option == input_POST($this->id) ) ? ' selected' : '' ).'>'.$option.'</option>';
+						$result .= '<option value="'.$option.'"'.( ( $option == $val ) ? ' selected' : '' ).'>'.$option.'</option>';
 				}
 
 				$result .= '</select>';
@@ -213,8 +219,14 @@ class Input {
 			// Default input type (text)
 			default:
 
+				// Determine whether or not to display POST value or given value
+				if ( input_POST($this->id) !== null )
+					$val = input_POST($this->id);
+				else
+					$val = $this->value;
+
 				$result .= '<input type="'.$this->type.'" name="'.$this->id.'" id="'.$this->id.'" ';
-				$result .= 'value="'.htmlspecialchars(input_POST($this->id)).'" ';
+				$result .= 'value="'.htmlspecialchars($val).'" ';
 				$result .= 'placeholder="'.$this->placeholder.'"';
 				$result .= ( $this->maxlength > 0 ) ? ' maxlength="'.$this->maxlength.'"' : '';
 				$result .= ( $this->autocomplete ) ? ' autocomplete="off"' : '';

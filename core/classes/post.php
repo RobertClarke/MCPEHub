@@ -90,10 +90,6 @@ class PostPage {
 
 		$page->canonical = $post['url'];
 
-		echo '<pre>';
-		print_r($post);
-		echo '</pre>';
-
 		$page->header($post['title'] .' | Minecraft PE '.ucwords($type).' on MCPE Hub', true);
 
 		$smarty = new Smarty;
@@ -141,7 +137,7 @@ function post_type_code( $key='' ) {
 	else {
 
 		$codes = [];
-		$codes_db = $db->select(['`key`', 'value'])->from('content_types')->fetch();
+		$codes_db = $db->select(['key', 'value'])->from('content_types')->fetch();
 
 		// Sort and store values in cache
 		foreach ( $codes_db as $val ) {
@@ -249,4 +245,46 @@ function get_category_by_id( $id, $post_type ) {
 **/
 function get_category_name( $id, $post_type ) {
 	return get_category_by_id($id, $post_type)['name'];
+}
+
+/**
+ * Returns an array containing MCPE versions fetched from the database
+ *
+ * @since 3.0.0
+ *
+ * @return array of versions containing the version number as key, label as value
+**/
+function get_versions() {
+	global $db;
+
+	// Check if already in cache
+	if ( $versions = cache_get( 'mcpe_versions', 'core' ) )
+		return $versions;
+
+	// Codes don't exist in cache, store them for future use
+	else {
+
+		$versions = [];
+		$versions_db = $db->select(['version'])->from('mcpe_versions')->fetch();
+
+		if ( !$versions_db )
+			return false;
+
+		foreach ( $versions_db as $ver ) {
+			$versions[ $ver['version'] ] = 'Minecraft PE '. $ver['version'];
+		}
+
+		// Order the array with the newest version first
+		natsort($versions);
+		$versions = array_reverse($versions);
+
+		// Add "latest" to the newest version
+		$versions[ key($versions) ] .= ' (Latest)';
+
+		cache_add( 'mcpe_versions', $versions, 'core' );
+
+		return $versions;
+
+	}
+
 }

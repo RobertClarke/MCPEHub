@@ -67,7 +67,7 @@ if ( $type !== null && activated() ) {
 			];
 		break;
 		case 'mod':
-			$inputs = ['link', 'category', 'version', 'device'];
+			$inputs = ['link', 'category', 'version', 'platform'];
 			$rules = [
 				'We do not accept stolen content. You must be the creator of the mod or have permission from the original creator to post it to our website.',
 				'You must provide screenshots of either the mod itself in-game, and/or a custom banner that represents the content in some way.',
@@ -110,13 +110,13 @@ if ( $type !== null && activated() ) {
 			'type'			=> 'select',
 			'label'			=> '<i class="icon-version"></i> Designed For',
 			'placeholder'	=> 'Click to select version',
-			'options'		=> ['0.12.0' => 'Minecraft PE 0.12.0 (Latest)', '0.11.0' => 'Minecraft PE 0.11.0', '0.10.0' => 'Minecraft PE 0.10.0', '0.9.0' => 'Minecraft PE 0.9.0']
+			'options'		=> get_versions()
 		],
-		'device' => [
+		'platform' => [
 			'type'			=> 'select',
-			'label'			=> '<i class="icon-device"></i> Compatible Platform',
-			'placeholder'	=> 'Click to select devices',
-			'options'		=> ['iOS', 'Android']
+			'label'			=> '<i class="icon-platform"></i> Compatible Platform',
+			'placeholder'	=> 'Click to select platforms',
+			'options'		=> [1 => 'iOS', 2 => 'Android']
 		],
 		'seed' => [
 			'label'			=> 'Seed Code',
@@ -232,24 +232,6 @@ if ( $type !== null && activated() ) {
 			// Unset images array since we store that in a separate table
 			unset($submit['uploaded']);
 
-			// Special db rules for specific post types
-			switch ( $type ) {
-				case 'mod':
-
-					// Add device table value to $submit
-					if ( $submit['device'] == 'iOS' )
-						$submit['platform_ios'] = 1;
-					else
-						$submit['platform_android'] = 1;
-
-					unset($submit['device']);
-
-				break;
-				case 'skin':
-					// *** Special dl link ***
-				break;
-			}
-
 			// Add extra values before pushing ito database
 			$submit['slug']			= $slug;
 			$submit['status']		= 0;
@@ -292,15 +274,11 @@ if ( $type !== null && activated() ) {
 	<?php $errors->display(); ?>
 	<form action="/submit?type=<?php echo $type; ?>" method="POST" id="submission">
 		<section>
-			<input type="text" name="title" id="title" value="" placeholder="<?php echo ucwords($type); ?> Title" autocomplete="off" value="<?php htmlspecialchars(input_POST('title')); ?>">
+			<input type="text" name="title" id="title" placeholder="<?php echo ucwords($type); ?> Title" autocomplete="off" value="<?php echo htmlspecialchars(input_POST('title')); ?>">
 			<textarea name="description" id="description" class="tinymce-submission tinymce" placeholder="Enter some text describing your <?php echo $type; ?> here"><?php if ( isset($submit['description']) ) echo $submit['description']; ?></textarea>
 		</section>
 		<section class="uploader">
-
-
 			<div class="dropzone">
-
-
 				<div class="dz-message">
 					Tap here to upload screenshots
 					<span class="note">You must provide at least one screenshot for your <?php echo $type; ?>.</span>
@@ -322,54 +300,7 @@ if ( $type !== null && activated() ) {
 						</div>
 					</div>
 				</div>
-
-
-			<div id="actions" class="row">
-
-			  <div class="col-lg-7">
-				<!-- The fileinput-button span is used to style the file input field as button -->
-				<!--<span class="btn btn-success fileinput-button">
-					<i class="glyphicon glyphicon-plus"></i>
-					<span>Add files...</span>
-				</span>-->
-				<!--<button type="submit" class="btn btn-primary start">
-					<i class="glyphicon glyphicon-upload"></i>
-					<span>Start upload</span>
-				</button>-->
-				<!--<button type="reset" class="btn btn-warning cancel">
-					<i class="glyphicon glyphicon-ban-circle"></i>
-					<span>Cancel upload</span>
-				</button>
-
-			<div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-
-
-
-			-->
-			  </div>
-
-			  <div class="col-lg-5">
-				<!-- The global file processing state -->
-				<span class="fileupload-process">
-				  <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-					<div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-				  </div>
-				</span>
-			  </div>
-
 			</div>
-
-
-
-
-
-
-
-
-
-		</div>
-
-
 		</section>
 		<section class="inputs">
 			<?php Form::show_inputs($form, $inputs); ?>

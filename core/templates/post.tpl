@@ -15,7 +15,7 @@
 	</section>
 	<section class="info">
 		<div class="author">
-			<div class="avatar"><a href="/user/{$author}"><img src="/avatar/64x64/{$avatar}" alt="" width="64" height="64"></a></div>
+			<div class="avatar"><a href="/user/{$author}"><img src="/avatar/64x64/{$avatar}" alt="{$author}" width="64" height="64"></a></div>
 			<p><a href="/user/{$author}">{$author}</a></p>
 			<a href="#" class="bttn mini"><i class="icon-follow"></i> Follow</a>
 		</div>
@@ -39,9 +39,32 @@
 		{$description}
 	</section>
 	<section class="comments">
-		<B>COMMENTS GO HERE</B>
+		<header>
+			<h3>{$comments} Comments</h3>
+			<a href="#" class="bttn green"><i class="icon-plus"></i> Leave a Comment</a>
+		</header>
+		<article>
+			<div class="author">
+				<div class="avatar"><a href="/user/{$author}"><img src="/avatar/48x48/{$avatar}" alt="{$author}" width="48" height="48"></a></div>
+				<p><a href="/user/{$author}">{$author}</a></p>
+				<p class="posted">6 hours ago</p>
+			</div>
+			<div class="comment">
+				<p>Hello world!</p>
+			</div>
+		</article>
+		<article class="poster">
+			<div class="author">
+				<div class="avatar"><a href="/user/{$author}"><img src="/avatar/48x48/{$avatar}" alt="{$author}" width="48" height="48"></a></div>
+				<p><a href="/user/{$author}">{$author}</a></p>
+				<p class="posted">6 hours ago</p>
+			</div>
+			<div class="comment">
+				<p>Hello world!</p>
+			</div>
+		</article>
 	</section>
 	<section class="report">
-		<B>REPORT BUTTON HERE</B>
+		<a href="#" class="bttn mini"><i class="icon-flag"></i> Report {$type|capitalize}</a>
 	</section>
 </article>

@@ -59,7 +59,8 @@ foreach( $types as $name => $id ) {
 			(SELECT COUNT(*) FROM likes WHERE post_id = post.id AND post_type = '.$id.') AS likes,
 			(SELECT COUNT(*) FROM comments WHERE post_id = post.id AND post_type = '.$id.' AND status = 1) AS comments,
 			(SELECT COUNT(*) FROM content_featured WHERE post_id = post.id AND post_type = '.$id.') AS featured,
-			GROUP_CONCAT(filename ORDER BY img.post_id) AS images
+			GROUP_CONCAT(filename ORDER BY img.post_id) AS images,
+			(SELECT filename FROM content_images WHERE post_id = post.id AND post_type = '.$id.' AND featured = 1 LIMIT 1) AS image_featured
 		FROM content_'.$name.' post
 		LEFT OUTER JOIN content_images img ON
 			img.post_id = post.id AND
@@ -94,6 +95,16 @@ $offset = pagination_offset($posts_total, 10, $url_page);
 $query_posts = $query_posts . ') AS posts ORDER BY submitted DESC LIMIT '.$offset.', 10';
 $posts = $db->query($query_posts)->fetch();
 
+foreach ( $posts as $id => $post ) {
+
+	$post['images'] = explode(',', $post['images']);
+
+	// Add featured image, if missing or not specified in database
+	if ( !isset($post['image_featured']) )
+		$posts[$id]['image_featured'] = $post['images'][0];
+
+}
+
 if ( $posts_total != 0 ) {
 
 	// Get user stats from the database
@@ -122,11 +133,8 @@ if ( $posts_total != 0 ) {
 	$stats = $db->query($query_stats)->fetch_first();
 	$likes = $db->query($query_likes)->fetch_first();
 
-} else {
-
+} else
 	$stats['views'] = $stats['downloads'] = $likes['count'] = 0;
-
-}
 
 // Get follower count
 $query_followers = 'SELECT COUNT(*) AS count FROM following WHERE user_following = 1';
@@ -159,13 +167,13 @@ $followers = $db->query($query_followers)->fetch_first();
 		<header>
 			<div class="title">
 				<p class="type '.$post['type'].'">'.ucwords($post['type']).'</p>
-				<a href="#"><h1>'.$post['title'].'</h1></a>
+				<a href="/'.$post['type'].'/'.$post['slug'].'"><h1>'.$post['title'].'</h1></a>
 				<div class="status">
 					'.( ($post['featured'] == 1) ? '<span class="featured"><i class="icon-trophy"></i> Featured</span>' : '' ).'
 					<span class="'.$status[$post['status']].'"><i class="icon-'.$status[$post['status']].'"></i> '.ucwords( $status[$post['status']] ).'</span>
 				</div>
 			</div>
-			<img src="/assets/img/DEMO_IMAGE.jpg" alt="" width="700" height="100" class="screen">
+			<img src="/uploads/700x100/'.$post['type'].'/'.$post['image_featured'].'" alt="'.$post['title'].'" width="700" height="100" class="screen">
 		</header>
 		<div class="info">
 			<div class="stats'.( (!isset($post['downloads'])) ? ' triple' : '' ).'">
@@ -176,8 +184,8 @@ $followers = $db->query($query_followers)->fetch_first();
 			</div>
 			<div class="actions">
 				<a href="/'.$post['type'].'/'.$post['slug'].'"><i class="icon-link"></i> Share</a>
-				<a href="/dashboard-edit?post='.$post['id'].'&type='.$post['type'].'"><i class="icon-pencil"></i> Edit Post</a>
-				<a href="/dashboard-delete?post='.$post['id'].'&type='.$post['type'].'" class="right delete"><i class="icon-trash"></i> Delete</a>
+				<a href="/edit?post='.$post['id'].'&type='.$post['type'].'"><i class="icon-pencil"></i> Edit Post</a>
+				<a href="/delete?post='.$post['id'].'&type='.$post['type'].'" class="right delete"><i class="icon-trash"></i> Delete</a>
 			</div>
 		</div>
 	</article>

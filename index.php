@@ -101,73 +101,20 @@ foreach ( $types as $type => $id ) {
 		$post = ( count($posts[$type]) > 1 ) ? $posts[$type][ rand(1, count($posts[$type]))-1 ] : $posts[$type][0];
 
 ?>
-		<a href="#"><article class="<?php echo $type; echo ( $type == 'map' ) ? ' big' : ''; ?>">
-			<header>
-				<p class="type">Featured <?php echo ucwords($type); ?></p>
-				<h1><?php echo $post['title']; ?></h1>
-			</header>
-			<div class="info">
-				<p><img src="/avatar/20x20/<?php echo $post['author_avatar']; ?>" alt="<?php echo $post['author']; ?>" width="20" height="20"> <?php echo $post['author']; ?></p>
-				<p class="likes"><i class="icon-thumbs-up"></i> <?php echo $post['likes']; ?></p>
-			</div>
-			<img src="/uploads/<?php echo ( $type == 'map' ) ? '500x280' : '240x140'; ?>/<?php echo $type; ?>/<?php echo $post['image_featured']; ?>" alt="<?php echo $post['title']; ?>" width="<?php echo ( $type == 'map' ) ? '500' : '240'; ?>" height="<?php echo ( $type == 'map' ) ? '280' : '140'; ?>" class="screen">
-		</article></a>
-<?php } } ?><!--
-		<a href="#"><article class="map big">
-			<header>
-				<p class="type">Featured Map</p>
-				<h1>8 villages with stronghold</h1>
-			</header>
-			<div class="info">
-				<p><img src="/assets/img/DEMO_AVATAR.jpg" alt="" width="20" height="20"> anatolie</p>
-				<p class="likes"><i class="icon-thumbs-up"></i> 35</p>
-			</div>
-			<img src="/assets/img/DEMO_IMAGE.jpg" alt="" width="500" height="280" class="screen">
-		</article></a>
-		<a href="#"><article class="seed">
-			<header>
-				<p class="type">Featured Seed</p>
-				<h1>HydroLandMCPE</h1>
-			</header>
-			<div class="info">
-				<p><img src="/assets/img/DEMO_AVATAR.jpg" alt="" width="20" height="20"> anatolie</p>
-				<p class="likes"><i class="icon-thumbs-up"></i> 35</p>
-			</div>
-			<img src="/assets/img/DEMO_IMAGE.jpg" alt="" width="250" height="140" class="screen">
-		</article></a>
-		<a href="#"><article class="texture">
-			<header>
-				<p class="type">Featured Texture</p>
-				<h1>Adventure Time Craft BETA 5</h1>
-			</header>
-			<div class="info">
-				<p><img src="/assets/img/DEMO_AVATAR.jpg" alt="" width="20" height="20"> anatolie</p>
-				<p class="likes"><i class="icon-thumbs-up"></i> 35</p>
-			</div>
-			<img src="/assets/img/DEMO_IMAGE.jpg" alt="" width="250" height="140" class="screen">
-		</article></a>
-		<a href="#"><article class="mod">
-			<header>
-				<p class="type">Featured Mod</p>
-				<h1>Power Pills Addon!</h1>
-			</header>
-			<div class="info">
-				<p><img src="/assets/img/DEMO_AVATAR.jpg" alt="" width="20" height="20"> anatolie</p>
-				<p class="likes"><i class="icon-thumbs-up"></i> 35</p>
-			</div>
-			<img src="/assets/img/DEMO_IMAGE.jpg" alt="" width="250" height="140" class="screen">
-		</article></a>
-		<a href="#"><article class="server">
-			<header>
-				<p class="type">Featured Server</p>
-				<h1>FuzionCraft PVP Server!</h1>
-			</header>
-			<div class="info">
-				<p><img src="/assets/img/DEMO_AVATAR.jpg" alt="" width="20" height="20"> anatolie</p>
-				<p class="likes"><i class="icon-thumbs-up"></i> 35</p>
-			</div>
-			<img src="/assets/img/DEMO_IMAGE.jpg" alt="" width="250" height="140" class="screen">
-		</article></a>-->
+		<a href="/<?php echo $type.'/'.$post['slug']; ?>">
+			<article class="<?php echo $type; echo ( $type == 'map' ) ? ' big' : ''; ?>">
+				<header>
+					<p class="type">Featured <?php echo ucwords($type); ?></p>
+					<h1><?php echo $post['title']; ?></h1>
+				</header>
+				<div class="info">
+					<p><img src="/avatar/20x20/<?php echo $post['author_avatar']; ?>" alt="<?php echo $post['author']; ?>" width="20" height="20"> <?php echo $post['author']; ?></p>
+					<p class="likes"><i class="icon-thumbs-up"></i> <?php echo $post['likes']; ?></p>
+				</div>
+				<img src="/uploads/<?php echo ( $type == 'map' ) ? '500x280' : '240x140'; ?>/<?php echo $type; ?>/<?php echo $post['image_featured']; ?>" alt="<?php echo $post['title']; ?>" width="<?php echo ( $type == 'map' ) ? '500' : '240'; ?>" height="<?php echo ( $type == 'map' ) ? '280' : '140'; ?>" class="screen">
+			</article>
+		</a>
+<?php } } ?>
 	</div>
 </div>
 <div id="ad-homepage">
@@ -175,10 +122,6 @@ foreach ( $types as $type => $id ) {
 		<div class="g-ad"></div>
 	</div>
 </div>
-
-
-
-
 <?php
 
 $i = 0; // Counter for applying "alt" classes
