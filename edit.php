@@ -24,6 +24,21 @@ if ( $type == null || empty($id) || !is_numeric($id) ) {
 }
 
 $post = $db->from('content_'.$type)->where(['id' => $id])->where_not_in('status', ['-2'])->fetch_first();
+$type_id = post_type_code($type);
+
+$query = '
+	SELECT
+		post.*,
+		GROUP_CONCAT(filename ORDER BY img.post_id) AS images
+	FROM content_'.$type.' post
+	LEFT OUTER JOIN content_images img ON
+		img.post_id = post.id AND
+		img.post_type = '.$type_id.'
+	WHERE post.id = '.$id.' AND post.status <> "-2"
+	GROUP BY post.id
+';
+
+$post = $db->query($query)->fetch_first();
 
 $title = 'Edit ' . (($type !== null) ? ucwords($type) : 'Post');
 
@@ -57,7 +72,14 @@ else {
 
 		// If AJAX request is being made, die with the results for the post.
 		if ( $ajax ) {
-			die(json_encode(['status' => 'success', 'details' => 'Yay']));
+
+			$post['images'] = explode(',', $post['images']);
+
+			foreach( $post['images'] as $id => $img )
+				$post['images'][$id] = ['name' => $img, 'size' => 1];
+
+			die(json_encode( ['status' => 'success', 'images' => json_encode($post['images'])] ));
+
 		}
 
 		$editable = true;
@@ -190,31 +212,43 @@ else {
 	<?php $errors->display(); ?>
 <?php if ( isset($editable) ) { // If post is editable/valid ?>
 
-
-
-	<div id="qwerty">
-
-	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script>
 
 $(function() {
 
 	$.ajax({
-		url: 'http://anatolies-macbook-pro.local:5757/edit?post=1&type=mod&fetch_thumbs=1',
+		url: '/edit?post=<?php echo $id; ?>&type=<?php echo $type; ?>&fetch_thumbs=1',
 		dataType: 'json',
     	success: function(data, textStatus, jqXHR) {
 
-			if ( data.status === 'error' ) {
+			// Successful return from AJAX
+			if ( data.status === 'success' ) {
+
+				data.images = JSON.parse(data.images);
+
+				$.each(data.images, function(key, value) {
+
+					var file = {
+						name: value.name,
+						size: value.size,
+						type: 'image/jpeg',
+						status: Dropzone.ADDED,
+						url: 'uploads/posts/<?php echo $type; ?>/'+value.name
+					};
+
+					dropzone.emit("addedfile", file);
+					dropzone.emit("thumbnail", file, 'uploads/posts/<?php echo $type; ?>/'+value.name);
+					dropzone.files.push(file);
+
+				});
+
+			}
+
+			// AJAX completed, but server returned error
+			else {
 				$('.dz-error').html('<div class="alert error">Error while fetching thumbnails: '+ data.details +'</div>');
 			}
-
-			else {
-				$('.dz-error').html('<div class="alert success">Success: '+ data.details +'</div>');
-			}
-
-
-console.log('success');
 
 		},
     	error: function(jqXHR, textStatus, errorThrown) {
@@ -222,17 +256,6 @@ console.log('success');
 		}
 
 	});
-
-
-		//$.each(data, function(key,value){
-
-			//var mockFile = { name: value.name, size: value.size };
-
-            //thisDropzone.options.addedfile.call(thisDropzone, mockFile);
-
-            //thisDropzone.options.thumbnail.call(thisDropzone, mockFile, "uploads/"+value.name);
-
-        //});
 
 });
 
