@@ -16,7 +16,7 @@ global $pg;
 <div id="footer">
     <div class="wrapper">
         <p>&copy; <a href="/"><span>MCPE Hub</span></a> <?php echo date('Y'); ?> - Creations copyright of the creators.</p>
-        <p class="side"><a href="http://cubemootion.com">Part of the CubeMotion network</a>. <span class="links"><a href="/tos">Terms</a> / <a href="/privacy">Privacy</a> / <a href="/links">Links</a></span></p>
+        <p class="side"><a href="http://cubemotion.com">Part of the CubeMotion network</a>. <span class="links"><a href="/tos">Terms</a> / <a href="/privacy">Privacy</a> / <a href="/links">Links</a></span></p>
     </div>
 </div>
 
