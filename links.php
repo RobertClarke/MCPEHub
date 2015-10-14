@@ -30,6 +30,10 @@ show_header('Links', FALSE);
         <b><a href="http://minecraftcolorcodes.com/" target="_blank">Minecraft Color Codes</a></b>
         A handy reference website for the Minecraft chat color codes.
     </p>
+    <p>
+        <b><a href="http://minecraftmuseum.net/" target="_blank">Minecraft Museum</a></b>
+        One of the first Minecraft galleries.
+    </p>
 </div>
 
 <?php show_footer(); ?>
