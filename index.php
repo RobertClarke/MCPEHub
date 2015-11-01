@@ -82,7 +82,7 @@
 							<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
 						</div>
 						<div class="info">
-							<a href="#"><h3>Speed Run [The Lava Tunnel]</h3></a>
+							<a href="#"><h2>Minecraft Pocket Edition Floor After Floor</h2></a>
 							<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
 						</div>
 					</article>
@@ -90,10 +90,148 @@
 
 				</div>
 
-				<div class="avrt banner"></div>
+				<!--<div class="avrt banner"></div>-->
 
+				<div id="posts">
+					<section class="posts maps">
+						<div class="title">
+							<h2><i class="icon-map"></i>Minecraft PE Maps</h2>
+							<h4>Have a blast on maps created by our community members!</h4>
+						</div>
+<?php $counter = 1; while ( $counter <= 3 ) { ?>
+						<article>
+							<div class="screenshot">
+								<a href="#like" class="likes"><i class="icon-heart"></i> 43</a>
+								<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
+							</div>
+							<div class="info">
+								<span class="details"><ul>
+									<li><a href="/maps/adventure">Adventure Map</a></li>
+									<li>5,891 views</li>
+								</ul></span>
+								<a href="#"><h2>Minecraft Pocket Edition Floor After Floor</h2></a>
+								<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
+							</div>
+						</article>
+<?php $counter++; } ?>
+					</section>
+					<section class="posts seeds">
+						<div class="title">
+							<h2><i class="icon-seed"></i>Minecraft PE Seeds</h2>
+							<h4>Start in a fresh world surrounded by cool terrains, villages and more!</h4>
+						</div>
+<?php $counter = 1; while ( $counter <= 3 ) { ?>
+						<article>
+							<div class="screenshot">
+								<a href="#like" class="likes"><i class="icon-heart"></i> 43</a>
+								<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
+							</div>
+							<div class="info">
+								<span class="details"><ul>
+									<li><a href="/maps/adventure">Mountain Seed</a></li>
+									<li>5,891 views</li>
+								</ul></span>
+								<a href="#"><h2>Quintuple Village! Exposed Mesa Dungeon!</h2></a>
+								<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
+							</div>
+						</article>
+<?php $counter++; } ?>
+					</section>
+				</div>
 
+				<div id="posts">
+					<section class="posts servers">
+						<div class="title">
+							<h2><i class="icon-server"></i>Minecraft PE Servers</h2>
+							<h4>Join other members and play online on community servers!</h4>
+						</div>
+<?php $counter = 1; while ( $counter <= 3 ) { ?>
+						<article>
+							<div class="screenshot">
+								<a href="#like" class="likes"><i class="icon-heart"></i> 43</a>
+								<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
+							</div>
+							<div class="info">
+								<span class="details"><ul>
+									<li><a href="/maps/adventure">PvP Server</a></li>
+									<li>5,891 views</li>
+								</ul></span>
+								<a href="#"><h2>MythcraftPE: Home Of PVP! Factions, Creative, and 1v1!</h2></a>
+								<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
+							</div>
+						</article>
+<?php $counter++; } ?>
+					</section>
+					<section class="posts skins">
+						<div class="title">
+							<h2><i class="icon-skin"></i>Minecraft PE Skins</h2>
+							<h4>Customize your Minecraft PE character with an awesome skin!</h4>
+						</div>
+<?php $counter = 1; while ( $counter <= 3 ) { ?>
+						<article>
+							<div class="screenshot">
+								<a href="#like" class="likes"><i class="icon-heart"></i> 43</a>
+								<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
+							</div>
+							<div class="info">
+								<span class="details"><ul>
+									<li><a href="/maps/adventure">Mob Skin</a></li>
+									<li>5,891 views</li>
+								</ul></span>
+								<a href="#"><h2>Minecraft Story Mode Jesse Skin</h2></a>
+								<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
+							</div>
+						</article>
+<?php $counter++; } ?>
+					</section>
+				</div>
 
+				<div id="posts">
+					<section class="posts textures">
+						<div class="title">
+							<h2><i class="icon-texture"></i>Minecraft PE Texture Packs</h2>
+							<h4>Add a custom texture pack to make your game beautiful!</h4>
+						</div>
+<?php $counter = 1; while ( $counter <= 3 ) { ?>
+						<article>
+							<div class="screenshot">
+								<a href="#like" class="likes"><i class="icon-heart"></i> 43</a>
+								<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
+							</div>
+							<div class="info">
+								<span class="details"><ul>
+									<li><a href="/maps/adventure">Realistic Texture Pack</a></li>
+									<li>5,891 views</li>
+								</ul></span>
+								<a href="#"><h2>Ender Shader</h2></a>
+								<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
+							</div>
+						</article>
+<?php $counter++; } ?>
+					</section>
+					<section class="posts mods">
+						<div class="title">
+							<h2><i class="icon-mod"></i>Minecraft PE Mods</h2>
+							<h4>Add functionality to your game by adding some mods!</h4>
+						</div>
+<?php $counter = 1; while ( $counter <= 3 ) { ?>
+						<article>
+							<div class="screenshot">
+								<a href="#like" class="likes"><i class="icon-heart"></i> 43</a>
+								<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
+							</div>
+							<div class="info">
+								<span class="details"><ul>
+									<li><a href="/maps/adventure">World Mod</a></li>
+									<li>5,891 views</li>
+								</ul></span>
+								<a href="#"><h2>0.12.3!!!! Dungeon Portal Mod!!! With Gravestone!!!!</h2></a>
+								<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
+							</div>
+						</article>
+<?php $counter++; } ?>
+					</section>
+				</div>
 
 			</div>
 		</section>

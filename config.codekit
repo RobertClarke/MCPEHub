@@ -115,15 +115,6 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
-	"\/assets\/css\/main.css": {
-		"fileType": 16,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/assets\/css\/main.css",
-		"outputAbbreviatedPath": "No Output Path",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0
-		},
 	"\/assets\/img\/DEMO_AVATAR.png": {
 		"fileType": 32768,
 		"ignore": 0,
@@ -146,28 +137,6 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
-	"\/assets\/img\/DEMO_POST1.png": {
-		"fileType": 32768,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"initialSize": 78225,
-		"inputAbbreviatedPath": "\/assets\/img\/DEMO_POST1.png",
-		"outputAbbreviatedPath": "\/assets\/img\/DEMO_POST1.png",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"processed": 0
-		},
-	"\/assets\/img\/DEMO_POST2.png": {
-		"fileType": 32768,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"initialSize": 79871,
-		"inputAbbreviatedPath": "\/assets\/img\/DEMO_POST2.png",
-		"outputAbbreviatedPath": "\/assets\/img\/DEMO_POST2.png",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"processed": 0
-		},
 	"\/assets\/img\/DEMO_POST3.jpg": {
 		"fileType": 16384,
 		"ignore": 0,
@@ -179,17 +148,6 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
-	"\/assets\/img\/DEMO_POST3.png": {
-		"fileType": 32768,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"initialSize": 70491,
-		"inputAbbreviatedPath": "\/assets\/img\/DEMO_POST3.png",
-		"outputAbbreviatedPath": "\/assets\/img\/DEMO_POST3.png",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"processed": 0
-		},
 	"\/assets\/img\/DEMO_POST4.jpg": {
 		"fileType": 16384,
 		"ignore": 0,
@@ -197,17 +155,6 @@
 		"initialSize": 35963,
 		"inputAbbreviatedPath": "\/assets\/img\/DEMO_POST4.jpg",
 		"outputAbbreviatedPath": "\/assets\/img\/DEMO_POST4.jpg",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"processed": 0
-		},
-	"\/assets\/img\/DEMO_POST4.png": {
-		"fileType": 32768,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"initialSize": 75303,
-		"inputAbbreviatedPath": "\/assets\/img\/DEMO_POST4.png",
-		"outputAbbreviatedPath": "\/assets\/img\/DEMO_POST4.png",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"processed": 0
@@ -4490,15 +4437,6 @@
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/forgot.php",
-		"outputAbbreviatedPath": "No Output Path",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0
-		},
-	"\/index.php": {
-		"fileType": 8192,
-		"ignore": 0,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/index.php",
 		"outputAbbreviatedPath": "No Output Path",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0
