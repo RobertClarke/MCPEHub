@@ -1,172 +1,103 @@
-<?php
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>MCPE Hub | The #1 Minecraft PE Community</title>
+		<link rel="stylesheet" href="./assets/css/main.css" type="text/css">
 
-/**
- * Homepage
- *
- * The website homepage, where all featured posts are displayed
- * for users who first visit the site.
-**/
 
-require_once('loader.php');
+		<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700|Varela+Round' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="https://i.icomoon.io/public/temp/9ab9b06e51/UntitledProject/style.css">
 
-$page->body_id = 'homepage';
-$page->no_wrap = true;
-$page->title_h1 = 'MCPE Hub';
-$page->title_h2 = 'The #1 Minecraft PE Community';
 
-$page->header();
-
-$types = post_type_code();
-
-$query_posts = $query_count = 'SELECT * FROM (';
-
-// Build query statement depending on types being fetched
-foreach( $types as $name => $id ) {
-
-	$query_count .= '
-	(
-		SELECT "'.$name.'" AS type, COUNT(*) AS count
-		FROM content_'.$name.' post
-		WHERE post.status = "1"
-	) UNION ALL';
-
-	$query_posts .= '
-	(
-		SELECT "'.$name.'" AS type,
-			post.id, post.title, post.slug, post.author_id, post.status, post.submitted,
-			featured.post_id, featured.post_type, featured.date AS featured,
-			(SELECT COUNT(*) FROM likes WHERE post_id = post.id AND post_type = '.$id.') AS likes,
-			GROUP_CONCAT(filename) AS images,
-			(SELECT filename FROM content_images WHERE post_id = post.id AND post_type = '.$id.' AND featured = 1 LIMIT 1) AS image_featured
-		FROM content_'.$name.' post
-		INNER JOIN content_featured featured
-			ON post.id = featured.post_id AND featured.post_type = '.$id.'
-	 	LEFT OUTER JOIN content_images images
-			ON post.id = images.post_id AND images.post_type = '.$id.'
-		WHERE post.status = 1
-		GROUP BY post.id
-		LIMIT 4
-	) UNION ALL';
-
-}
-
-// Trim off last UNION ALL from statements
-$query_count = rtrim($query_count, ' UNION ALL');
-$query_posts = rtrim($query_posts, ' UNION ALL');
-
-// Determine # of each type of post
-$query_count = $query_count . ') AS posts';
-$db_count = $db->query($query_count)->fetch();
-
-// Storing post counts
-$posts_count = [];
-foreach ( $db_count as $c ) {
-	$posts_count[ $c['type'] ] = $c['count'];
-}
-
-$query_posts = $query_posts . ') AS posts ORDER BY featured DESC';
-$db_posts = $db->query($query_posts)->fetch();
-
-// Organize posts by post type
-$posts = [];
-
-foreach ( $db_posts as $post ) {
-
-	$post['images'] = explode(',', $post['images']);
-
-	// Add featured image, if missing or not specified in database
-	if ( !isset($post['image_featured']) )
-		$post['image_featured'] = $post['images'][0];
-
-	// Get author info
-	$post['auth'] = new User($post['author_id']);
-	$post['author'] = $post['auth']->username;
-	$post['author_avatar'] = $post['auth']->data['avatar'];
-
-	$posts[ $post['type'] ][] = $post;
-
-}
-
-?>
-<div id="featured">
-	<div class="wrapper">
-<?php
-
-$posts_top = '';
-
-foreach ( $types as $type => $id ) {
-	if ( in_array($type, ['map', 'seed', 'texture', 'mod', 'server']) && isset($posts[$type]) ) {
-
-		// Pick out a random post from each category
-		$post = ( count($posts[$type]) > 1 ) ? $posts[$type][ rand(1, count($posts[$type]))-1 ] : $posts[$type][0];
-
-?>
-		<a href="/<?php echo $type.'/'.$post['slug']; ?>">
-			<article class="<?php echo $type; echo ( $type == 'map' ) ? ' big' : ''; ?>">
-				<header>
-					<p class="type">Featured <?php echo ucwords($type); ?></p>
-					<h1><?php echo $post['title']; ?></h1>
-				</header>
-				<div class="info">
-					<p><img src="/avatar/20x20/<?php echo $post['author_avatar']; ?>" alt="<?php echo $post['author']; ?>" width="20" height="20"> <?php echo $post['author']; ?></p>
-					<p class="likes"><i class="icon-thumbs-up"></i> <?php echo $post['likes']; ?></p>
-				</div>
-				<img src="/uploads/<?php echo ( $type == 'map' ) ? '500x280' : '240x140'; ?>/<?php echo $type; ?>/<?php echo $post['image_featured']; ?>" alt="<?php echo $post['title']; ?>" width="<?php echo ( $type == 'map' ) ? '500' : '240'; ?>" height="<?php echo ( $type == 'map' ) ? '280' : '140'; ?>" class="screen">
-			</article>
-		</a>
-<?php } } ?>
-	</div>
-</div>
-<div id="ad-homepage">
-	<div class="wrapper">
-		<div class="g-ad"></div>
-	</div>
-</div>
-<?php
-
-$i = 0; // Counter for applying "alt" classes
-
-foreach ( $types as $type => $id ) {
-
-	$type_s = $type.'s';
-
-	if ( $type == 'blog' )
-		$type_s = 'news';
-
-?>
-<div id="<?php echo $type_s; ?>" class="featured-posts <?php echo $type_s; echo ( $i % 2 !== 0 ) ? ' alt' : ''; ?>">
-	<div class="wrapper">
-		<h2>Featured Community <?php echo ucwords($type_s); ?></h2>
-<?php
-	if ( array_key_exists($type, $posts) ) {
-		foreach ( $posts[$type] as $post ) {
-?>
-		<article><a href="/<?php echo $type; ?>/<?php echo $post['slug']; ?>">
-			<div class="image">
-				<div class="info">
-					<p><img src="/avatar/20x20/<?php echo $post['author_avatar']; ?>" alt="<?php echo $post['author']; ?>" width="20" height="20"> <?php echo $post['author']; ?></p>
-					<p class="likes"><i class="icon-thumbs-up"></i> <?php echo $post['likes']; ?></p>
-				</div>
-				<img src="/uploads/240x140/<?php echo $type; ?>/<?php echo $post['image_featured']; ?>" alt="<?php echo $post['title']; ?>" width="234" height="135" class="screen">
+		<link rel="shortcut icon" href="/favicon.png">
+		<meta name="description" content="MCPE Hub is the #1 Minecraft PE community in the world, featuring seeds, maps, servers, skins, mods, and more.">
+		<meta name="keywords" content="minecraft pe, mcpe, minecraft, mcpehub">
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+		<meta name="format-detection" content="telephone=no">
+		<meta property="og:site_name" content="MCPE Hub">
+		<meta property="fb:app_id" content="873336029407458">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:title" content="MCPE Hub | The #1 Minecraft PE Community">
+		<meta property="og:description" content="MCPE Hub is the #1 Minecraft PE community in the world, featuring seeds, maps, servers, skins, mods, and more.">
+		<meta property="og:url" content="http://mcpe.dev/">
+		<meta property="og:image" content="http://mcpehub.com/assets/img/fb_banner.jpg">
+		<meta property="og:type" content="website">
+	</head>
+	<body id="homepage">
+		<section id="top" class="extended">
+			<div class="wrapper">
+				<div id="logo"><a href="/">MCPE Hub</a></div>
+				<nav id="nav-top">
+					<ul>
+						<li class="dropdown">
+							<a href="#">MCPE Content <i class="icon-caret-down"></i></a>
+							<!--<ul>
+								<li><a href="#"><i class="icon-map"></i>Maps <span>3,138</span></a></li>
+								<li><a href="#"><i class="icon-seed"></i>Seeds <span>1,701</span></a></li>
+								<li><a href="#"><i class="icon-skin"></i>Skins <span>3,409</span></a></li>
+								<li><a href="#"><i class="icon-texture"></i>Texture Packs <span>549</span></a></li>
+								<li><a href="#"><i class="icon-mod"></i>Mods <span>889</span></a></li>
+								<li><a href="#"><i class="icon-server"></i>Servers <b class="badge updated">Updated</b> <span>2174</span></a></li>
+								<li><a href="#"><i class="icon-youtuber"></i>YouTubers <b class="badge new">New</b> <span>43</span></a></li>
+								<li><a href="#"><i class="icon-tutorial"></i>Tutorials <span>16</span></a></li>
+								<li><a href="#"><i class="icon-blog"></i>News <span>24</span></a></li>
+								<li><a href="#"><i class="icon-update"></i>Game Updates <span>4</span></a></li>
+							</ul>-->
+						</li>
+						<li class="dropdown">
+							<a href="#">Community <i class="icon-caret-down"></i></a>
+							<!--<ul>
+								<li><a href="#"><i class="icon-trophy"></i>Leaderboards</a></li>
+								<li><a href="#"><i class="icon-question"></i>About The Hub</a></li>
+								<li><a href="#"><i class="icon-bullhorn"></i>Announcements</a></li>
+								<li><a href="#"><i class="icon-line-chart"></i>Stats</a></li>
+								<li><a href="#"><i class="icon-user-admin"></i>The Team </a></li>
+								<li><a href="#"><i class="icon-twitter"></i>Follow Us</a></li>
+							</ul>-->
+						</li>
+						<li><a href="#">Forums</a></li>
+					</ul>
+				</nav>
 			</div>
-			<header>
-				<h1><?php echo $post['title']; ?></h1>
-				<h3>Challenging, yet fun map with two dungeons, spawners &amp; more!</h3>
-			</header>
-		</a></article>
-<?php } } ?>
-	</div>
-	<div class="more"><a href="/<?php echo $type_s; ?>">Browse <?php echo ucwords($type_s); ?> (<?php echo $posts_count[$type]; ?>)</a></div>
-</div>
-<?php $i++; } ?>
-<div id="stats">
-	<div class="wrapper">
-		<h2>Our Community</h2>
-		<p>Our community statistics, updated every hour</p>
-		<div class="stat"><b class="countUp" data-count="83647">0</b> Members</div>
-		<div class="stat"><b class="countUp" data-count="12732">0</b> Posts</div>
-		<div class="stat"><b class="countUp" data-count="1738294">0</b> Post Views</div>
-		<div class="stat"><b class="countUp" data-count="1203020">0</b> Downloads</div>
-	</div>
-</div>
-<?php $page->footer(); ?>
+			<div class="wrapper extended">
+				<header id="header">
+					<div class="centered">
+						<h1>The #1 Minecraft PE Community</h1>
+						<h2>Featuring <span>114,384 members</span>, <span>23,058 submissions</span> and more!</h2>
+					</div>
+					<a href="#" class="join-bttn">Join The Community</a>
+				</header>
+			</div>
+		</section>
+		<section id="content">
+			<div class="wrapper">
+
+				<div id="featured-posts">
+
+<?php $counter = 1; while ( $counter <= 4 ) { ?>
+					<article>
+						<div class="screenshot">
+							<a href="#like" class="likes"><i class="icon-heart"></i> 43</a>
+							<a href="#"><img src="./assets/img/DEMO_POST<?php echo $counter; ?>.png" alt="" width="240" height="180"></a>
+						</div>
+						<div class="info">
+							<a href="#"><h3>Speed Run [The Lava Tunnel]</h3></a>
+							<span class="author"><a href="#"><img src="./assets/img/DEMO_AVATAR.png" alt="" width="16" height="16"> Geoman</a></span>
+						</div>
+					</article>
+<?php $counter++; } ?>
+
+				</div>
+
+				<div class="avrt banner"></div>
+
+
+
+
+			</div>
+		</section>
+
+		<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+	</body>
+</html>

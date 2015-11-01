@@ -202,6 +202,19 @@ else {
 		// Form submitted
 		if ( submit_POST() ) {
 
+
+
+			// Array for holding submitted values
+			$submit = [];
+
+
+			foreach ( $inputs as $input )
+				$submit[$input] = input_POST($input);
+
+
+
+
+
 		}
 
 	} // END: Check if the post author matches the current user
@@ -229,17 +242,19 @@ $(function() {
 
 				$.each(data.images, function(key, value) {
 
-					var file = {
+					var mockFile = {
 						name: value.name,
 						size: value.size,
 						type: 'image/jpeg',
 						status: Dropzone.ADDED,
+						accepted: true,
 						url: 'uploads/posts/<?php echo $type; ?>/'+value.name
 					};
 
-					dropzone.emit("addedfile", file);
-					dropzone.emit("thumbnail", file, 'uploads/posts/<?php echo $type; ?>/'+value.name);
-					dropzone.files.push(file);
+					dropzone.emit("addedfile", mockFile);
+					dropzone.emit("thumbnail", mockFile, 'uploads/posts/<?php echo $type; ?>/'+value.name);
+					dropzone.emit("complete", mockFile);
+					dropzone.files.push(mockFile);
 
 				});
 

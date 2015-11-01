@@ -94,7 +94,9 @@ $offset = pagination_offset($posts_total, 10, $url_page);
 
 $query_posts = $query_posts . ') AS posts ORDER BY submitted DESC LIMIT '.$offset.', 10';
 $posts = $db->query($query_posts)->fetch();
-
+echo '<pre>';
+print_r($query_posts);
+echo '</pre>';
 foreach ( $posts as $id => $post ) {
 
 	$post['images'] = explode(',', $post['images']);
