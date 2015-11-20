@@ -29,21 +29,21 @@ $post = $db->select()->from('content_'.$p_type.'s')->where('`id` = \''.$p_id.'\'
 // Check if post exists in database.
 if (!$db->affected_rows) $error->set('INVALID');
 else {
-	
+
 	$valid = TRUE;
 	$post = $post[0];
-	
+
 	$post['type']		= $p_type;
 	$post['author_id']	= $post['author'];
 	$post['author']		= $user->info('username', $post['author_id']);
-	
+
 	$error->add('NOTIF', 'You are editing this post on behalf of <b>'.$post['author'].'</b>.', 'info');
 	$error->set('NOTIF');
-	
+
 	// Default POST values.
 	$f['title']			= isset($_POST['title']) ? $_POST['title'] : NULL;
 	$f['description']	= isset($_POST['description']) ? $_POST['description'] : NULL;
-	
+
 	// Switch for different inputs depending on post type.
 	switch ($post['type']) {
 		case 'map':
@@ -68,7 +68,7 @@ else {
 			$post_inputs = ['tag_blog'];
 		break;
 	} // End: Switch for different inputs depending on post type.
-	
+
 	// Setting default POST values for all extra inputs.
 	$extra_inputs = [
 		'ip' 			=> FALSE,
@@ -85,12 +85,12 @@ else {
 		'seed'			=> FALSE,
 		'tag_blog'		=> FALSE
 	];
-	
+
 	foreach( $post_inputs as $input ) {
 		$extra_inputs[$input] = TRUE;
 		$f[$input] = isset($_POST[$input]) ? $_POST[$input] : NULL;
 	}
-	
+
 	$extras = [
 		'dl_link' => [
 			'type'			=> 'text',
@@ -102,7 +102,7 @@ else {
 			'spellcheck'	=> TRUE,
 			'maxlength'		=> 100,
 			'helper'		=> 'We recommend hosting files for free on <i class="fa fa-dropbox"></i> <a href="http://dropbox.com" target="_blank">Dropbox</a>.',
-			
+
 			'friendly_name' => 'Download Link',
 			'required'		=> TRUE
 		],
@@ -125,7 +125,7 @@ else {
 				'pixel-art' 	=> 'Pixel Art',
 				'roller-coaster'=> 'Roller Coaster'
 			],
-			
+
 			'friendly_name' => 'Tags',
 			'required'		=> TRUE
 		],
@@ -145,7 +145,7 @@ else {
 				'overhangs' 	=> 'Overhangs',
 				'waterfall' 	=> 'Waterfall',
 			],
-			
+
 			'friendly_name' => 'Tags',
 			'required'		=> TRUE
 		],
@@ -162,7 +162,7 @@ else {
 				'themed'		=> 'Themed',
 				'experimental'	=> 'Experimental',
 			],
-			
+
 			'friendly_name' => 'Type',
 			'required'		=> TRUE
 		],
@@ -183,11 +183,11 @@ else {
 				'fantasy'	=> 'Fantasy',
 				'other'		=> 'Other',
 			],
-			
+
 			'friendly_name' => 'Type',
 			'required'		=> TRUE
 		],
-		
+
 		'tag_blog' => [
 			'type'			=> 'select',
 			'multi'			=> TRUE,
@@ -201,11 +201,11 @@ else {
 				'update'				=>	'Update',
 				'community'				=>	'Community'
 			],
-			
+
 			'friendly_name' => 'Tags',
 			'required'		=> TRUE
 		],
-		
+
 		'ip' => [
 			'type'			=> 'text',
 			'name'			=> 'ip',
@@ -215,11 +215,11 @@ else {
 			'spellcheck'	=> TRUE,
 			'maxlength'		=> 60,
 			'helper'		=> 'IP cannot start with <i>192.168</i>, <i>127.0.0</i> or <i>10.0.0</i> - these will be rejected.',
-			
+
 			'friendly_name' => 'Server IP',
 			'required'		=> TRUE
 		],
-		
+
 		'port' => [
 			'type'			=> 'text',
 			'name'			=> 'port',
@@ -228,7 +228,7 @@ else {
 			'autocomplete'	=> TRUE,
 			'spellcheck'	=> TRUE,
 			'maxlength'		=> 20,
-			
+
 			'friendly_name' => 'Server Port',
 			'required'		=> TRUE
 		],
@@ -239,8 +239,8 @@ else {
 			'class_cont'	=> 'half',
 			'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Versions',
 			'placeholder'	=> 'Click to select versions',
-			'options'		=> ['0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
-			
+			'options'		=> ['0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
+
 			'friendly_name' => 'Versions',
 			'required'		=> TRUE
 		],
@@ -250,8 +250,8 @@ else {
 			'class_cont'	=> 'half',
 			'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Version',
 			'placeholder'	=> 'Click to select version',
-			'options'		=> ['0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
-			
+			'options'		=> ['0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
+
 			'friendly_name' => 'Version',
 			'required'		=> TRUE
 		],
@@ -263,7 +263,7 @@ else {
 			'label'			=> '<i class="fa fa-mobile fa-fw"></i> Compatible Devices',
 			'placeholder'	=> 'Click to select devices',
 			'options'		=> ['Android', 'iOS'],
-			
+
 			'friendly_name' => 'Devices',
 			'required'		=> TRUE
 		],
@@ -274,7 +274,7 @@ else {
 			'label'			=> '<i class="fa fa-expand fa-fw"></i> Texture Resolution',
 			'placeholder'	=> 'Click to select resolutions',
 			'options'		=> ['16x16', '32x32', '64x64', '128x128', '256x256'],
-			
+
 			'friendly_name' => 'Resolution',
 			'required'		=> TRUE
 		],
@@ -288,7 +288,7 @@ else {
 			'spellcheck'	=> TRUE,
 			'maxlength'		=> 100,
 			'helper'		=> 'Please enter <u>only</u> the seed here.',
-			
+
 			'friendly_name' => 'Seed',
 			'required'		=> TRUE
 		],
@@ -306,97 +306,97 @@ else {
 			'html_allowed'	=> TRUE
 		]
 	];
-	
+
 	//$f['tags'] = isset($_POST['tags']) ? $_POST['tags'] : NULL;
 	$tag_types = ['tag_map', 'tag_seed', 'tag_texture', 'tag_skin', 'tag_blog'];
-	
+
 	// Going through tag types and only leaving the type that is required.
 	foreach( $tag_types as $type ) {
 		if ( !in_array($type, $post_inputs) ) unset($extras[$type]);
 		else {
-			
+
 			$extras['tags'] = $extras[$type];
 			unset($extras[$type]);
-			
+
 			$f['tags'] = isset($_POST['tags']) ? $_POST['tags'] : NULL;
 			unset($f[$type]);
-			
+
 			// Swap all specific tag types to general 'tags' label.
 			$post_inputs[array_search($type, $post_inputs)] = 'tags';
 		}
 	}
-	
+
 	// Setting values of inputs (default & submitted).
 	foreach ( $extras as $key => $input ) {
-		
+
 		if ( array_key_exists($key, $post) && array_key_exists($key, $f) ) {
-			
+
 			if ( $input['type'] == 'text' ) {
 				if ( empty($_POST) ) $extras[$key]['value'] = $post[$key];
 				else $extras[$key]['value'] = $f[$key];
 			}
 			elseif ( $input['type'] == 'select' ) {
-				
+
 				if ( empty($_POST) ) $extras[$key]['selected'] = explode(',', $post[$key]);
 				else $extras[$key]['selected'] = $f[$key];
 			}
-			
+
 		} else unset($extras[$key]);
-		
+
 	}
-	
+
 	if ( empty($_POST) ) {
 		$f['title'] = $post['title'];
 		$f['description'] = $post['description'];
 	}
-	
+
 	require_once('core/htmlpurifier/HTMLPurifier.standalone.php');
 	$purifier = new HTMLPurifier(HTMLPurifier_Config::createDefault());
-	
+
 	$f['description'] = $purifier->purify($f['description']);
-	
+
 	// If any changes are submitted.
 	if ( !empty($_POST) ) {
-		
+
 		$error->reset();
-		
+
 		$validate = $form->validate_inputs($extras, $f, $_POST);
-		
+
 		// Check if any inputs missing.
 		if ( !empty($validate['missing']) ) {
 			$error->add('MISSING', 'The following inputs must be filled out: '.$validate['missing'].'.');
 			$error->set('MISSING');
 		}
-		
+
 		// If no errors in form, continue.
 		if ( !$error->exists() ) {
-			
+
 			$extras = $validate['inputs'];
-			
+
 			$description = $extras['description']['clean_val'];
-			
+
 			$purifier = new HTMLPurifier(HTMLPurifier_Config::createDefault());
 			$description = $purifier->purify($description);
-			
+
 			$description = str_replace('assets/img/smilies/', '/assets/img/smilies/', $description);
-			
+
 			// Escape all submitted values for database.
 			$db_edit = [];
 			foreach( $extras as $input => $value ) $db_edit[$input] = $db->escape($value['clean_val']);
-			
+
 			$db_edit['description']	= $db->escape($description);
 			$db_edit['editor_id']	= $user->info('id');
 			$db_edit['edited']		= time_now();
 			//$db_edit['active']		= 0;
-			
+
 			$db->where(['id' => $p_id])->update('content_'.$p_type.'s', $db_edit);
-			
+
 			redirect('/moderate?edited');
-			
+
 		} // End: If no errors in form, continue.
-		
+
 	} // End: If any changes are submitted.
-	
+
 } // End: Check if post exists in database.
 
 $icons = ['map' => 'map-marker', 'seed' => 'leaf', 'texture' => 'paint-brush', 'skin' => 'male', 'mod' => 'puzzle-piece', 'server' => 'gamepad', 'blog' => 'pencil'];

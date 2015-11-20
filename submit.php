@@ -24,46 +24,46 @@ $form_input['description'] = isset( $_POST['description'] ) ? $_POST['descriptio
 
 // Switch for different inputs/rules depending on post type.
 switch ( $post_type ) {
-	
+
 	case 'map': // Map
-		
+
 		$post_rules = array( 'author', 'screenshots', 'pc_ports' );
 		$post_inputs = array( 'dl_link', 'tag_map', 'versions' );
-		
+
 	break;
 	case 'seed': // Seed
-		
+
 		$post_rules = array( 'screenshots' );
 		$post_inputs = array( 'seed', 'tag_seed', 'versions' );
-		
+
 	break;
 	case 'texture': // Texture
-		
+
 		$post_rules = array( 'author', 'screenshots', 'pc_ports' );
 		$post_inputs = array( 'dl_link', 'tag_texture', 'versions', 'devices', 'resolution' );
-		
+
 	break;
 	case 'skin': // Skin
-		
+
 		$post_rules = array( 'author', 'screenshots' );
 		$post_inputs = array( 'tag_skin' );
-		
+
 	break;
 	case 'mod': // Mod
-		
+
 		$post_rules = array( 'author', 'screenshots' );
 		$post_inputs = array( 'dl_link', 'versions', 'devices' );
-		
+
 	break;
 	case 'server': // Server
-		
+
 		$post_rules = array( 'server_owner', 'server_temp', 'server_screenshots' );
 		$post_inputs = array( 'ip', 'port', 'version' );
-		
+
 	break;
-	
+
 	// No default because default value forced to "map".
-	
+
 } // END: Switch for different inputs/rules depending on post type.
 
 // Set array for additional inputs depending on post type.
@@ -83,12 +83,12 @@ $form_inputs = array(
 );
 
 foreach( $post_inputs as $input ) {
-	
+
 	$form_inputs[$input] = TRUE;
-	
+
 	if ( $input == 'tag_map' || $input == 'tag_seed' || $input == 'tag_texture' || $input == 'tag_skin' ) $input = 'tags';
 	$form_input[$input] = isset( $_POST[$input] ) ? $_POST[$input] : '';
-	
+
 }
 
 // Set empty arrays if values are missing.
@@ -124,7 +124,7 @@ $form_rules[] = 'Do not re-post '.$post_type.'s that have already been posted by
 
 // Declare all form inputs. Some important values also used in submission code.
 $the_inputs = array(
-	
+
 	'dl_link' => array(
 		'type'			=> 'text',
 		'name'			=> 'dl_link',
@@ -136,11 +136,11 @@ $the_inputs = array(
 		'spellcheck'	=> TRUE,
 		'maxlength'		=> 100,
 		//'helper'		=> 'We recommend hosting files for free on <i class="fa fa-dropbox"></i> <a href="http://dropbox.com" target="_blank">Dropbox</a>.',
-		
+
 		'friendly_name' => 'Download Link',
 		'required'		=> TRUE
 	),
-	
+
 	'tag_map' => array(
 		'type'			=> 'select',
 		'multi'			=> TRUE,
@@ -161,11 +161,11 @@ $the_inputs = array(
 			'roller-coaster'=> 'Roller Coaster'
 		),
 		'db_id'			=> 'tags',
-		
+
 		'friendly_name' => 'Tags',
 		'required'		=> TRUE
 	),
-	
+
 	'tag_seed' => array(
 		'type'			=> 'select',
 		'multi'			=> TRUE,
@@ -184,11 +184,11 @@ $the_inputs = array(
 			'waterfall' 	=> 'Waterfall',
 		),
 		'db_id'			=> 'tags',
-		
+
 		'friendly_name' => 'Tags',
 		'required'		=> TRUE
 	),
-	
+
 	'tag_texture' => array(
 		'type'			=> 'select',
 		'name'			=> 'tags',
@@ -204,11 +204,11 @@ $the_inputs = array(
 			'experimental'	=> 'Experimental',
 		),
 		'db_id'			=> 'tags',
-		
+
 		'friendly_name' => 'Type',
 		'required'		=> TRUE
 	),
-	
+
 	'tag_skin' => array(
 		'type'			=> 'select',
 		'name'			=> 'tags',
@@ -228,11 +228,11 @@ $the_inputs = array(
 			'other'		=> 'Other',
 		),
 		'db_id'			=> 'tags',
-		
+
 		'friendly_name' => 'Type',
 		'required'		=> TRUE
 	),
-	
+
 	'ip' => array(
 		'type'			=> 'text',
 		'name'			=> 'ip',
@@ -243,11 +243,11 @@ $the_inputs = array(
 		'spellcheck'	=> TRUE,
 		'maxlength'		=> 60,
 		'helper'		=> 'IP cannot start with <i>192.168</i>, <i>127.0.0</i> or <i>10.0.0</i> - these will be rejected.',
-		
+
 		'friendly_name' => 'Server IP',
 		'required'		=> TRUE
 	),
-	
+
 	'port' => array(
 		'type'			=> 'text',
 		'name'			=> 'port',
@@ -257,11 +257,11 @@ $the_inputs = array(
 		'autocomplete'	=> TRUE,
 		'spellcheck'	=> TRUE,
 		'maxlength'		=> 20,
-		
+
 		'friendly_name' => 'Server Port',
 		'required'		=> TRUE
 	),
-	
+
 	'versions' => array(
 		'type'			=> 'select',
 		'multi'			=> TRUE,
@@ -270,12 +270,12 @@ $the_inputs = array(
 		'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Versions',
 		'placeholder'	=> 'Click to select versions',
 		'selected'		=> $form_input['versions'],
-		'options'		=> ['0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
-		
+		'options'		=> ['0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
+
 		'friendly_name' => 'Versions',
 		'required'		=> TRUE
 	),
-	
+
 	'version' => array(
 		'type'			=> 'select',
 		'name'			=> 'version',
@@ -283,12 +283,12 @@ $the_inputs = array(
 		'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Version',
 		'placeholder'	=> 'Click to select version',
 		'selected'		=> $form_input['version'],
-		'options'		=> ['0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
-		
+		'options'		=> ['0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
+
 		'friendly_name' => 'Version',
 		'required'		=> TRUE
 	),
-	
+
 	'devices' => array(
 		'type'			=> 'select',
 		'multi'			=> TRUE,
@@ -298,11 +298,11 @@ $the_inputs = array(
 		'placeholder'	=> 'Click to select devices',
 		'selected'		=> $form_input['devices'],
 		'options'		=> array( 'Android', 'iOS' ),
-		
+
 		'friendly_name' => 'Devices',
 		'required'		=> TRUE
 	),
-	
+
 	'resolution' => array(
 		'type'			=> 'select',
 		'name'			=> 'resolution',
@@ -312,7 +312,7 @@ $the_inputs = array(
 		'selected'		=> $form_input['resolution'],
 		'options'		=> array( '16x16', '32x32', '64x64', '128x128', '256x256' )
 	),
-	
+
 	'seed' => array(
 		'type'			=> 'text',
 		'name'			=> 'seed',
@@ -324,15 +324,15 @@ $the_inputs = array(
 		'spellcheck'	=> TRUE,
 		'maxlength'		=> 100,
 		'helper'		=> 'Please enter <u>only</u> the seed here.',
-		
+
 		'friendly_name' => 'Seed',
 		'required'		=> TRUE
 	),
-	
+
 	'title' => array( 'friendly_name' => 'Title' ),
 	'description' => array( 'friendly_name' => 'Description' ),
 	'tags' => array( 'friendly_name' => 'Tags' ),
-	
+
 );
 
 // If user isn't activated, show a message asking them to activate.
@@ -340,115 +340,115 @@ if ( $user->info('activated') != 1 ) $error->force('NOT_ACTIVE');
 
 // If submit form is submitted.
 if ( !empty( $_POST ) && $user->info('activated') == 1 ) {
-	
+
 	// Clean up description HTML using HTMLPurifier.
 	require( 'core/htmlpurifier/HTMLPurifier.standalone.php' );
 	$purifier = new HTMLPurifier( HTMLPurifier_Config::createDefault() );
-	
+
 	$form_input['description'] = $purifier->purify( $form_input['description'] );
-	
+
 	// If user is activated, let them post.
 	if ( $user->info('activated') == 1 ) {
-		
+
 		$error->reset();
-		
+
 		$inputs = array(
 			'title'			=> strip_tags( $form_input['title'] ),
 			'description'	=> $form_input['description'],
 			'images'		=> $form_input['images']
 		);
-		
+
 		$required = array( 'title', 'description' );
-		
+
 		// Loop through every additional input and process.
 		foreach( $post_inputs as $post_input ) {
-			
+
 			// Set current input info var.
 			$input = $the_inputs[$post_input];
-			
+
 			// Grab value of input from form, in var for clean access.
 			$input_val = $form_input[ $input['name'] ];
-			
+
 			// Use db_id, if exists.
 			if ( !isset( $input['db_id'] ) ) $input['db_id'] = $post_input;
-			
+
 			// Push input to $inputs array to insert into processing.
 			$inputs[ $input['db_id'] ] = '';
-			
-			
+
+
 			// If input is a select, we must validate every option.
 			if ( $input['type'] == 'select' && isset( $input['options'] ) && is_array( $input['options'] ) ) {
-				
+
 				$input['clean_val'] = '';
 				$allowed_options = array();
-				
+
 				$assocArr = array_keys($input['options']) !== range(0, count($input['options']) - 1) ? TRUE : FALSE;
-				
+
 				// Grab all possible options for input.
 				if ( $assocArr ) foreach( $input['options'] as $option => $value ) $allowed_options[] = $option;
 				else $allowed_options = $input['options'];
-				
+
 				// Check if input values match possiblities. Separate values using commas (value,value,value).
 				foreach( $input_val as $option ) if ( in_array( $option, $allowed_options ) ) $input['clean_val'] .= $option.',';
-				
+
 				// Strip last comma from list, push to inputs.
 				$input['clean_val'] = trim( $input['clean_val'], ',' );
-				
+
 				// If empty value (no validated), set default if it isn't multi-select.
 				if ( !isset( $input['multi'] ) && empty( $input['clean_val'] ) ) $input['clean_val'] = $allowed_options[0];
-				
+
 				$inputs[ $input['db_id'] ] = $input['clean_val'];
-				
+
 			}
-			
+
 			// If input is text, clean the text and push to inputs array.
 			else if ( $input['type'] == 'text' ) {
-				
+
 				// Handle max length + strip tags.
 				if ( isset( $input['maxlength'] ) ) $input['clean_val'] = substr( $input_val, 0, $input['maxlength'] );
 				else $input['clean_val'] = $input_val;
-				
+
 				$inputs[ $input['db_id'] ] = strip_tags( $input['clean_val'] );
-				
+
 			}
-			
+
 			if ( isset( $input['required'] ) ) $required[] = $input['db_id'];
-			
+
 		}
-		
-		
+
+
 		// Check if any required inputs are missing.
 		$inputs_missing = '';
 		foreach ( $inputs as $input => $value ) {
 			if ( in_array( $input, $required ) && empty( $value ) ) $inputs_missing .= $the_inputs[$input]['friendly_name'].', ';
 		}
 		$inputs_missing = trim( $inputs_missing, ', ' );
-		
+
 		// Show an error for missing inputs.
 		if ( !empty( $inputs_missing ) ) {
 			$error->add( 'INPUT_MISSING', 'The following inputs must be filled out: '.$inputs_missing.'.', 'error' );
 			$error->append( 'INPUT_MISSING' );
 		}
-		
+
 		if ( strlen($inputs['title']) < 10 ) {
 			$error->add('TITLE_LENGTH', 'The post title must at least 10 characters long.', 'error');
 			$error->append('TITLE_LENGTH');
 		}
-		
+
 		$error->add( 'IMG_MISSING', 'You must upload at least one image for the post.', 'error' );
 		$error->add( 'IMG_MAX', 'One or more images uploaded exceeded the maximum upload file size.', 'error' );
 		$error->add( 'IMG_INVALID', 'One or more files uploaded are not valid image files.', 'error' );
-		
+
 		// Check if at least 1 image is uploaded.
 		$uploaded_images = gather_files( $_FILES['images'] );
 		if ( empty( $_FILES['images'] ) || count($uploaded_images) == 1 && $uploaded_images[0]['error'] == 4 ) $error->append( 'IMG_MISSING' );
 		else {
-			
+
 			$i = 0;
 			$images_confirmed = FALSE;
 			$uploaded_images = array_slice( $uploaded_images, 0, 5 );
 			foreach( $uploaded_images as $image ) {
-				
+
 				// No image uploaded in input, unset and ignore.
 				if ( $image['error'] == 4 ) {
 					unset( $uploaded_images[$i] );
@@ -461,91 +461,91 @@ if ( !empty( $_POST ) && $user->info('activated') == 1 ) {
 					$error->append( 'IMG_INVALID' );
 					break;
 				}
-				
+
 				$i++;
-				
+
 			}
-			
+
 			// Todo: Check for PHP max size again (new PHP standard?)
-			
+
 		}
-		
+
 		// If we have no errors in the form, lets continue.
 		if ( empty( $error->selected ) ) {
-			
+
 			// Escapes every user input we're sending to the database.
 			foreach( $inputs as $input => $value ) $inputs[$input] = $db->escape( $value );
-			
+
 			// Process uploaded images.
 			$images = '';
 			$upload_dir = ABS . 'uploads/posts/'.$post_type.'s/';
-			
+
 			foreach( $uploaded_images as $i => $image ) {
-				
+
 				$f_ext = '.' . strtolower( end( explode( '.', $image['name'] ) ) );
 				$f_name = uniqid() . strtolower(random_str(3));
-				
+
 				@move_uploaded_file( $_FILES['images']['tmp_name'][$i], $upload_dir . $f_name . $f_ext );
-				
+
 				$images .= $f_name . $f_ext.',';
-				
+
 				if ( $post_type == 'skin' ) $dl_link = '/uploads/posts/skins/'.$f_name . $f_ext;
-				
+
 			}
-			
+
 			// Generate slug.
 			$slug = generate_slug( $inputs['title'], "'" );
-			
+
 			// Check if slug exists, append random string if it does.
 			$check = $db->from('content_'.$post_type.'s')->where(array('slug'=>$slug))->fetch();
 			if ( $db->affected_rows != 0 ) $slug .= '-'.random_str(3);
-			
+
 			// Set final database values.
 			$inputs['images'] 		= trim( $images, ',' );
-			
+
 			if ( $post_type == 'skin' ) $inputs['dl_link'] = $dl_link;
-			
+
 			$inputs['author'] 		= $user->info( 'id' );
 			$inputs['submitted'] 	= date( 'Y-m-d H:i:s' );
 			$inputs['slug']			= $slug;
 			$inputs['active']		= 0;
-			
+
 			// Insert into database.
 			$db->insert( 'content_'.$post_type.'s', $inputs );
-			
+
 			// Redirect to post.
 			redirect( '/'.$post_type.'/'.$inputs['slug'].'?created' );
-			
+
 		}
-		
+
 	}
-	
+
 }
 
 // Made this into a function just so we can use it in a clean way below.
 function show_extra_inputs() {
-	
+
 	global $form, $post_inputs, $the_inputs;
-	
+
 	// Push out required inputs for use in form.
 	$loop_count = 0;
 	foreach( $post_inputs as $input ) {
-		
+
 		// Open container div, as needed.
 		if ( ( $loop_count + 1 ) % 2 == 1 )
 			echo "<div class=\"inputs clearfix\">\n\n";
-		
+
 		// For every 2nd input, add the class "last" for proper spacing.
 		$force = ( ( $loop_count + 1 ) % 2 != 1 ) ? array('class_cont' => 'half last') : null;
-		
+
 		$form->build_input( $the_inputs[$input], $force );
-		
+
 		// Close container div, as needed.
 		if ( ( $loop_count + 1 ) % 2 != 1 || ( $loop_count + 1 ) == count( $post_inputs ) )
 			echo "</div>\n";
-		
+
 		$loop_count++;
-		
+
 	}
 
 }
@@ -579,21 +579,21 @@ $icons = array( 'map' => 'map-marker', 'seed' => 'leaf', 'texture' => 'magic', '
 <?php $error->display(); ?>
 
 <form action="<?php echo $url->show('type='.$post_type, TRUE); ?>" method="POST" class="form submission" enctype="multipart/form-data">
-    
+
 <?php if ( $user->info('activated') != 1 ) echo '<div class="form-overlay"></div>'; ?>
-    
+
 <?php if ( !empty( $form_rules ) ) { ?>
     <div class="input-rules">
         <p>When submitting <?php echo $post_type; ?>s, please remember the following:</p>
         <ol><?php foreach( $form_rules as $rule ) echo "<li>$rule</li>"; ?></ol>
     </div>
 <?php } ?>
-    
+
     <div class="main-inputs">
         <div class="input">
             <input type="text" name="title" id="title" class="text title with-badge" value="<?php echo htmlspecialchars($form_input['title']); ?>" placeholder="<?php echo ucwords($post_type); ?> Title" maxlength="100" autocomplete="off" />
         </div>
-        
+
         <script src="/assets/js/tinymce/tinymce.min.js"></script>
     <script>
 tinymce.init({
@@ -610,24 +610,24 @@ tinymce.init({
 	object_resizing : false
 });
     </script>
-        
+
         <textarea name="description" id="description" class="visual"><?php echo $form_input['description']; ?></textarea>
     </div>
-    
+
     <div class="main-inputs uploads clearfix">
         <div id="uploadInputs" class="clearfix">
             <input type="file" name="images[]" id="image" class="file-upload" />
         </div>
         <?php if ( $post_type != 'skin' ) { ?><div class="addUpload"><a href="#" id="addUpload" class="bttn mini"><i class="fa fa-plus"></i> Add More</a></div><?php } ?>
     </div>
-    
+
     <?php show_extra_inputs(); // Show extra inputs using function created above. ?>
     <br>
-    
+
     <div class="submit">
         <button type="submit" class="bttn big green"><i class="fa fa-upload"></i> Submit <?php echo ucwords($post_type); ?></button>
     </div>
-    
+
 </form>
 
 <?php show_footer(); ?>
