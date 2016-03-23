@@ -34,6 +34,10 @@ show_header('Links', FALSE);
         <b><a href="http://minecraftmuseum.net/" target="_blank">Minecraft Museum</a></b>
         One of the first Minecraft galleries.
     </p>
+    <p>
+        <b><a href="http://lbsg.net/" target="_blank">Lifeboat Network</a></b>
+        The largest Minecraft PE server network.
+    </p>
 </div>
 
 <?php show_footer(); ?>
