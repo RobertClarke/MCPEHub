@@ -28,10 +28,14 @@ $track = [];
 
 foreach ( $users as $u ) {
 	$track[$u['id']] = 0;
+
+	echo 'Tracking editor '.$u['username'].'<br>';
 }
 
 foreach ( $posts as $p ) {
 	$track[ $p['editor_id'] ] += 1;
+
+	echo 'Adding editor '.$p['editor_id'].' to post '.$p['id'].'<br>';
 }
 
 ?>
