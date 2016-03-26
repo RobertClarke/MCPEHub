@@ -32,11 +32,19 @@ foreach ( $users as $u ) {
 	echo 'Tracking editor '.$u['username'].'<br>';
 }
 
+echo '<pre>';
+print_r($track);
+echo '</pre>';
+
 foreach ( $posts as $p ) {
 	$track[ $p['editor_id'] ] += 1;
 
 	echo 'Adding editor '.$p['editor_id'].' to post '.$p['id'].'<br>';
 }
+
+echo '<pre>';
+print_r($track);
+echo '</pre>';
 
 ?>
 <div id="p-title">
