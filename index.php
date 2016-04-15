@@ -37,33 +37,33 @@ $db_posts = $db->query('
 	(SELECT "skin" 		AS type, '.$q_cols.' FROM `content_skins` 	 WHERE '.$q_where.$q_end.') UNION ALL
 	(SELECT "mod" 		AS type, '.$q_cols.' FROM `content_mods` 	 WHERE '.$q_where.$q_end.') UNION ALL
 	(SELECT "server" 	AS type, '.$q_cols.' FROM `content_servers`  WHERE '.$q_where.$q_end.')
-	
+
 	ORDER BY `featured_time` DESC
-	
+
 ')->fetch();
 
 // Grab additional info, organize posts array for use.
 foreach( $db_posts as $id => $post ) {
-	
+
 	// Determine number of likes and comments on post.
 	$q_where = 'post = "'.$post['id'].'" AND type = "map"';
 	$count_vars = $db->query('
 		(SELECT "likes"		AS type, COUNT(*) FROM `likes`		WHERE '.$q_where.') UNION ALL
 		(SELECT "comments"	AS type, COUNT(*) FROM `comments`	WHERE '.$q_where.')
 	')->fetch();
-	
+
 	foreach( $count_vars as $var ) $post[ $var['type'] ] = $var['COUNT(*)'];
-	
+
 	$post['author_username'] = $user->info('username', $post['author']);
 	$post['url'] = $post['type'].'/' . $post['slug'];
-	
+
 	// Grab first image from images for display.
 	$post['images'] = explode( ',', $post['images'] );
 	$post['image'] = urlencode( $post['images'][0] );
-	
+
 	$post['image_slide_url'] = './uploads/700x280/'.$post['type'].'s/'.$post['image'];
 	$post['image_url'] = './uploads/130x80/'.$post['type'].'s/'.$post['image'];
-	
+
 	$db_posts[$id] = $post;
 
 }
@@ -90,17 +90,17 @@ $s_label = array(
 );
 
 function show_featured( $type ) {
-	
+
 	global $posts;
-	
+
 	$allowed = array( 'maps', 'seeds', 'textures', 'skins', 'mods', 'servers' );
 	if ( !in_array( $type, $allowed ) ) $type = 'maps';
-	
+
 	if ( isset( $posts[ $type ] ) && count( $posts[ $type ] ) != 0 ) {
-	
+
 	foreach( $posts[ $type ] as $post ) {
 		$dot = ( strlen( $post['title'] ) > 35 ) ? '...' : ''; // '...' After post title if too long.
-		
+
 ?>
             	<div class="post clearfix">
             	    <div class="img">
@@ -119,8 +119,8 @@ function show_featured( $type ) {
             	   </div>
             	</div>
 <?php
-	} // End foreach. 
-	
+	} // End foreach.
+
 	}
 }
 
@@ -135,13 +135,13 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 
 	// Formatting post author for display.
 	$post['author'] = $user->info( '', $post['author'] );
-	
+
 ?>
 <li>
     <a href="/<?php echo $post['type']; ?>/<?php echo $post['slug']; ?>"><img src="/uploads/690x250/<?php echo $post['type']; ?>s/<?php echo urlencode($post['image']); ?>" width="690" height="250" alt="<?php echo $post['title']; ?>"></a>
     <p class="flex-caption"><a href="/<?php echo $post['type']; ?>/<?php echo $post['slug']; ?>"><?php echo ucwords($post['type']); ?>: <b><?php echo $post['title']; ?></b></a></p>
 </li>
-<?php } // END: Foreach ?>        
+<?php } // END: Foreach ?>
         </ul>
     </div>
 </div>
@@ -155,18 +155,16 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 </div>
 
 <div id="home-posts">
-    <div class="half" style="margin-bottom:0;">
+	<div class="half" style="margin-bottom:0;">
         <div class="box">
-            <h2><i class="fa fa-map-marker fa-fw"></i> Featured MCPE Maps</h2>
-<?php show_featured('maps'); ?>
-            <div class="bttn-more"><a href="/maps" class="bttn mid gold">Browse Maps (<?php echo $post_count['maps']; ?>)</a></div>
+            <h2><i class="fa fa-gamepad fa-fw"></i> Featured MCPE Servers</h2>
+<?php show_featured('servers'); ?>
+            <div class="bttn-more"><a href="/servers" class="bttn mid gold">Browse Servers (<?php echo $post_count['servers']; ?>)</a></div>
         </div>
-    </div>
-    <div class="half last" style="margin-bottom:0;">
-    	<div class="box">
-            <h2><i class="fa fa-leaf fa-fw"></i> Featured MCPE Seeds</h2>
-<?php show_featured('seeds'); ?>
-            <div class="bttn-more"><a href="/seeds" class="bttn mid gold">Browse Seeds (<?php echo $post_count['seeds']; ?>)</a></div>
+        <div class="box">
+            <h2><i class="fa fa-codepen fa-fw"></i> Featured MCPE Mods</h2>
+<?php show_featured('mods'); ?>
+            <div class="bttn-more"><a href="/mods" class="bttn mid gold">Browse Mods (<?php echo $post_count['mods']; ?>)</a></div>
         </div>
     </div>
 </div>
@@ -182,18 +180,20 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 </script>
      </div>
  <div id="home-posts">
- 	<div class="half">
-        <div class="box">
-            <h2><i class="fa fa-gamepad fa-fw"></i> Featured MCPE Servers</h2>
-<?php show_featured('servers'); ?>
-            <div class="bttn-more"><a href="/servers" class="bttn mid gold">Browse Servers (<?php echo $post_count['servers']; ?>)</a></div>
-        </div>
-        <div class="box">
-            <h2><i class="fa fa-codepen fa-fw"></i> Featured MCPE Mods</h2>
-<?php show_featured('mods'); ?>
-            <div class="bttn-more"><a href="/mods" class="bttn mid gold">Browse Mods (<?php echo $post_count['mods']; ?>)</a></div>
-        </div>
-    </div>
+	<div class="half">
+		<div class="box">
+			<h2><i class="fa fa-map-marker fa-fw"></i> Featured MCPE Maps</h2>
+<?php show_featured('maps'); ?>
+			<div class="bttn-more"><a href="/maps" class="bttn mid gold">Browse Maps (<?php echo $post_count['maps']; ?>)</a></div>
+		</div>
+	</div>
+	<div class="half last" style="margin-bottom:0;">
+	 <div class="box">
+		 <h2><i class="fa fa-leaf fa-fw"></i> Featured MCPE Seeds</h2>
+<?php show_featured('seeds'); ?>
+		 <div class="bttn-more"><a href="/seeds" class="bttn mid gold">Browse Seeds (<?php echo $post_count['seeds']; ?>)</a></div>
+	 </div>
+	</div>
     <div class="half last">
         <div class="box">
             <h2><i class="fa fa-magic fa-fw"></i> Featured MCPE Textures</h2>
