@@ -161,11 +161,9 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 <?php show_featured('servers'); ?>
             <div class="bttn-more"><a href="/servers" class="bttn mid gold">Browse Servers (<?php echo $post_count['servers']; ?>)</a></div>
         </div>
-        <div class="box">
-            <h2><i class="fa fa-codepen fa-fw"></i> Featured MCPE Mods</h2>
-<?php show_featured('mods'); ?>
-            <div class="bttn-more"><a href="/mods" class="bttn mid gold">Browse Mods (<?php echo $post_count['mods']; ?>)</a></div>
-        </div>
+	</div>
+	<div class="half last" style="margin-bottom:0;">
+
     </div>
 </div>
      <div class="home-banner-ad">
@@ -186,26 +184,24 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
 <?php show_featured('maps'); ?>
 			<div class="bttn-more"><a href="/maps" class="bttn mid gold">Browse Maps (<?php echo $post_count['maps']; ?>)</a></div>
 		</div>
-	</div>
-	<div class="half last" style="margin-bottom:0;">
-	 <div class="box">
-		 <h2><i class="fa fa-leaf fa-fw"></i> Featured MCPE Seeds</h2>
-<?php show_featured('seeds'); ?>
-		 <div class="bttn-more"><a href="/seeds" class="bttn mid gold">Browse Seeds (<?php echo $post_count['seeds']; ?>)</a></div>
-	 </div>
-	</div>
-    <div class="half last">
-        <div class="box">
+		<div class="box">
             <h2><i class="fa fa-magic fa-fw"></i> Featured MCPE Textures</h2>
 <?php show_featured('textures'); ?>
             <div class="bttn-more"><a href="/textures" class="bttn mid gold">Browse Textures (<?php echo $post_count['textures']; ?>)</a></div>
         </div>
-        <div class="box">
+	</div>
+	<div class="half last" style="margin-bottom:0;">
+		<div class="box">
             <h2><i class="fa fa-smile-o fa-fw"></i> Featured MCPE Skins</h2>
 <?php show_featured('skins'); ?>
             <div class="bttn-more"><a href="/skins" class="bttn mid gold">Browse Skins (<?php echo $post_count['skins']; ?>)</a></div>
         </div>
-    </div>
+		<div class="box">
+   		 <h2><i class="fa fa-leaf fa-fw"></i> Featured MCPE Seeds</h2>
+   <?php show_featured('seeds'); ?>
+   		 <div class="bttn-more"><a href="/seeds" class="bttn mid gold">Browse Seeds (<?php echo $post_count['seeds']; ?>)</a></div>
+   	    </div>
+	</div>
 </div>
 
 <?php show_footer(); ?>
