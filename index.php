@@ -163,7 +163,11 @@ foreach( $db_posts as $map => $post ) { // START: Map list foreach.
         </div>
 	</div>
 	<div class="half last" style="margin-bottom:0;">
-
+		<div class="box">
+			<h2><i class="fa fa-codepen fa-fw"></i> Featured MCPE Mods</h2>
+<?php show_featured('mods'); ?>
+			<div class="bttn-more"><a href="/mods" class="bttn mid gold">Browse Mods (<?php echo $post_count['mods']; ?>)</a></div>
+		</div>
     </div>
 </div>
      <div class="home-banner-ad">
