@@ -67,7 +67,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
     <h1>Minecraft PE Servers</h1>
     <div class="tabs">
         <a href="/servers" class="bttn mid tip search" data-tip="Search Servers"><i class="fa fa-search solo"></i></a>
-        <a href="http://netherbox.com/p/mcpehub" class="bttn mid gold" target="_blank"><i class="fa fa-flag-checkered"></i> Start Your Own!</a>
+        <a href="https://netherbox.com/?promo=MINE" class="bttn mid gold" target="_blank"><i class="fa fa-flag-checkered"></i> Minecraft Server Hosting</a>
         <a href="/submit?type=server" class="bttn mid green"><i class="fa fa-upload"></i> Submit Server</a>
     </div>
 </div>
