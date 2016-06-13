@@ -9,8 +9,8 @@ require_once('core.php');
 $pg = [
 	'title_main'	=> 'Texture Packs',
 	'title_sub'		=> 'Minecraft PE',
-	'seo_desc'		=> 'All kinds of colorful Minecraft PE texture packs, to change the look of Minecraft PE in your game.',
-	'seo_keywords'	=> 'minecraft pe texture packs, mcpe texture packs, minecraft pe, mcpe'
+	'seo_desc'		=> 'All kinds of colorful Minecraft PE texture packs and resource packs, to change the look of Minecraft PE in your game.',
+	'seo_keywords'	=> 'minecraft pe texture packs, minecraft pe resource packs mcpe texture packs, minecraft pe, mcpe'
 ];
 
 // Set allowed categories.
