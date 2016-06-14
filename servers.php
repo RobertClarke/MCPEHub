@@ -46,12 +46,7 @@ $offset	= $pagination->build($count, 10, $current_page);
 // Must set this again since SQL class reset itself after fetch above.
 if ( isset($search) ) $db->like(['title' => $db->escape(strip_tags($search))]);
 
-// Lifeboat sponsored server
-if ( $current_page == 1 ) {
-	$posts = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['id' => 4])->or_where(['active' => 1])->fetch();
-} else {
-	$posts = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['active' => 1])->fetch();
-}
+$posts = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['active' => 1])->fetch();
 
 // If no posts are found, display an error.
 if ( $count == 0 ) {
@@ -99,6 +94,12 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 <div id="posts" class="servers compact">
 
 <?php
+
+// Lifeboat sponsored server
+if ( $count != 0 && $current_page == 1 ) {
+	$sponsored = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['id' => 4])->fetch();
+	array_unshift($posts, $sponsored);
+}
 
 // Primary post list.
 foreach( $posts as $i => $p ) {
