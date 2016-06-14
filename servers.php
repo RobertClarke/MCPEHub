@@ -21,10 +21,10 @@ $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views']) ) {
 	$sort = $_GET['sort'];
 	$url->add('sort', $_GET['sort']);
-	
+
 	$db_sort = $sort.' DESC';
 	$db->order_by($db_sort);
-	
+
 } else {
 	$sort = NULL;
 	$db_sort = 'published DESC';
@@ -32,12 +32,12 @@ if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views']) ) {
 
 // If user searching, add onto query.
 if ( !empty($_GET['search']) ) {
-	
+
 	$search = $_GET['search'];
 	$url->add('search', urlencode($search));
-	
+
 	$db->like(['title' => $db->escape(strip_tags($search))]);
-	
+
 }
 
 $count	= $db->select('COUNT(*) AS count')->from('content_servers')->where(['active' => 1])->fetch()[0]['count'];
@@ -46,7 +46,12 @@ $offset	= $pagination->build($count, 10, $current_page);
 // Must set this again since SQL class reset itself after fetch above.
 if ( isset($search) ) $db->like(['title' => $db->escape(strip_tags($search))]);
 
-$posts = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['active' => 1])->fetch();
+// Lifeboat sponsored server
+if ( $current_page == 1 ) {
+	$posts = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['id' => 4])->or_where(['active' => 1])->fetch();
+} else {
+	$posts = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['active' => 1])->fetch();
+}
 
 // If no posts are found, display an error.
 if ( $count == 0 ) {
@@ -59,7 +64,6 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 	$error->add('S_RESULT', 'Your search for "<b>'.htmlspecialchars($_GET['search']).'</b>" returned '.$count.' results.', 'info');
 	$error->set('S_RESULT');
 }
-
 
 ?>
 
@@ -80,20 +84,20 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 </div>
 
 <div class="posts-tools">
-    
+
 <?php if ( $count != 0 ) { ?>
     <select data-placeholder="Sort By" class="chosen redirect">
         <option value="<?php echo $url->show('sort=latest'); ?>"<?php if ( empty($sort) ) echo ' selected'; ?>>Latest Servers</option>
         <option value="<?php echo $url->show('sort=views'); ?>"<?php if ( $sort == 'views' ) echo ' selected'; ?>>Most Viewed</option>
     </select>
 <?php $pagination->html(); } ?>
-    
+
 </div>
 
 <?php $error->display(); ?>
 
 <div id="posts" class="servers compact">
-    
+
 <?php
 
 // Primary post list.
