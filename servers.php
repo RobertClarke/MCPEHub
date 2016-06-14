@@ -97,7 +97,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 
 // Lifeboat sponsored server
 if ( $count != 0 && $current_page == 1 ) {
-	$sponsored = $db->from('content_servers')->limit($offset, 10)->order_by($db_sort)->where(['id' => 4])->fetch();
+	$sponsored = $db->from('content_servers')->where(['id' => 4])->fetch();
 	array_unshift($posts, $sponsored);
 }
 
