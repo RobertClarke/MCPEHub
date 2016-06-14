@@ -114,7 +114,7 @@ function show_featured( $type ) {
             	   </div>
             	   <div class="info">
             	       <h3><a href="<?php echo $post['url']; ?>"><?php echo substr($post['title'], 0, 35).$dot; ?></a></h3>
-            	       <p>by <a href="user/<?php echo $post['author_username']; ?>"><?php echo $post['author_username']; ?></a></p>
+            	       <p>by <a href="user/<?php echo $post['author_username']; ?>"><?php echo $post['author_username']; ?></a><?php if ( $post['id'] == 4 ) echo ' - <b>Sponsored</b>'; ?></p>
             	       <ul>
 	            	       <li><i class="fa fa-thumbs-up"></i> <strong><?php echo $post['likes']; ?></strong><span> likes</span></li>
 	            	       <li><i class="fa fa-eye"></i> <strong><?php echo $post['views']; ?></strong><span> views</span></li>
