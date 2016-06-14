@@ -97,12 +97,8 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 
 // Lifeboat sponsored server
 if ( $count != 0 && $current_page == 1 ) {
-	$sponsored = $db->from('content_servers')->where(['id' => 4])->fetch();
-	array_unshift($posts, $sponsored);
-
-	echo '<!--';
-	print_r($posts);
-	echo '-->';
+	$sponsored = $db->from('content_servers')->limit(1)->where(['id' => 4])->fetch();
+	array_unshift($posts, $sponsored[0]);
 }
 
 // Primary post list.
