@@ -36,18 +36,19 @@ $db_posts = $db->query('
 	(SELECT "texture" 	AS type, '.$q_cols.' FROM `content_textures` WHERE '.$q_where.$q_end.') UNION ALL
 	(SELECT "skin" 		AS type, '.$q_cols.' FROM `content_skins` 	 WHERE '.$q_where.$q_end.') UNION ALL
 	(SELECT "mod" 		AS type, '.$q_cols.' FROM `content_mods` 	 WHERE '.$q_where.$q_end.') UNION ALL
-	(SELECT "server" 	AS type, '.$q_cols.' FROM `content_servers`  WHERE '.$q_where.$q_end.')
+	(SELECT "server" 	AS type, '.$q_cols.' FROM `content_servers`  WHERE '.$q_where.$q_end.' LIMIT 2)
 
 	ORDER BY `featured_time` DESC
 
 ')->fetch();
 
 // Add sponsored server to top of server list
+$sponsored = $db->from('content_servers')->limit(1)->select('"server" AS type, '.$q_cols)->where(['id' => 4])->fetch();
 //$sponsored = $db->query('SELECT "server" AS type, '.$q_cols.' FROM `content_servers` WHERE id = 4 LIMIT 1');
 //array_unshift($db_posts, $sponsored);
 
 echo '<!--';
-echo 'SELECT "server" AS type, '.$q_cols.' FROM `content_servers` WHERE id = 4 LIMIT 1';
+print_r($sponsored);
 echo '-->';
 
 // Grab additional info, organize posts array for use.
