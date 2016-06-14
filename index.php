@@ -46,6 +46,10 @@ $db_posts = $db->query('
 //$sponsored = $db->query('SELECT "server" AS type, '.$q_cols.' FROM `content_servers` WHERE id = 4 LIMIT 1');
 //array_unshift($db_posts, $sponsored);
 
+echo '<!--';
+echo 'SELECT "server" AS type, '.$q_cols.' FROM `content_servers` WHERE id = 4 LIMIT 1';
+echo '-->';
+
 // Grab additional info, organize posts array for use.
 foreach( $db_posts as $id => $post ) {
 
