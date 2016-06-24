@@ -34,10 +34,10 @@ $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views', 'downloads']) ) {
 	$sort = $_GET['sort'];
 	$url->add('sort', $_GET['sort']);
-	
+
 	$db_sort = $sort.' DESC';
 	$db->order_by($db_sort);
-	
+
 } else {
 	$sort = NULL;
 	$db_sort = 'published DESC';
@@ -45,23 +45,23 @@ if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views', 'downloads']) ) 
 
 // If user selected a category.
 if ( !empty($_GET['category']) ) {
-	
+
 	if ( array_search($_GET['category'], $post_cats) ) {
 		$db->like(['tags' => $_GET['category']]);
 		$url->add('category', $_GET['category']);
 	}
 	else $_GET['category'] = NULL;
-	
+
 }
 
 // If user searching, add onto query.
 elseif ( !empty($_GET['search']) ) {
-	
+
 	$search = $_GET['search'];
 	$url->add('search', urlencode($search));
-	
+
 	$db->like(['title' => $db->escape(strip_tags($search))]);
-	
+
 }
 
 $count	= $db->select('COUNT(*) AS count')->from('content_skins')->where(['active' => 1])->fetch()[0]['count'];
@@ -99,7 +99,8 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
     <h1><?php echo ( !empty($page_head) ) ? $page_head : 'Minecraft PE Skins'; ?></h1>
     <div class="tabs">
         <div class="bttn-group">
-            <a href="/skins" class="bttn mid tip search" data-tip="Search Skins"><i class="fa fa-search solo"></i></a>
+			<a href="/how-to-install-skins" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>
+			<a href="/skins" class="bttn mid tip search" data-tip="Search Skins"><i class="fa fa-search solo"></i></a>
         </div>
         <a href="/submit?type=skin" class="bttn mid green"><i class="fa fa-upload"></i> Submit Skin</a>
     </div>
@@ -113,7 +114,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 </div>
 
 <div class="posts-tools">
-    
+
     <select data-placeholder="Choose a Category" class="chosen redirect">
         <option value=""></option>
 <?php
@@ -131,13 +132,13 @@ foreach( $post_cats as $title => $id ) {
         <option value="<?php echo $url->show('sort=downloads'); ?>"<?php if ( $sort == 'downloads' ) echo ' selected'; ?>>Most Downloaded</option>
     </select>
 <?php $pagination->html(); } ?>
-    
+
 </div>
 
 <?php $error->display(); ?>
 
 <div id="posts">
-    
+
 <?php
 
 // Primary post list.
