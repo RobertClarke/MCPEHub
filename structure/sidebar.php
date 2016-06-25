@@ -58,7 +58,7 @@
 <a href="https://netherbox.com/?promo=MINE" target="_blank"><img src="/assets/img/netherbox.jpg" width="300" height="50" alt="Minecraft Server Hosting" style="margin-bottom: 5px;"></a>
 <div class="twitter-follow"><a href="https://twitter.com/MCPEHubNetwork" class="twitter-follow-button" data-show-count="false" data-size="large" data-dnt="true">Follow @MCPEHubNetwork</a></div>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-    <div class="avrt">
+    <div class="avrt big">
         <ins class="adsbygoogle" style="display:inline-block;width:300px;height:600px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="1513409877"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
