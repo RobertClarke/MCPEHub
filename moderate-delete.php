@@ -9,6 +9,10 @@ require_once('core.php');
 // Redirect if user not admin/mod.
 if ( !$user->is_admin() && !$user->is_mod() ) redirect('/');
 
+// Redirect mods to /moderate because they shouldn't be able to delete posts (temporary fix)
+redirect('/moderate');
+die();
+
 $post_types	= ['map', 'seed', 'texture', 'skin', 'mod', 'server', 'blog'];
 
 // If missing URL variables, redirect right away.
@@ -27,18 +31,18 @@ $post = $db->select('id, author, active')->from('content_'.$p_type.'s')->where([
 // Check if post exists in database.
 if (!$db->affected_rows) $error->set('INVALID');
 else {
-	
+
 	$post = $post[0];
-	
+
 	// Check if post is already deleted.
 	if ( $post['active'] == '-2' ) $error->set('INVALID');
 	else {
-		
+
 		$db->where(['id' => $post['id']])->update('content_'.$p_type.'s', ['active' => '-2']);
 		redirect('/moderate?deleted');
-		
+
 	} // End: Check if post is already deleted.
-	
+
 } // End: Check if post exists in database.
 
 ?>

@@ -31,13 +31,13 @@ $count = count($posts);
 $offset	= $pagination->build($count, 10, $current_page);
 
 if ( $count != 0 ) {
-	
+
 	$slice = [];
 	foreach ( $posts as $key => $col ) $slice[$key] = $col['submitted'];
 	array_multisort($slice, SORT_DESC, $posts);
-	
+
 	$posts = array_slice($posts, $offset, 10);
-	
+
 } else $error->set('NONE');
 
 $icns = [
@@ -87,7 +87,7 @@ if ( isset($_GET['del']) ) {
 <?php $error->display(); ?>
 
 <div id="posts">
-    
+
 <?php
 
 foreach ( $posts as $post ) {
@@ -122,8 +122,9 @@ echo '
         <div class="bttn-group">
             <a href="/moderate-edit?post='.$post['id'].'&type='.$post['type'].'" class="bttn mid tip" data-tip="Edit Post"><i class="fa fa-pencil solo"></i></a>
             <a href="'.$post['url'].'" class="bttn mid tip" data-tip="View Post"><i class="fa fa-eye solo"></i></a>
-            <a href="/moderate-suspend?user='.$post['author_id'].'" class="bttn mid tip" data-tip="Suspend Author"><i class="fa fa-gavel solo"></i></a>
-            <a href="/moderate-delete?post='.$post['id'].'&type='.$post['type'].'" class="bttn mid tip" data-tip="Delete Post"><i class="fa fa-trash-o solo"></i></a>
+            <a href="/moderate-suspend?user='.$post['author_id'].'" class="bttn mid tip" data-tip="Suspend Author"><i class="fa fa-gavel solo"></i></a>';
+//echo '<a href="/moderate-delete?post='.$post['id'].'&type='.$post['type'].'" class="bttn mid tip" data-tip="Delete Post"><i class="fa fa-trash-o solo"></i></a>';
+echo '
             <a href="#reject" class="reject bttn mid red tip" data-tip="Reject Post"><i class="fa fa-times solo"></i></a>
             <a href="#approve" class="approve bttn mid green tip" data-tip="Approve Post"><i class="fa fa-check solo"></i></a>
         </div>
