@@ -47,10 +47,6 @@ else redirect('/404');
 
 show_header($pg_title, FALSE, ['body_id' => 'profile', 'title_main' => 'Profile', 'title_sub' => 'Member']);
 
-echo '<--';
-print_r($u);
-echo '-->';
-
 ?>
 
 <div class="top">
