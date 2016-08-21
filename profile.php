@@ -61,7 +61,7 @@ show_header($pg_title, FALSE, ['body_id' => 'profile', 'title_main' => 'Profile'
 <?php echo $html['bttn_follow']; ?>
 <?php if ( $user->is_admin() || $user->is_mod() && $u['level'] !== 9 ) { ?>
         <a href="/moderate-suspend?user=<?php echo $u['id']; ?>" class="bttn red"><i class="fa fa-ban"></i> <?php echo ($user->suspended($p['user']) ) ? 'Unsuspend' : 'Suspend'; ?></a>
-<?php } if ( $user->is_admin() && $u['level'] !== 9 ) { ?>
+<?php } if ( $user->is_admin() && !$user->is_admin($u['username']) ) { ?>
         <a href="/moderate-set?user=<?php echo $u['id']; ?>" class="bttn <?php echo ( $u['level'] == 1 ) ? 'red' : 'green'; ?>"><i class="fa fa-gavel"></i> <?php echo ( $u['level'] == 1 ) ? 'Unmoderate' : 'Moderate'; ?></a>
 <?php } if ( $owner ) { ?>
         <a href="/profile_edit" class="bttn"><i class="fa fa-pencil fa-fw"></i> Edit Profile</a>
