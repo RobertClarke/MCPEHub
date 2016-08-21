@@ -18,7 +18,7 @@
   
 **/
 
-class Error {
+class ErrorContainer {
 	
 	private $errors = [];
 	private $forced = FALSE;

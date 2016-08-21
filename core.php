@@ -41,7 +41,7 @@ $user = new User($db);
 
 // Error generator
 require_once( ABS . 'core/classes/error.php' );
-$error = new Error();
+$error = new ErrorContainer();
 
 require_once( ABS . 'core/classes/email.php' );
 $mail = new Email;

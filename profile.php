@@ -13,6 +13,17 @@ if ( empty($p['user']) ) {
 	else redirect('/');
 }
 
+if ( isset($_GET['moderated']) && $user->is_admin() ) {
+	$usr = ( isset($_GET['user']) ) ? $_GET['user'] : '';
+	$error->add('MODERATED', 'The user <b>'.$usr.'</b> has been moderated.', 'success');
+	$error->force('MODERATED');
+}
+if ( isset($_GET['unmoderated']) && $user->is_admin() ) {
+	$usr = ( isset($_GET['user']) ) ? $_GET['user'] : '';
+	$error->add('UNMODERATED', 'The user <b>'.$usr.'</b> has been unmoderated.', 'success');
+	$error->force('UNMODERATED');
+}
+
 // Check if profile exists + user not suspended.
 if ( !empty($p['user']) && $u = $user->info('', $p['user']) ) {
 	
@@ -49,6 +60,8 @@ show_header($pg_title, FALSE, ['body_id' => 'profile', 'title_main' => 'Profile'
 
 ?>
 
+<?php $error->display(); ?>
+
 <div class="top">
     <div class="avatar">
         <img src="<?php echo $u['avatar']; ?>" alt="<?php echo $u['username']; ?>" width="80" height="80">
@@ -59,15 +72,25 @@ show_header($pg_title, FALSE, ['body_id' => 'profile', 'title_main' => 'Profile'
     </div>
     <div class="actions">
 <?php echo $html['bttn_follow']; ?>
-<?php if ( $user->is_admin() || $user->is_mod() && $u['level'] !== 9 ) { ?>
-        <a href="/moderate-suspend?user=<?php echo $u['id']; ?>" class="bttn red"><i class="fa fa-ban"></i> <?php echo ($user->suspended($p['user']) ) ? 'Unsuspend' : 'Suspend'; ?></a>
-<?php } if ( $user->is_admin() && !$user->is_admin($u['username']) ) { ?>
-        <a href="/moderate-set?user=<?php echo $u['id']; ?>" class="bttn <?php echo ( $u['level'] == 1 ) ? 'red' : 'green'; ?>"><i class="fa fa-gavel"></i> <?php echo ( $u['level'] == 1 ) ? 'Unmoderate' : 'Moderate'; ?></a>
-<?php } if ( $owner ) { ?>
+<?php if ( $owner ) { ?>
         <a href="/profile_edit" class="bttn"><i class="fa fa-pencil fa-fw"></i> Edit Profile</a>
 <?php } ?>
     </div>
 </div>
+
+<?php if ( $user->is_admin() || $user->is_mod() ) echo '<h3>Moderator Tools</h3>'; ?>
+<?php if ( ( $user->is_admin() || $user->is_mod() ) && !$user->is_admin($u['username']) ) { ?>
+        <a href="/moderate-suspend?user=<?php echo $u['id']; ?>" class="bttn red"><i class="fa fa-ban"></i> <?php echo ($user->suspended($p['user']) ) ? 'Unsuspend' : 'Suspend'; ?></a>
+<?php } ?>
+<?php if ( $user->is_admin() && !$user->is_admin($u['username']) ) { ?>
+        <a href="/moderate-set?user=<?php echo $u['id']; ?>" class="bttn <?php echo ( $u['level'] == 1 ) ? 'red' : 'green'; ?>"><i class="fa fa-gavel"></i> <?php echo ( $u['level'] == 1 ) ? 'Unmoderate' : 'Moderate'; ?></a>
+<?php } ?>
+<?php if ( $user->is_admin() ) { ?>
+        <a href="/moderate-rank?user=<?php echo $u['id']; ?>&rank=youtuber" class="bttn"><i class="fa fa-youtube"></i> <?php echo ( $u['youtuber'] != 1 ) ? 'Set' : 'Remove'; ?> YouTuber</a>
+		<a href="/moderate-rank?user=<?php echo $u['id']; ?>&rank=verified" class="bttn"><i class="fa fa-check"></i> <?php echo ( $u['verified'] != 1 ) ? 'Set' : 'Remove'; ?> Verified</a>
+		<a href="/moderate-rank?user=<?php echo $u['id']; ?>&rank=featured" class="bttn"><i class="fa fa-trophy"></i> <?php echo ( $u['featured'] != 1 ) ? 'Set' : 'Remove'; ?> Featured</a>
+<?php } ?>
+<?php if ( $user->is_admin() || $user->is_mod() ) echo '<br><br>'; ?>
 
 <div class="about">
     <h3>About Me</h3>
