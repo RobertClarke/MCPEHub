@@ -149,7 +149,7 @@ _atrk_opts = { atrk_acct:"urwtl1agWBr1N8", domain:"mcpehub.com",dynamic: true};
     enable_page_level_ads: true
   });
 </script>
-
+<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body<?php echo $pg['body_id'] . $pg['body_class']; ?>>
 

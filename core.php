@@ -1,5 +1,4 @@
 <?php
-
 /**
   * Website Core
   *
@@ -81,4 +80,6 @@ $form = new Form();
 require_once( ABS . 'core/classes/comments.php' );
 $comments = new Comments($db, $user);
 
+require_once( ABS . 'core/classes/voter.php' );
+$voter = new Voter($db, $user);
 ?>

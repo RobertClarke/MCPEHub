@@ -167,6 +167,7 @@ echo '
         <span><i class="fa fa-thumbs-up"></i> <strong>'.$post['likes'].'</strong> likes</span>
         <span><i class="fa fa-eye"></i> <strong>'.$post['views'].'</strong> views</span>
         <span><i class="fa fa-comments"></i> <strong>'.$post['comments'].'</strong> comments</span>
+		'.($post['type'] == 'server' ? '<div class="bttn-group" style="margin-left:20px;"><a href="#link" class="bttn mid tip actn_votereward" data-tip="VoteReward Config" data-toggle="modal" data-target="#actn_votereward"><i class="fa fa-gears solo"></i></a></div>' : '').'
         <div class="bttn-group">
             <a href="'.$post['url'].'" class="bttn mid tip" data-tip="View Post"><i class="fa fa-eye solo"></i></a>
             <a href="#link" class="bttn mid tip actn_link" data-tip="Get Post Link" data-toggle="modal" data-target="#actn_link"><i class="fa fa-link solo"></i></a>
@@ -183,38 +184,56 @@ echo '
 
 </div>
 <?php if ( $count != 0 ) { ?>
-<?php $pagination->html(); ?>
-<div id="actn_link" class="modal fade modal-md msg">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4><i class="fa fa-link"></i> Post Link</h4>
-                <button class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <form><input type="text" id="link_copy" value="http://mcpehub.com" readonly="true"></form>
-                <a href="/dashboard" class="bttn mid full" data-dismiss="modal">Close Window</a>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="actn_del" class="modal fade modal-sm msg">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4><i class="fa fa-trash-o"></i> Delete Post</h4>
-                <button class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <span class="title"><i class="fa fa-trash-o"></i><p>Are you sure you want to delete this post?</p></span>
-                <div class="bttn-group">
-                    <a href="/delete?post=&type=" class="bttn mid red del">Yes, Delete Post</a>
-                    <a href="/dashboard" class="bttn mid" data-dismiss="modal">Cancel</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+	<?php $pagination->html(); ?>
+	<div id="actn_link" class="modal fade modal-md msg">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4><i class="fa fa-link"></i> Post Link</h4>
+					<button class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				</div>
+				<div class="modal-body">
+					<form><input type="text" id="link_copy" value="http://mcpehub.com" readonly="true"></form>
+					<a href="/dashboard" class="bttn mid full" data-dismiss="modal">Close Window</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="actn_del" class="modal fade modal-sm msg">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4><i class="fa fa-trash-o"></i> Delete Post</h4>
+					<button class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				</div>
+				<div class="modal-body">
+					<span class="title"><i class="fa fa-trash-o"></i><p>Are you sure you want to delete this post?</p></span>
+					<div class="bttn-group">
+						<a href="/delete?post=&type=" class="bttn mid red del">Yes, Delete Post</a>
+						<a href="/dashboard" class="bttn mid" data-dismiss="modal">Cancel</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<?php if($post['type'] == 'server'){ ?>
+	<div id="actn_votereward" class="modal fade modal-md msg">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4><i class="fa fa-gears"></i> VoteReward Config File</h4>
+					<button class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+				</div>
+				<div class="modal-body">
+					<div style="float:left;width:70%;"><p>Place this file in your VoteReward 'lists' folder, this will allow users to claim rewards by voting for your server on MCPE Hub</p></div>
+					<div style="float:right;"><a href="<?php echo $post['url'].'/mcpehub.com.vrc';?>" class="bttn mid green" style="margin-bottom:30px;">Download .VRC file</a> </div>
+					<a href="/dashboard" class="bttn mid full" data-dismiss="modal">Close Window</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<?php } ?>
+
 <?php } ?>
 
 <?php show_footer(); ?>

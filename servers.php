@@ -27,7 +27,7 @@ if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views']) ) {
 
 } else {
 	$sort = NULL;
-	$db_sort = 'published DESC';
+	$db_sort = 'votes DESC';
 }
 
 // If user searching, add onto query.

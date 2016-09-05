@@ -125,6 +125,7 @@ else $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub follow
     <div id="p-title" class="solo">
         <h1><?php echo $p['title']; ?></h1>
         <div class="likes"><?php echo $html['bttn_like_top']; ?> <span><?php echo $p['likes']; ?></span></div>
+		<div class="likes"><a href="<?php echo $p['url']; ?>/vote" class="bttn mini green"><i class="fa fa-arrow-up"></i> Vote</a> <span><?php echo $p['votes']; ?></span></div>
     </div>
     
     <?php $error->display(); ?>
