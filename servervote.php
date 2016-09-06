@@ -84,7 +84,7 @@ $html['vote_form'] = '
 	<div class="vote">
 		<form action="'.$p['url'].'/vote" method="post">
 			<div class="g-recaptcha" data-sitekey="6LfORSkTAAAAABCuMLq6a_iIDpmB-OQZqKfvULVX"></div><br/>
-			<input type="text" name="mcuser" placeholder="Minecraft username" '.($vote == null ? '' : 'disabled').'/>
+			<input type="text" name="mcuser" placeholder="Minecraft username" value="'.$vote['mc_user'].'" '.($vote == null ? '' : 'disabled').'/>
 			<input type="hidden" name="vote" value="1"/>
 			<button class="bttn big '.($vote == null ? 'green"' : '" disabled').'>
 				'.($vote == null ? '<i class="fa fa-plus"></i> Vote for this server' : '<i class="fa fa-clock-o"></i>  Vote again in '.$vote['remain'].'H').'
@@ -99,6 +99,7 @@ $html['vote_form'] = '
     <div id="p-title" class="solo">
 		<a href="<?php echo $p['url']; ?>" class="bttn mini green" style="margin-right:10px;"><i class="fa fa-arrow-left"></i> Back</a>
         <h1 style="text-align:center;">Vote for <?php echo $p['title']; ?></h1>
+		<div class="likes"><a href="<?php echo $p['url']; ?>/vote" class="bttn mini green"><i class="fa fa-arrow-up"></i> Votes this month</a> <span><?php echo $p['votes']; ?></span></div>
     </div>
     <?php $error->display(); ?>
 <?php

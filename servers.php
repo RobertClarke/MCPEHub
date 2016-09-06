@@ -18,7 +18,7 @@ show_header('Minecraft PE Servers', FALSE, $pg);
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 
 // Sort options.
-if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views']) ) {
+if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views','published']) ) {
 	$sort = $_GET['sort'];
 	$url->add('sort', $_GET['sort']);
 
@@ -26,7 +26,7 @@ if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views']) ) {
 	$db->order_by($db_sort);
 
 } else {
-	$sort = NULL;
+	$sort = 'votes';
 	$db_sort = 'votes DESC';
 }
 
@@ -82,8 +82,9 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 
 <?php if ( $count != 0 ) { ?>
     <select data-placeholder="Sort By" class="chosen redirect">
-        <option value="<?php echo $url->show('sort=latest'); ?>"<?php if ( empty($sort) ) echo ' selected'; ?>>Latest Servers</option>
+        <option value="<?php echo $url->show('sort=latest'); ?>"<?php if ( empty($sort) ) echo ' selected'; ?>>Most Voted</option>
         <option value="<?php echo $url->show('sort=views'); ?>"<?php if ( $sort == 'views' ) echo ' selected'; ?>>Most Viewed</option>
+		<option value="<?php echo $url->show('sort=published'); ?>"<?php if ( $sort == 'published' ) echo ' selected'; ?>>Latest Servers</option>
     </select>
 <?php $pagination->html(); } ?>
 
@@ -139,8 +140,9 @@ echo '
     <div class="info">
         <span><i class="fa fa-globe"></i> <strong><span class="status">Loading...</span></strong></span>
         <span><i class="fa fa-thumbs-up"></i> <strong>'.$p['likes'].'</strong> likes</span>
-        <span><i class="fa fa-eye"></i> <strong>'.$p['views'].'</strong> views</span>
+        '.($sort == 'votes' ? '<span><i class="fa fa-arrow-up"></i> <strong>'.$p['votes'].'</strong> votes</span>' : '<span><i class="fa fa-eye"></i> <strong>'.($p['views'] >= 1000 ? floor($p['views']/1000).'K' : $p['views']).'</strong> views</span>').'
         <span><i class="fa fa-comments"></i> <strong>'.$p['comments'].'</strong> comments</span>
+		
         <span class="players"></span>
 ';
 

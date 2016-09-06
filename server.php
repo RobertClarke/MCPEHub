@@ -152,7 +152,7 @@ echo '
                     '.$user->badges($p['author']).'
                 </span>
                 '.$html['bttn_follow'].'
-                <span class="posted">'.$p['views'].' Views ~ '.$p['published'].'</span>
+                <span class="posted">'.number_format($p['views']).' Views ~ '.$p['published'].'</span>
             </p>
         </div>
         <div class="actions">
