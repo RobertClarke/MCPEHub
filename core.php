@@ -16,6 +16,10 @@ define( 'ABS', dirname(__FILE__) . '/' );
 if ( substr( $_SERVER['REQUEST_URI'], -4 ) != '.php' ) $request_uri = $_SERVER['REQUEST_URI'] . 'index.php';
 else $request_uri = $_SERVER['REQUEST_URI'];
 
+// Use user's IP from cloudflare
+if (isset($_SERVER["HTTP_CF_CONNECTING_IP"]))$_SERVER['REMOTE_ADDR'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
+
+
 $request_uri = rtrim( dirname( $request_uri ) , '/' );
 define( 'MAINURL', 'http://' . $_SERVER['SERVER_NAME'] . $request_uri . '/' );
 
