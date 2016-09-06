@@ -31,7 +31,7 @@ $p_owner = ( $p['author'] == $user->info('id') ) ? TRUE : FALSE;
 
 $voter->set_server($p);
 
-if($_GET['vrc']){
+if(isset($_GET['vrc'])){
 	if(!$p_owner){
 		$error->add('NOT_OWNER', 'You are not the owner of that server.', 'error');
 		$error->set('NOT_OWNER');
@@ -45,7 +45,7 @@ if($_GET['vrc']){
 
 show_header('Vote for '.$p['title'], FALSE, $pg);
 
-if($_POST['vote']){
+if(isset($_POST['vote'])){
 	$captcha_success = false;
 	$error->add('RECAPTCHA_FAIL', 'The captcha was entered incorrectly. Please try again.', 'error');
 	$error->add('VOTE_FAIL', 'You have already voted for this server. Try again in '.$voter->vote['remain'].'H', 'info');
@@ -98,7 +98,7 @@ $html['vote_form'] = '
     
     <div id="p-title" class="solo">
 		<a href="<?php echo $p['url']; ?>" class="bttn mini green" style="margin-right:10px;"><i class="fa fa-arrow-left"></i> Back</a>
-        <h1 style="text-align:center;">Vote for <?php echo $p['title']; ?></h1>
+        <h1 style="text-align:center;font-size:18px;">Vote for <?php echo $p['title']; ?></h1>
 		<div class="likes"><a href="<?php echo $p['url']; ?>/vote" class="bttn mini green"><i class="fa fa-arrow-up"></i> Votes this month</a> <span><?php echo $p['votes']; ?></span></div>
     </div>
     <?php $error->display(); ?>

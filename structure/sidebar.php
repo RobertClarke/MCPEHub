@@ -1,7 +1,6 @@
 <?php global $user, $num_unapproved, $pg; ?>
 <div id="sidebar">
-
-<?php if ( $pg['current'] != 'map' && $pg['current'] != 'seed' && $pg['current'] != 'mod' && $pg['current'] != 'server' && $pg['current'] != 'skin' && $pg['current'] != 'texture' ) { ?>
+<?php if ( $pg['current'] != 'map' && $pg['current'] != 'seed' && $pg['current'] != 'mod' && $pg['current'] != 'server' && $pg['current'] != 'skin' && $pg['current'] != 'texture' && $pg['current'] != 'servervote') { ?>
     <div class="avrt" style="height:250px;margin-bottom:5px;">
 		<ins class="adsbygoogle"
      style="display:inline-block;width:300px;height:250px"

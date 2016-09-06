@@ -25,12 +25,16 @@ class Voter {
 		if(!$this->user->logged_in()){
 			$is_anon = '1';
 			
-			$track_id = $db->escape($_COOKIE['vote_track']);
-			$ip = $db->escape($_SERVER['REMOTE_ADDR']);
+			if(isset($_COOKIE['vote_track'])){
+				$track_id = $db->escape($_COOKIE['vote_track']);
+				$ip = $db->escape($_SERVER['REMOTE_ADDR']);
+				
+				$anon = $db->query("SELECT * FROM users_anon WHERE track_id = '$track_id' OR ip = '$ip'")->fetch();
+				$anon_user = isset($anon[0]) ? $anon[0] : null;
+			}else{
+				$anon_user = null;
+			}
 			
-			$anon = $db->query("SELECT * FROM users_anon WHERE track_id = '$track_id' OR ip = '$ip'")->fetch();
-			$anon_user = $anon[0];
-		
 			if($anon_user == null){
 				$track_id = uniqid();
 				$uid = $db->insert('users_anon', array('track_id'=>$track_id,'ip'=>$ip));
@@ -50,7 +54,7 @@ class Voter {
 		$sid = $this->server['id'];
 		
 		$server = $db->query("SELECT * FROM content_servers s LEFT JOIN server_vote_config svc ON svc.server_id = s.id AND svc.plugin = 'VoteReward' WHERE s.id = $sid")->fetch();
-		$server = $server[0];
+		$server = isset($server[0]) ? $server[0] : null;
 		
 		
 		$pkey = ($server['public_key'] != '' ? $server['public_key'] : uniqid());
@@ -80,7 +84,7 @@ class Voter {
 		$key = $db->escape($_GET['key']);
 		
 		$server = $db->query("SELECT * FROM server_vote_config svc LEFT JOIN server_votes sv ON sv.server_id = svc.server_id AND sv.mc_user = '$mcuser' AND sv.timestamp > now() - INTERVAL 1 DAY WHERE svc.public_key = '$key'")->fetch();
-		$server = $server[0];
+		$server = isset($server[0]) ? $server[0] : null;
 		if($server == null){
 			$json = array('error' => 'Invalid public key');
 		}elseif($mcuser == ''){
@@ -106,7 +110,7 @@ class Voter {
 		$user = $this->get_vote_user();
 		$server_id = $this->server['id'];
 		$vote = $db->query("SELECT * FROM server_votes WHERE server_id = '$server_id' AND user_id = '$user[id]' AND is_anon = '$user[anon]' AND timestamp > now() - INTERVAL 1 DAY")->fetch();
-		$vote = $vote[0];
+		$vote = isset($vote[0]) ? $vote[0] : null;
 		if($vote != null){
 			$vote['remain'] = ceil(24 - (time() - strtotime($vote['timestamp']))/3600);
 		}
