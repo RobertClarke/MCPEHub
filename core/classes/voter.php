@@ -25,14 +25,12 @@ class Voter {
 		if(!$this->user->logged_in()){
 			$is_anon = '1';
 			
+			$ip = $db->escape($_SERVER['REMOTE_ADDR']);
 			if(isset($_COOKIE['vote_track'])){
 				$track_id = $db->escape($_COOKIE['vote_track']);
-				$ip = $db->escape($_SERVER['REMOTE_ADDR']);
 				
 				$anon = $db->query("SELECT * FROM users_anon WHERE track_id = '$track_id' OR ip = '$ip'")->fetch();
 				$anon_user = isset($anon[0]) ? $anon[0] : null;
-			}else{
-				$anon_user = null;
 			}
 			
 			if($anon_user == null){
