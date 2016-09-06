@@ -3,6 +3,7 @@
 class Voter {
 	public $vote_user;
 	public $db;
+	public $user;
 	public $server;
 	public $vote;
 	
@@ -13,38 +14,36 @@ class Voter {
 	
 	public function set_server($server){
 		$this->server = $server;
-		$this->get_vote_user();
+		$this->get_vote_cookie();
 	}
 	
-	public function get_vote_user(){
+	public function get_vote_cookie(){
 		$db = $this->db;
-		if(isset($this->vote_user)){
-			return $this->vote_user;
-		}
-		$is_anon = '0';
-		if(!$this->user->logged_in()){
-			$is_anon = '1';
-			
-			$ip = $db->escape($_SERVER['REMOTE_ADDR']);
-			if(isset($_COOKIE['vote_track'])){
-				$track_id = $db->escape($_COOKIE['vote_track']);
-				
-				$anon = $db->query("SELECT * FROM users_anon WHERE track_id = '$track_id' OR ip = '$ip'")->fetch();
-				$anon_user = isset($anon[0]) ? $anon[0] : null;
-			}
-			
-			if($anon_user == null){
-				$track_id = uniqid();
-				$uid = $db->insert('users_anon', array('track_id'=>$track_id,'ip'=>$ip));
-			}else{
-				$uid = $anon_user['id'];
-				$track_id = $anon_user['track_id'];
-			}
-			setcookie('vote_track',$track_id,time()+86400*30);
+		
+		if(isset($this->vote_cookie))return $this->vote_cookie;
+		
+		
+		$ip = $db->escape($_SERVER['REMOTE_ADDR']);
+		
+		$track_id = isset($_COOKIE['vote_track']) ? $_COOKIE['vote_track'] : ''; 
+		$track_q = ($track_id != '') ? "track_id = '$track_id' OR" : '';
+		
+		$cookie = $db->query("SELECT * FROM vote_cookies WHERE $track_q ip = '$ip'")->fetch();
+		$cookie = isset($cookie[0]) ? $cookie[0] : null;
+		
+		if($cookie == null){
+			//if we don't know this user, create new track_id for cookie
+			$track_id = uniqid();
+			$cid = $db->insert('vote_cookies', array('track_id'=>$track_id,'ip'=>$ip));
 		}else{
-			$uid = $this->user->info('id');
+			//otherwise use existing track_id
+			$cid = $cookie['id'];
+			$track_id = $cookie['track_id'];
 		}
-		return $this->vote_user = array('id'=>$uid, 'anon'=>$is_anon);
+		
+		setcookie('vote_track',$track_id,time()+86400*90);
+
+		return $this->vote_user = array('track_id'=>$track_id,'cookie_id'=>$cid,'user_id'=>($this->user->logged_in() ? $this->user->info('id') : 0));
 	}
 		
 	public function votereward_vrc(){
@@ -105,10 +104,12 @@ class Voter {
 		if(isset($this->vote))return $this->vote;
 		$db = $this->db;
 		
-		$user = $this->get_vote_user();
+		$cookie = $this->get_vote_cookie();
 		$server_id = $this->server['id'];
-		$vote = $db->query("SELECT * FROM server_votes WHERE server_id = '$server_id' AND user_id = '$user[id]' AND is_anon = '$user[anon]' AND timestamp > now() - INTERVAL 1 DAY")->fetch();
+		
+		$vote = $db->query("SELECT * FROM server_votes WHERE server_id = '$server_id' AND cookie_id = '$cookie[cookie_id]' AND timestamp > now() - INTERVAL 1 DAY")->fetch();
 		$vote = isset($vote[0]) ? $vote[0] : null;
+		
 		if($vote != null){
 			$vote['remain'] = ceil(24 - (time() - strtotime($vote['timestamp']))/3600);
 		}
@@ -121,7 +122,7 @@ class Voter {
 		$sid = $this->server['id'];
 		$mcuser = $db->escape($mcuser);
 		
-		$user = $this->get_vote_user();
+		$cookie = $this->get_vote_cookie();
 		$vote = $this->get_existing_vote();
 		
 		if($vote != null){
@@ -141,9 +142,9 @@ class Voter {
 			}*/
 			$db->insert('server_votes',
 				array(
-					'user_id' => $user['id'],
+					'user_id' => $cookie['user_id'],
+					'cookie_id' => $cookie['cookie_id'],
 					'mc_user' => $mcuser,
-					'is_anon' => $user['anon'],
 					'server_id' => $sid,
 					'reward_claimed' => $claimed,
 					'timestamp' => 'now()',
