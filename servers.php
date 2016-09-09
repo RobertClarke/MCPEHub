@@ -18,17 +18,13 @@ show_header('Minecraft PE Servers', FALSE, $pg);
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 
 // Sort options.
-if ( !empty($_GET['sort']) && in_array($_GET['sort'], ['views','published']) ) {
-	$sort = $_GET['sort'];
-	$url->add('sort', $_GET['sort']);
+$sort = !empty($_GET['sort']) && in_array($_GET['sort'], ['views','published','votes']) ? $_GET['sort'] : 'votes';
 
-	$db_sort = $sort.' DESC';
-	$db->order_by($db_sort);
+$url->add('sort', $sort);
 
-} else {
-	$sort = 'votes';
-	$db_sort = 'votes DESC';
-}
+$db_sort = $sort.' DESC';
+$db->order_by($db_sort);
+
 
 // If user searching, add onto query.
 if ( !empty($_GET['search']) ) {
@@ -82,7 +78,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 
 <?php if ( $count != 0 ) { ?>
     <select data-placeholder="Sort By" class="chosen redirect">
-        <option value="<?php echo $url->show('sort=latest'); ?>"<?php if ( empty($sort) ) echo ' selected'; ?>>Most Voted</option>
+        <option value="<?php echo $url->show('sort=votes'); ?>"<?php if ( empty($sort) ) echo ' selected'; ?>>Most Voted</option>
         <option value="<?php echo $url->show('sort=views'); ?>"<?php if ( $sort == 'views' ) echo ' selected'; ?>>Most Viewed</option>
 		<option value="<?php echo $url->show('sort=published'); ?>"<?php if ( $sort == 'published' ) echo ' selected'; ?>>Latest Servers</option>
     </select>
