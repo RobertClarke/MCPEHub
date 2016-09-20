@@ -25,7 +25,6 @@ $url->add('sort', $sort);
 $db_sort = $sort.' DESC';
 $db->order_by($db_sort);
 
-
 // If user searching, add onto query.
 if ( !empty($_GET['search']) ) {
 
