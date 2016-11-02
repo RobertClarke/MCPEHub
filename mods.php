@@ -7,10 +7,10 @@
 require_once('core.php');
 
 $pg = [
-	'title_main'	=> 'Mods',
+	'title_main'	=> 'Mods and Addons',
 	'title_sub'		=> 'Minecraft PE',
-	'seo_desc'		=> 'Complete Minecraft PE mods make it easy to change the look and feel of your game. Updated often with the best MCPE mods.',
-	'seo_keywords'	=> 'minecraft pe mods, mcpe mods, minecraft pe, mcpe'
+	'seo_desc'		=> 'Complete Minecraft PE mods and addons make it easy to change the look and feel of your game. Updated often with the best MCPE mods.',
+	'seo_keywords'	=> 'minecraft pe mods, minecraft pe addons, mcpe mods, mcpe addons, minecraft pe, mcpe'
 ];
 
 show_header('Minecraft PE Mods', FALSE, $pg);
