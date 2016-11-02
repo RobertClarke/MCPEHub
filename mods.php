@@ -64,7 +64,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 ?>
 
 <div id="p-title">
-    <h1>Minecraft PE Mods</h1>
+    <h1>Minecraft PE Mods and Addons</h1>
     <div class="tabs">
         <div class="bttn-group">
             <a href="/how-to-install-mods" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>
