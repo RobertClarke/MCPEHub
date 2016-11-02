@@ -13,7 +13,7 @@ $pg = [
 	'seo_keywords'	=> 'minecraft pe mods, minecraft pe addons, mcpe mods, mcpe addons, minecraft pe, mcpe'
 ];
 
-show_header('Minecraft PE Mods', FALSE, $pg);
+show_header('Minecraft PE Mods and Addons', FALSE, $pg);
 
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 
