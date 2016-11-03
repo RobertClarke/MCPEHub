@@ -12,17 +12,17 @@ $seo_default_tags = 'minecraft pe, mcpehub, mcpe';
 $pg = [
 	'title'			=> (!empty($page_title)) ? $page_title : NULL,
 	'sidebar'		=> (isset($pg_set['sidebar']) && !$pg_set['sidebar']) ? FALSE : TRUE,
-	
+
 	'current'		=> basename($_SERVER['PHP_SELF'], '.php'),
 	'html_title'	=> NULL,
 	'nav'			=> NULL,
-	
+
 	'seo_desc'		=> (!isset($pg_set['seo_desc'])) ? $seo_default_desc : $pg_set['seo_desc'],
 	'seo_keywords'	=> (!isset($pg_set['seo_keywords'])) ? $seo_default_tags : $pg_set['seo_keywords'],
-	
+
 	'body_id'		=> (!empty($pg_set['body_id'])) ? ' id="'.$pg_set['body_id'].'"' : NULL,
 	'body_class'	=> (!empty($pg_set['body_class'])) ? ' class="'.$pg_set['body_class'].'"' : NULL,
-	
+
 	'title_main'	=> (!empty($pg_set['title_main'])) ? $pg_set['title_main'] : 'MCPE Hub',
 	'title_sub'		=> (!empty($pg_set['title_sub'])) ? $pg_set['title_sub'] : 'The #1 Minecraft PE Community',
 ];
@@ -40,7 +40,7 @@ $pg['nav_links'] = [
 	'seeds'		=>	['yellow',		'/seeds',		'seed',		'Seeds'],
 	'textures'	=>	['green',		'/textures',	'texture',	'Textures'],
 	'skins'		=>	['pink',		'/skins',		'skin',		'Skins'],
-	'mods'		=>	['blue',		'/mods',		'mod',		'Mods'],
+	'mods'		=>	['blue',		'/mods',		'mod',		'Mods + Addons'],
 	'servers'	=>	['purple',		'/servers',		'server',	'Servers']
 ];
 
@@ -51,7 +51,7 @@ foreach( $pg['nav_links'] as $id => $n ) {
 
 // If admin/mod, get number of pending posts.
 if ( $user->is_admin() || $user->is_mod() ) {
-	
+
 	$posts_unapproved = $db->query('
 		(SELECT "map"	 	AS type, id FROM `content_maps` 	 WHERE active = "0") UNION ALL
 		(SELECT "seed" 		AS type, id FROM `content_seeds` 	 WHERE active = "0") UNION ALL
@@ -61,21 +61,21 @@ if ( $user->is_admin() || $user->is_mod() ) {
 		(SELECT "server" 	AS type, id FROM `content_servers` 	 WHERE active = "0")
 	')->fetch();
 	$num_unapproved = $db->affected_rows;
-	
+
 	if ( $num_unapproved > 99 ) $num_unapproved = '99+';
-	
+
 }
 
 ?>
 <!--
 
-   _____      _          __  __       _   _             
-  / ____|    | |        |  \/  |     | | (_)            
- | |    _   _| |__   ___| \  / | ___ | |_ _  ___  _ __  
- | |   | | | | '_ \ / _ \ |\/| |/ _ \| __| |/ _ \| '_ \ 
+   _____      _          __  __       _   _
+  / ____|    | |        |  \/  |     | | (_)
+ | |    _   _| |__   ___| \  / | ___ | |_ _  ___  _ __
+ | |   | | | | '_ \ / _ \ |\/| |/ _ \| __| |/ _ \| '_ \
  | |___| |_| | |_) |  __/ |  | | (_) | |_| | (_) | | | |
   \_____\__,_|_.__/ \___|_|  |_|\___/ \__|_|\___/|_| |_|
-                                                        
+
 
 
 Now hiring, email robert (at) cubemotion (dot) com
@@ -84,17 +84,17 @@ Now hiring, email robert (at) cubemotion (dot) com
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
+
     <title><?php echo $pg['html_title']; ?></title>
-    
+
     <meta charset="UTF-8">
     <meta name="description" content="<?php echo $pg['seo_desc']; ?>">
     <meta name="keywords" content="<?php echo $pg['seo_keywords']; ?>">
-    
+
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Changa+One%7COpen+Sans:300,400,600,700,800">
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    
+
     <link rel="shortcut icon" href="/favicon.png?v=2" />
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
@@ -106,10 +106,10 @@ Now hiring, email robert (at) cubemotion (dot) com
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
     <meta name="apple-mobile-web-app-title" content="MCPE Hub">
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="format-detection" content="telephone=no">
-    
+
 <script type="text/javascript">
 //<![CDATA[
 try{if (!window.CloudFlare) {var CloudFlare=[{verbose:0,p:1401845039,byc:0,owlid:"cf",bag2:1,mirage2:0,oracle:0,paths:{cloudflare:"/cdn-cgi/nexp/dokv=abba2f56bd/"},atok:"ffdd644c0cf852107efb78e494a19174",petok:"9bc09865fdc38abc269eca1c8af3c8d17950e012-1402185323-1800",zone:"mcpehub.com",rocket:"0",apps:{}}];CloudFlare.push({"apps":{"ape":"195a63d680ea0b81a0820582ea994b85"}});!function(a,b){a=document.createElement("script"),b=document.getElementsByTagName("script")[0],a.async=!0,a.src="//ajax.cloudflare.com/cdn-cgi/nexp/dokv=97fb4d042e/cloudflare.min.js",b.parentNode.insertBefore(a,b)}()}}catch(e){};
@@ -141,7 +141,7 @@ _atrk_opts = { atrk_acct:"urwtl1agWBr1N8", domain:"mcpehub.com",dynamic: true};
 (function() { var as = document.createElement('script'); as.type = 'text/javascript'; as.async = true; as.src = "https://d31qbv1cthcecs.cloudfront.net/atrk.js"; var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(as, s); })();
 </script>
 <noscript><img src="https://d5nxst8fruw4z.cloudfront.net/atrk.gif?account=urwtl1agWBr1N8" style="display:none" height="1" width="1" alt="" /></noscript>
-    
+
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
   (adsbygoogle = window.adsbygoogle || []).push({
@@ -187,8 +187,8 @@ if ( strpos($pg['body_class'], 'boxed') ) {
 <?php } else { ?>
             <a href="/dashboard" data-tip="Dashboard"><i class="fa fa-tachometer"></i></a>
 <?php if ( $user->is_admin() || $user->is_mod() ) { ?><a href="/moderate" data-tip="Moderate"><i class="fa fa-gavel"></i><?php echo ($num_unapproved != 0) ? '<span class="badge">'.$num_unapproved.'</span>' : NULL; ?></a><?php } ?>
-            <a href="/alerts" data-tip="Notifications" data-dropdown="#drop-notif" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-bullhorn"></i></a>
-            <a href="/inbox" data-tip="Messages" data-dropdown="#drop-msgs" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-send"></i></a>
+            <!--<a href="/alerts" data-tip="Notifications" data-dropdown="#drop-notif" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-bullhorn"></i></a>
+            <a href="/inbox" data-tip="Messages" data-dropdown="#drop-msgs" data-toggle="modal" data-target="#modal-soon"><i class="fa fa-send"></i></a>-->
             <div class="user">
                 <a href="/profile" class="toggle" data-dropdown="#nav-user">
                     <img src="/avatar/60x60/<?php echo $user->info('avatar'); ?>" alt="<?php echo $user->info('username'); ?>" width="30" height="30">
@@ -216,8 +216,8 @@ if ( strpos($pg['body_class'], 'boxed') ) {
 <script>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
-            
-            
+
+
         </div>
     </div>
 </div>
