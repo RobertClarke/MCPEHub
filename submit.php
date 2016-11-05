@@ -27,7 +27,7 @@ switch ( $post_type ) {
 
 	case 'map': // Map
 
-		$post_rules = array( 'author', 'screenshots', 'pc_ports' );
+		$post_rules = array( 'author', 'screenshots', 'pc_ports', 'ad_links' );
 		$post_inputs = array( 'dl_link', 'tag_map', 'versions' );
 
 	break;
@@ -39,7 +39,7 @@ switch ( $post_type ) {
 	break;
 	case 'texture': // Texture
 
-		$post_rules = array( 'author', 'screenshots', 'pc_ports' );
+		$post_rules = array( 'author', 'screenshots', 'pc_ports', 'ad_links' );
 		$post_inputs = array( 'dl_link', 'tag_texture', 'versions', 'devices', 'resolution' );
 
 	break;
@@ -51,7 +51,7 @@ switch ( $post_type ) {
 	break;
 	case 'mod': // Mod
 
-		$post_rules = array( 'author', 'screenshots' );
+		$post_rules = array( 'author', 'screenshots', 'ad_links' );
 		$post_inputs = array( 'dl_link', 'versions', 'devices' );
 
 	break;
@@ -113,7 +113,8 @@ $rules = array(
 	'pc_ports'		=> 'PC Ports must have proper credit given to the original author.',
 	'server_owner'	=> 'You must be the owner of the server unless you have permission from the owner.',
 	'server_temp'	=> 'We only accept 24/7 servers. This means we do not accept "instant" servers.',
-	'server_screenshots' => 'You must have proper screenshots (or custom pictures) relating to the server.'
+	'server_screenshots' => 'You must have proper screenshots (or custom pictures) relating to the server.',
+	'ad_links'	=> 'Ad links (such as ad.fly and similar websites) are <b>not</b> permitted on MCPE Hub.',
 );
 
 foreach( $post_rules as $rule ) $form_rules[] = $rules[$rule];
@@ -270,7 +271,7 @@ $the_inputs = array(
 		'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Versions',
 		'placeholder'	=> 'Click to select versions',
 		'selected'		=> $form_input['versions'],
-		'options'		=> ['0.15.0', '0.14.0', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
+		'options'		=> ['0.16.0', '0.15.0', '0.14.0', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
 
 		'friendly_name' => 'Versions',
 		'required'		=> TRUE
@@ -283,7 +284,7 @@ $the_inputs = array(
 		'label'			=> '<i class="fa fa-slack fa-fw"></i> Compatible Version',
 		'placeholder'	=> 'Click to select version',
 		'selected'		=> $form_input['version'],
-		'options'		=> ['0.15.0', '0.14.0', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
+		'options'		=> ['0.16.0', '0.15.0', '0.14.0', '0.13.0', '0.12.0', '0.11.0', '0.10.0', '0.9.0', '0.8.0'],
 
 		'friendly_name' => 'Version',
 		'required'		=> TRUE

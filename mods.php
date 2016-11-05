@@ -7,13 +7,13 @@
 require_once('core.php');
 
 $pg = [
-	'title_main'	=> 'Mods',
+	'title_main'	=> 'Mods and Addons',
 	'title_sub'		=> 'Minecraft PE',
-	'seo_desc'		=> 'Complete Minecraft PE mods make it easy to change the look and feel of your game. Updated often with the best MCPE mods.',
-	'seo_keywords'	=> 'minecraft pe mods, mcpe mods, minecraft pe, mcpe'
+	'seo_desc'		=> 'Complete Minecraft PE mods and addons make it easy to change the look and feel of your game. Updated often with the best MCPE mods.',
+	'seo_keywords'	=> 'minecraft pe mods, minecraft pe addons, mcpe mods, mcpe addons, minecraft pe, mcpe'
 ];
 
-show_header('Minecraft PE Mods', FALSE, $pg);
+show_header('Minecraft PE Mods and Addons', FALSE, $pg);
 
 $current_page = ( isset($_GET['page']) ) ? $_GET['page'] : 1;
 
@@ -64,7 +64,7 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 ?>
 
 <div id="p-title">
-    <h1>Minecraft PE Mods</h1>
+    <h1>Minecraft PE Mods and Addons</h1>
     <div class="tabs">
         <div class="bttn-group">
             <a href="/how-to-install-mods" class="bttn mid tip" data-tip="How To Install"><i class="fa fa-question-circle solo"></i></a>

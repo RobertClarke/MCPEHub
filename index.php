@@ -36,15 +36,15 @@ $db_posts = $db->query('
 	(SELECT "texture" 	AS type, '.$q_cols.' FROM `content_textures` WHERE '.$q_where.$q_end.') UNION ALL
 	(SELECT "skin" 		AS type, '.$q_cols.' FROM `content_skins` 	 WHERE '.$q_where.$q_end.') UNION ALL
 	(SELECT "mod" 		AS type, '.$q_cols.' FROM `content_mods` 	 WHERE '.$q_where.$q_end.') UNION ALL
-	(SELECT "server" 	AS type, '.$q_cols.' FROM `content_servers`  WHERE '.$q_where.' ORDER BY featured_time DESC LIMIT 2)
+	(SELECT "server" 	AS type, '.$q_cols.' FROM `content_servers`  WHERE '.$q_where.' ORDER BY featured_time DESC LIMIT 3)
 
 	ORDER BY `featured_time` DESC
 
 ')->fetch();
 
 // Add sponsored server to top of server list
-$sponsored = $db->from('content_servers')->limit(1)->select('"server" AS type, '.$q_cols)->where(['id' => 4])->fetch();
-array_unshift($db_posts, $sponsored[0]);
+/*$sponsored = $db->from('content_servers')->limit(1)->select('"server" AS type, '.$q_cols)->where(['id' => 4])->fetch();
+array_unshift($db_posts, $sponsored[0]);*/
 
 // Grab additional info, organize posts array for use.
 foreach( $db_posts as $id => $post ) {
@@ -114,7 +114,7 @@ function show_featured( $type ) {
             	   </div>
             	   <div class="info">
             	       <h3><a href="<?php echo $post['url']; ?>"><?php echo substr($post['title'], 0, 35).$dot; ?></a></h3>
-            	       <p>by <a href="user/<?php echo $post['author_username']; ?>"><?php echo $post['author_username']; ?></a><?php if ( $post['id'] == 4 ) echo ' - Sponsored'; ?></p>
+            	       <p>by <a href="user/<?php echo $post['author_username']; ?>"><?php echo $post['author_username']; ?></a><?php //if ( $post['id'] == 4 ) echo ' - Sponsored'; ?></p>
             	       <ul>
 	            	       <li><i class="fa fa-thumbs-up"></i> <strong><?php echo $post['likes']; ?></strong><span> likes</span></li>
 	            	       <li><i class="fa fa-eye"></i> <strong><?php echo $post['views']; ?></strong><span> views</span></li>

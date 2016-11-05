@@ -92,10 +92,10 @@ elseif ( !empty($_GET['search']) && $current_page == 1 ) {
 <?php
 
 // Lifeboat sponsored server
-if ( $count != 0 && $current_page == 1 ) {
+/*if ( $count != 0 && $current_page == 1 ) {
 	$sponsored = $db->from('content_servers')->limit(1)->where(['id' => 4])->fetch();
 	array_unshift($posts, $sponsored[0]);
-}
+}*/
 
 // Primary post list.
 foreach( $posts as $i => $p ) {
@@ -110,10 +110,12 @@ $p['thumb']		= '/uploads/700x200/servers/'.urlencode($p['images'][0]);
 $p['thumb_a']	= '/avatar/64x64/'.$user->info('avatar', $p['auth']);
 
 // Sponsored server tag
-if ( $p['id'] == 4 )
+/*if ( $p['id'] == 4 )
 	$p['f_html'] = '<div class="featured"><i class="fa fa-star fa-fw"></i> Sponsored</div>';
 else
-	$p['f_html'] = ( $p['featured'] == 1 ) ? '<div class="featured"><i class="fa fa-star fa-fw"></i> Featured</div>' : NULL;
+	$p['f_html'] = ( $p['featured'] == 1 ) ? '<div class="featured"><i class="fa fa-star fa-fw"></i> Featured</div>' : NULL;*/
+
+$p['f_html'] = ( $p['featured'] == 1 ) ? '<div class="featured"><i class="fa fa-star fa-fw"></i> Featured</div>' : NULL;
 
 // Determine number of likes & comments for post.
 $db_count = $db->query('
@@ -139,13 +141,14 @@ echo '
         <span><i class="fa fa-comments"></i> <strong>'.$p['comments'].'</strong> comments</span>
 		
         <span class="players"></span>
+				<a href="'.$p['url'].'" class="bttn mid"><i class="fa fa-gamepad"></i> Server Details</a>
 ';
 
 // Sponsored server button
-if ( $p['id'] == 4 )
+/*if ( $p['id'] == 4 )
 	echo '<a href="'.$p['url'].'" class="bttn mid"><i class="fa fa-star"></i> Check It Out</a>';
 else
-	echo '<a href="'.$p['url'].'" class="bttn mid"><i class="fa fa-gamepad"></i> Show Server Details</a>';
+	echo '<a href="'.$p['url'].'" class="bttn mid"><i class="fa fa-gamepad"></i> Show Server Details</a>';*/
 
 echo '
     </div>
