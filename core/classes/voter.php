@@ -94,7 +94,7 @@ class Voter {
 				$db->where(['id'=>$server['id']])->update('server_votes', ['reward_claimed' => 1]);
 				$claimed = 1;
 			}
-			$json = array('voted' => (int)$voted, 'claimed' => (int)$claimed);
+			$json = array('voted' => (bool)$voted, 'claimed' => (bool)$claimed);
 		}
 		
 		return json_encode($json, JSON_UNESCAPED_SLASHES);
