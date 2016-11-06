@@ -24,24 +24,24 @@ $post_types = ['maps','seeds','textures','skins','mods','servers'];
 
 // Showing specific type of posts on request.
 if ( isset($_GET['type']) && in_array($_GET['type'], $post_types) ) {
-	
+
 	$type = $_GET['type'];
 	$url->add('type', $type);
-	
+
 	$db_where = '`author` = \''.$user->info('id').'\' AND `active` <> \'-2\'';
-	
+
 	$count	= $db->select('COUNT(*) AS count')->from('content_'.$type)->where($db_where)->fetch()[0]['count'];
 	$offset	= $pagination->build($count, 5, $current_page);
-	
+
 	$posts	= $db->from('content_'.$type)->limit($offset, 5)->order_by('published DESC')->where($db_where)->fetch();
-	
+
 	if ( $count == 0 ) $error->set('P_MISSING_TYPE');
-	
+
 } else { // Show all posts, no post type requested.
-	
+
 	$q_cols		= 'id,title,slug,author,images,active,views,edited,submitted,featured';
 	$q_where	= '`author`=\''.$user->info('id').'\' AND `active` <> \'-2\'';
-	
+
 	$posts = $db->query('
 		(SELECT "map"	 	AS type, '.$q_cols.' FROM `content_maps` 	 WHERE '.$q_where.') UNION ALL
 		(SELECT "seed" 		AS type, '.$q_cols.' FROM `content_seeds` 	 WHERE '.$q_where.') UNION ALL
@@ -50,20 +50,20 @@ if ( isset($_GET['type']) && in_array($_GET['type'], $post_types) ) {
 		(SELECT "mod" 		AS type, '.$q_cols.' FROM `content_mods` 	 WHERE '.$q_where.') UNION ALL
 		(SELECT "server" 	AS type, '.$q_cols.' FROM `content_servers`  WHERE '.$q_where.')
 	')->fetch();
-	
+
 	$count = count($posts);
 	$offset	= $pagination->build($count, 10, $current_page);
-	
+
 	if ( $count != 0 ) {
-		
+
 		$slice = [];
 		foreach ( $posts as $key => $col ) $slice[$key] = $col['submitted'];
 		array_multisort($slice, SORT_DESC, $posts);
-		
+
 		$posts = array_slice($posts, $offset, 10);
-		
+
 	} else $error->set('P_MISSING');
-	
+
 } // End: Show all posts, no post type requested.
 
 $icns = [
@@ -105,8 +105,6 @@ foreach( $dd_stat as $stat ) {
 	$dd_stat_html .= '<option value="'.$url->show('status='.$stat).'"'.$selected.'>'.ucwords($stat).'</option>';
 }*/
 
-
-
 ?>
 
 <div id="p-title">
@@ -118,7 +116,7 @@ foreach( $dd_stat as $stat ) {
 </div>
 
 <div class="posts-tools">
-    
+
     <select data-placeholder="Post Type" class="chosen redirect"><?php echo $dd_cats_html; ?></select>
 <?php if ( $count != 0 ) $pagination->html(); ?>
 </div>
@@ -126,7 +124,7 @@ foreach( $dd_stat as $stat ) {
 <?php $error->display(); ?>
 
 <div id="posts">
-    
+
 <?php
 
 foreach ( $posts as $post ) {
@@ -216,7 +214,6 @@ echo '
 			</div>
 		</div>
 	</div>
-	<?php if($post['type'] == 'server'){ ?>
 	<div id="actn_votereward" class="modal fade modal-md msg">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -226,13 +223,12 @@ echo '
 				</div>
 				<div class="modal-body">
 					<div style="float:left;width:70%;"><p>Place this file in your VoteReward 'lists' folder, this will allow users to claim rewards by voting for your server on MCPE Hub</p></div>
-					<div style="float:right;"><a href="<?php echo $post['url'].'/mcpehub.com.vrc';?>" class="bttn mid green" style="margin-bottom:30px;">Download .VRC file</a> </div>
+					<div style="float:right;"><a href="#" class="bttn mid green vrcdl" style="margin-bottom:30px;">Download .VRC file</a> </div>
 					<a href="/dashboard" class="bttn mid full" data-dismiss="modal">Close Window</a>
 				</div>
 			</div>
 		</div>
 	</div>
-	<?php } ?>
 
 <?php } ?>
 

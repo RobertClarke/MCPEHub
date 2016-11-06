@@ -114,7 +114,7 @@ $rules = array(
 	'server_owner'	=> 'You must be the owner of the server unless you have permission from the owner.',
 	'server_temp'	=> 'We only accept 24/7 servers. This means we do not accept "instant" servers.',
 	'server_screenshots' => 'You must have proper screenshots (or custom pictures) relating to the server.',
-	'ad_links'	=> 'Ad links (such as ad.fly and similar websites) are <b>not</b> permitted on MCPE Hub.',
+	'ad_links'	=> 'Ad links (such as ad.fly and similar websites) are <b>not</b> permitted on MCPE Hub',
 );
 
 foreach( $post_rules as $rule ) $form_rules[] = $rules[$rule];
@@ -137,7 +137,7 @@ $the_inputs = array(
 		'spellcheck'	=> TRUE,
 		'maxlength'		=> 100,
 		//'helper'		=> 'We recommend hosting files for free on <i class="fa fa-dropbox"></i> <a href="http://dropbox.com" target="_blank">Dropbox</a>.',
-
+		'helper'		=> 'Make sure to include the "http://" part of the link.',
 		'friendly_name' => 'Download Link',
 		'required'		=> TRUE
 	),
