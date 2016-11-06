@@ -6,6 +6,11 @@
 
 require_once('core.php');
 
+if(isset($_GET['vrp'])){
+	echo $voter->votereward_process($_GET['vrp'] == 'claim');
+	exit;
+}
+
 $type = 'server';
 if ( !isset($_GET['post']) || empty($_GET['post']) ) redirect( '/'.$type.'s' );
 
@@ -42,6 +47,8 @@ if(isset($_GET['vrc'])){
 		exit;
 	}
 }
+
+
 
 show_header('Vote for '.$p['title'], FALSE, $pg);
 

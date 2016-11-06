@@ -1,7 +1,7 @@
 <?php
 
 class Voter {
-	public $vote_user;
+	public $vote_cookie;
 	public $db;
 	public $user;
 	public $server;
@@ -43,7 +43,7 @@ class Voter {
 		
 		setcookie('vote_track',$track_id,time()+86400*90);
 
-		return $this->vote_user = array('track_id'=>$track_id,'cookie_id'=>$cid,'user_id'=>($this->user->logged_in() ? $this->user->info('id') : 0));
+		return $this->vote_cookie = array('track_id'=>$track_id,'cookie_id'=>$cid,'user_id'=>($this->user->logged_in() ? $this->user->info('id') : 0));
 	}
 		
 	public function votereward_vrc(){
