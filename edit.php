@@ -345,6 +345,33 @@ else {
 				$error->set('MISSING');
 			}
 
+			// Check if download URL is from Dropbox/Mediafire/Google
+			if ( in_array('dl_link', $post_inputs) ) {
+
+				$error->add('DL_INVALID_URL', 'The download link you provided isn\'t valid. Make sure it starts with "http://" or "https://".', 'error');
+				$error->add('DL_INVALID_DOMAIN', 'We currently only allow <a href="http://mediafire.com/" target="_blank">Mediafire</a>, <a href="http://dropbox.com/" target="_blank">Dropbox</a> and <a href="http://drive.google.com/" target="_blank">Google Drive</a> download links. Please upload your '.$post['type'].' to one of those services, then re-submit your '.$post['type'].'.', 'error');
+
+				if ( (strpos($f['dl_link'], 'http://') === 0 || strpos($f['dl_link'], 'https://') === 0) && filter_var($f['dl_link'], FILTER_VALIDATE_URL) !== false ) {
+
+					$allowed_domains = ['mediafire.com', 'dropbox.com', 'drive.google.com'];
+					foreach ( $allowed_domains as $d ) $allowed_domains[] = 'www.'.$d;
+
+					$parse = parse_url($f['dl_link']);
+
+					if ( !in_array($parse['host'], $allowed_domains) ) {
+						$error->append('DL_INVALID_DOMAIN');
+					}
+
+					else if ( !isset($parse['path']) || $parse['path'] == '/' ) {
+						$error->append('DL_INVALID_URL');
+					}
+
+				} else {
+					$error->append('DL_INVALID_URL');
+				}
+
+			}
+
 			// If no errors in form, continue.
 			if ( !$error->exists() ) {
 
