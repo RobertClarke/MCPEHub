@@ -35,7 +35,7 @@ $p_owner = ( $p['author'] == $user->info('id') ) ? TRUE : FALSE;
 // Show messages, if user is post author.
 if ( $p_owner ) {
 
-	$error->add('SUBMITTED',	'You\'ve submitted your '.$type.' for approval! Once a moderator approves it, it\'ll show up on the public website. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'check');
+	$error->add('SUBMITTED',	'You\'ve submitted your '.$type.' for approval! Once a moderator approves it, it\'ll show up on the public website. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'success');
 	$error->add('PENDING',		'Your '.$type.' hasn\'t been approved by a moderator yet and isn\'t shown on the public website yet. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'warning');
 	$error->add('REJECTED',		'Your '.$type.' was rejected by a moderator and won\'t appear on the public website.', 'error');
 	$error->add('EDITED',		'You\'ve edited your '.$type.'. Once your changes are approved by a moderator, your '.$type.' will be visible on the public website again.', 'warning');

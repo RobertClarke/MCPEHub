@@ -34,20 +34,20 @@ $p_owner = ( $p['author'] == $user->info('id') ) ? TRUE : FALSE;
 
 // Show messages, if user is post author.
 if ( $p_owner ) {
-	
-	$error->add('SUBMITTED',	'You\'ve submitted your '.$type.' for approval! Once a moderator approves it, it\'ll show up on the public website. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'check');
+
+	$error->add('SUBMITTED',	'You\'ve submitted your '.$type.' for approval! Once a moderator approves it, it\'ll show up on the public website. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'success');
 	$error->add('PENDING',		'Your '.$type.' hasn\'t been approved by a moderator yet and isn\'t shown on the public website yet. You can link your friends to this '.$type.' and they\'ll be able to view it.', 'warning');
 	$error->add('REJECTED',		'Your '.$type.' was rejected by a moderator and won\'t appear on the public website.', 'error');
 	$error->add('EDITED',		'You\'ve edited your '.$type.'. Once your changes are approved by a moderator, your '.$type.' will be visible on the public website again.', 'warning');
-	
+
 	if 		( $p['active'] == 0 )		$error->set('PENDING');
 	elseif	( $p['active'] == '-1' )	$error->set('REJECTED');
-	
+
 	elseif	( $p['active'] == 0 && $p['edited'] != 0 ) $error->set('EDITED');
-	
+
 	if		( isset($_GET['created']) )	$error->set('SUBMITTED');
 	if		( isset($_GET['edited']) )	$error->set('EDITED');
-	
+
 }
 
 // Update view count on post.
@@ -63,23 +63,23 @@ foreach( $db_count as $key ) $p[$key['data']] = $key['COUNT(*)'];
 
 // Check if user has liked or favorited the post already.
 if ( $user->logged_in() ) {
-	
+
 	$q_where = '`post` = \''.$p['id'].'\' AND `type` = \''.$type.'\' AND `user` = \''.$user->info('id').'\'';
 	$us_count = $db->query('
 		(SELECT "liked"		AS data, COUNT(*) FROM `likes`		WHERE '.$q_where.') UNION ALL
 		(SELECT "favorited"	AS data, COUNT(*) FROM `favorites`	WHERE '.$q_where.')
 	')->fetch();
-	
+
 	foreach( $us_count as $key ) $p[$key['data']] = $key['COUNT(*)'];
-	
+
 	$p['liked']		= ( $p['liked'] != 0 ) ? TRUE : FALSE;
 	$p['favorited']	= ( $p['favorited'] != 0 ) ? TRUE : FALSE;
-	
+
 	$q_where = '`following` = \''.$p['author'].'\' AND `user` = \''.$user->info('id').'\'';
 	$p['following'] = $db->query('SELECT COUNT(*) FROM `following` WHERE '.$q_where)->fetch()[0]['COUNT(*)'];
-	
+
 	$p['following'] = ( $p['following'] != 0 ) ? TRUE : FALSE;
-	
+
 }
 
 $p['auth'] 		= $user->info('username', $p['author']);
@@ -121,16 +121,16 @@ else $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub follow
 ?>
 
 <div id="post" data-id="<?php echo $p['id']; ?>" data-type="<?php echo $type; ?>">
-    
+
     <div id="p-title" class="solo">
         <h1><?php echo $p['title']; ?></h1>
         <div class="likes"><?php echo $html['bttn_like_top']; ?> <span><?php echo $p['likes']; ?></span></div>
 		<div class="likes"><a href="<?php echo $p['url']; ?>/vote" class="bttn mini green"><i class="fa fa-arrow-up"></i> Vote</a> <span><?php echo $p['votes']; ?></span></div>
     </div>
-    
+
     <?php $error->display(); ?>
     <?php $post_tools->mod_toolkit($p['id'], $type, $p, $p['author']); ?>
-    
+
     <div id="slideshow">
         <div id="slider" class="flexslider">
             <ul class="slides"><?php foreach( $p['img_full'] as $img ) echo '<li><img src="'.$img.'" alt="'.$p['title'].'" width="690" height="250"></li>'; ?></ul>
@@ -139,7 +139,7 @@ else $html['bttn_follow'] = '<a href="'.$p['url'].'" class="bttn mini sub follow
             <ul class="slides"><?php foreach( $p['img_thumb'] as $img ) echo '<li><img src="'.$img.'" alt="'.$p['title'].'" width="120" height="70"></li>'; ?></ul>
         </div>
     </div>
-    
+
 <?php
 
 echo '
@@ -164,21 +164,21 @@ echo '
             </div>
         </div>
     </div>
-    
+
     <div class="section">
         <div class="server-info">IP: <b>'.strtolower($p['ip']).'</b><div class="spacer"></div>Port: <b>'.$p['port'].'</b></div>
     </div>
-    
+
     <div id="avrt-post" class="section">
         <div class="avrt"><ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-3736311321196703" data-ad-slot="9036676673"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});</script></div>
     </div>
-    
+
     <div id="description" class="section">'.$p['description'].'</div>
-    
+
 '; ?>
 
 <?php $comments->show($p['id'], $type); ?>
-    
+
 </div>
 
 <?php show_footer(); ?>

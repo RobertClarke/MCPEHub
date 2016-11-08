@@ -27,7 +27,7 @@ switch ( $post_type ) {
 
 	case 'map': // Map
 
-		$post_rules = array( 'author', 'screenshots', 'pc_ports', 'ad_links' );
+		$post_rules = array( 'author', 'screenshots', 'pc_ports' );
 		$post_inputs = array( 'dl_link', 'tag_map', 'versions' );
 
 	break;
@@ -39,7 +39,7 @@ switch ( $post_type ) {
 	break;
 	case 'texture': // Texture
 
-		$post_rules = array( 'author', 'screenshots', 'pc_ports', 'ad_links' );
+		$post_rules = array( 'author', 'screenshots', 'pc_ports' );
 		$post_inputs = array( 'dl_link', 'tag_texture', 'versions', 'devices', 'resolution' );
 
 	break;
@@ -51,7 +51,7 @@ switch ( $post_type ) {
 	break;
 	case 'mod': // Mod
 
-		$post_rules = array( 'author', 'screenshots', 'ad_links' );
+		$post_rules = array( 'author', 'screenshots' );
 		$post_inputs = array( 'dl_link', 'versions', 'devices' );
 
 	break;
@@ -114,7 +114,6 @@ $rules = array(
 	'server_owner'	=> 'You must be the owner of the server unless you have permission from the owner.',
 	'server_temp'	=> 'We only accept 24/7 servers. This means we do not accept "instant" servers.',
 	'server_screenshots' => 'You must have proper screenshots (or custom pictures) relating to the server.',
-	'ad_links'	=> 'Ad links (such as ad.fly and similar websites) are <b>not</b> permitted on MCPE Hub',
 );
 
 foreach( $post_rules as $rule ) $form_rules[] = $rules[$rule];
@@ -137,7 +136,7 @@ $the_inputs = array(
 		'spellcheck'	=> TRUE,
 		'maxlength'		=> 100,
 		//'helper'		=> 'We recommend hosting files for free on <i class="fa fa-dropbox"></i> <a href="http://dropbox.com" target="_blank">Dropbox</a>.',
-		'helper'		=> 'Make sure to include the "http://" part of the link.',
+		'helper'		=> 'Make sure to include "http://" or "https://" at the start.',
 		'friendly_name' => 'Download Link',
 		'required'		=> TRUE
 	),
@@ -468,6 +467,26 @@ if ( !empty( $_POST ) && $user->info('activated') == 1 ) {
 			}
 
 			// Todo: Check for PHP max size again (new PHP standard?)
+
+		}
+
+		// Check if download URL is from Dropbox/Mediafire/Google
+		if ( in_array('dl_link', $post_inputs) ) {
+
+			if ( (strpos($value, 'http://') !== 0 || strpos($value, 'https://') !== 0) && filter_var($inputs['dl_link'], FILTER_VALIDATE_URL) !== false ) {
+
+				$allowed_domains = ['mediafire.com', 'dropbox.com', 'drive.google.com'];
+				foreach ( $allowed_domains as $d ) $allowed_domains[] = 'www.'.$d;
+
+				if ( !in_array(parse_url($inputs['dl_link'])['host'], $allowed_domains) ) {
+					$error->add('DL_INVALID_DOMAIN', 'We currently only allow <a href="http://mediafire.com/" target="_blank">Mediafire</a>, <a href="http://dropbox.com/" target="_blank">Dropbox</a> and <a href="http://drive.google.com/" target="_blank">Google Drive</a> download links. Please upload your '.$post_type.' to one of those services, then re-submit your '.$post_type.'.', 'error');
+					$error->append('DL_INVALID_DOMAIN');
+				}
+
+			} else {
+				$error->add('DL_INVALID_URL', 'The download link you provided isn\'t valid. Make sure it starts with "http://" or "https://".', 'error');
+				$error->append('DL_INVALID_URL');
+			}
 
 		}
 
