@@ -362,7 +362,7 @@ else {
 						$error->append('DL_INVALID_DOMAIN');
 					}
 
-					else if ( !isset($parse['path']) || $parse['path'] == '/' ) {
+					else if ( !isset($parse['path']) || (($parse['path'] == '/') && !isset($parse['query'])) ) {
 						$error->append('DL_INVALID_URL');
 					}
 
