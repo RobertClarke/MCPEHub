@@ -29,6 +29,7 @@ RewriteCond %{REQUEST_URI} !^/login
 RewriteCond %{REQUEST_URI} !^/register
 RewriteCond %{REQUEST_URI} !^/assets/css/main.css
 RewriteCond %{REQUEST_URI} !^/assets/js/main-min.js
+RewriteCond %{REQUEST_URI} !^/assets/img/header.jpg
 RewriteCond %{REQUEST_URI} !^/account
 RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1 [R=301,L]
 
@@ -84,9 +85,9 @@ RewriteRule ^avatar/([0-9]+)x([0-9]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image.php?
 rewriteCond %{THE_REQUEST} ^GET\ /([^/]+/)*[^.]+\.php(\?[^\ ]*)?\ HTTP/
 rewriteRule ^(([^/]+/)*[^.]+)\.php$ http://mcpehub.com/$1 [R=301,L]
 
-# Internally rewrite extensionless page URLs to.php files 
-# if no extension or trailing slash on requested URL 
-RewriteCond %{REQUEST_URI} !(\.¦/$) 
-# and if filename exists when .php is appended 
-RewriteCond %{REQUEST_FILENAME}.php -f 
+# Internally rewrite extensionless page URLs to.php files
+# if no extension or trailing slash on requested URL
+RewriteCond %{REQUEST_URI} !(\.¦/$)
+# and if filename exists when .php is appended
+RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule (.+) /$1.php [L]
