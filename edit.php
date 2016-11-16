@@ -349,11 +349,11 @@ else {
 			if ( in_array('dl_link', $post_inputs) ) {
 
 				$error->add('DL_INVALID_URL', 'The download link you provided isn\'t valid. Make sure it starts with "http://" or "https://".', 'error');
-				$error->add('DL_INVALID_DOMAIN', 'We currently only allow <a href="http://mediafire.com/" target="_blank">Mediafire</a>, <a href="http://dropbox.com/" target="_blank">Dropbox</a> and <a href="http://drive.google.com/" target="_blank">Google Drive</a> download links. Please upload your '.$post['type'].' to one of those services, then re-submit your '.$post['type'].'.', 'error');
+				$error->add('DL_INVALID_DOMAIN', 'We currently only allow <a href="http://dropbox.com/" target="_blank">Dropbox</a> and <a href="http://mediafire.com/" target="_blank">Mediafire</a> download links. Please upload your '.$post_type.' to one of those services, then re-submit your '.$post_type.'.', 'error');
 
 				if ( (strpos($f['dl_link'], 'http://') === 0 || strpos($f['dl_link'], 'https://') === 0) && filter_var($f['dl_link'], FILTER_VALIDATE_URL) !== false ) {
 
-					$allowed_domains = ['mediafire.com', 'dropbox.com', 'drive.google.com'];
+					$allowed_domains = ['mediafire.com', 'dropbox.com', 'db.tt'];
 					foreach ( $allowed_domains as $d ) $allowed_domains[] = 'www.'.$d;
 
 					$parse = parse_url($f['dl_link']);
