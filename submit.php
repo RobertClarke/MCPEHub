@@ -108,7 +108,7 @@ if ( !isset( $form_input['resolution'] ) ) $form_input['resolution'] = '';
 if ( !isset( $form_input['seed'] ) ) $form_input['seed'] = '';
 
 $rules = array(
-	'author'		=> 'You must be the author of the '.$post_type.', unless you have permission from the original author.',
+	'author'		=> 'You must be the creator of the '.$post_type.'.',
 	'screenshots'	=> 'You must submit proper screenshots of the '.$post_type.'.',
 	'pc_ports'		=> 'PC Ports must have proper credit given to the original author.',
 	'server_owner'	=> 'You must be the owner of the server unless you have permission from the owner.',
