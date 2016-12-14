@@ -65,7 +65,7 @@ if ( !empty( $_POST ) ) {
 						$email =	"<p>Sorry to hear you forgot your password! You can reset it by clicking on <a href=\"".MAINURL."reset?code={$code}\">this link</a>. This password reset request expires in 48 hours.</p>\n";
 						$email .=	"<p>If you didn't request a password change, please ignore this email. No changes will be made to your account.</p>\n";
 						$email .=	"<p>Have a great day!</p><p>- MCPE Hub Team</p>\n";
-						$email .=	"<p><i>Follow us on Twitter: <a href=\"http://twitter.com/MCPEHubNetwork\">@MCPEHubNetwork</a> for news, updates, giveaways and more!</i></p>\n";
+						$email .=	"<p><i>Follow us on Twitter: <a href=\"http://twitter.com/MCHubCommunity\">@MCHubCommunity</a> for news, updates, giveaways and more!</i></p>\n";
 						$email .=	"<div class=\"bottom\">If you have issues opening the link above, use the following link: <a href=\"".MAINURL."reset?code={$code}\">".MAINURL."reset?code={$code}</a></div>\n";
 
 						// Format and send email to user.
