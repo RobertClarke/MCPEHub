@@ -277,7 +277,7 @@ if ( !empty($_POST) ) {
 		$e_body .= "<p>Activate your account by clicking on <a href=\"".MAINURL."activate?code={$token}\">this link</a>.</p>\n";
 		$e_body .= "<p>Once you've activated your account, you'll be able to publish content, comment and participate in our growing community.</p>\n";
 		$e_body .= "<p>Thanks for participating in our community!</p><p>- MCPE Hub Team</p>\n";
-		$e_body .= "<p><i>Follow us on Twitter: <a href=\"http://twitter.com/MCPEHubNetwork\">@MCPEHubNetwork</a> for news, updates, giveaways and more!</i></p>\n";
+		$e_body .= "<p><i>Follow us on Twitter: <a href=\"http://twitter.com/MCHubCommunity\">@MCHubCommunity</a> for news, updates, giveaways and more!</i></p>\n";
 		$e_body .= "<div class=\"bottom\">If you have issues opening the link above, use the following link: <a href=\"".MAINURL."activate?code={$token}\">".MAINURL."activate?code={$token}</a></div>\n";
 		
 		$email = $mail->format($e_body);
