@@ -1,5 +1,8 @@
 <?php
 
+// Maintenance message
+die('Hang tight! Our website is under routine maintenance.');
+
 /**
   * Homepage
 **/

@@ -1,93 +1,9 @@
-Options +FollowSymLinks
+Options -MultiViews
+
 RewriteEngine On
-RewriteBase /
+#RewriteBase /public
 
-ErrorDocument 404 http://mcpehub.com/404
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
 
-# www to non www
-RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
-
-# Turn SSL on for /login
-RewriteCond %{HTTP:CF-Visitor} '"scheme":"http"'
-RewriteCond %{REQUEST_URI} ^/login
-RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-
-# Turn SSL on for /register
-RewriteCond %{HTTP:CF-Visitor} '"scheme":"http"'
-RewriteCond %{REQUEST_URI} ^/register
-RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-
-# Turn SSL on for /account
-RewriteCond %{HTTP:CF-Visitor} '"scheme":"http"'
-RewriteCond %{REQUEST_URI} ^/account
-RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-
-# Turn SSL off everything but /login
-RewriteCond %{HTTP:CF-Visitor} '"scheme":"https"'
-RewriteCond %{REQUEST_URI} !^/login
-RewriteCond %{REQUEST_URI} !^/register
-RewriteCond %{REQUEST_URI} !^/assets/css/main.css
-RewriteCond %{REQUEST_URI} !^/assets/js/main-min.js
-RewriteCond %{REQUEST_URI} !^/assets/img/header.jpg
-RewriteCond %{REQUEST_URI} !^/account
-RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1 [R=301,L]
-
-# deny all .htaccess, .DS_Store $hî†é and ._* (resource fork) files
-<Files ~ "^\.([Hh][Tt]|[Dd][Ss]_[Ss]|[_])">
- Order allow,deny
- Deny from all
- Satisfy All
-</Files>
-
-# deny access to all .log and .comment files
-<Files ~ "^.*\.([Ll][Oo][Gg]|[cC][oO][mM][mM][eE][nN][tT])">
- Order allow,deny
- Deny from all
- Satisfy All
-</Files>
-
-######### Advancester things
-
-#RewriteRule ^map/([^/]+)?$ map.php?map=$1 [L]
-#RewriteRule ^seed/([^/]+)?$ seed.php?seed=$1 [L]
-#RewriteRule ^texture/([^/]+)?$ texture.php?texture=$1 [L]
-#RewriteRule ^mod/([^/]+)?$ mod.php?mod=$1 [L]
-#RewriteRule ^server/([^/]+)?$ server.php?server=$1 [L]
-
-#RewriteRule            ^maps/?$                maps.php                [L]
-#RewriteRule            ^seeds/?$               seeds.php               [L]
-#RewriteRule            ^textures/?$    textures.php    [L]
-#RewriteRule            ^mods/?$                mods.php                [L]
-#RewriteRule            ^servers/?$             servers.php             [L]
-#RewriteRule            ^blog/?$             blog.php             [L]
-
-RewriteRule            ^votereward/(check|claim)/?$             servervote.php?vrp=$1             [NC,QSA]
-RewriteRule             ^map/([^/]+)?$                  map.php?post=$1                 [NC,QSA]
-RewriteRule             ^seed/([^/]+)?$                 seed.php?post=$1                [NC,QSA]
-RewriteRule             ^texture/([^/]+)?$              texture.php?post=$1         [NC,QSA]
-RewriteRule             ^skin/([^/]+)?$                 skin.php?post=$1                [NC,QSA]
-RewriteRule             ^mod/([^/]+)?$                  mod.php?post=$1                 [NC,QSA]
-RewriteRule             ^server/([^/]+)?$               server.php?post=$1          [NC,QSA]
-RewriteRule             ^server/([^/]+)/vote?$               servervote.php?post=$1          [NC,QSA]
-RewriteRule             ^server/([^/]+)/mcpehub.com.vrc?$               servervote.php?post=$1&vrc=1          [NC,QSA]
-RewriteRule             ^blog-post/([^/]+)?$               blog-post.php?post=$1          [NC,QSA]
-
-RewriteRule ^user/([^/]+)?$ profile.php?user=$1 [L]
-
-# mcpehub.com/uploads/250x250/map/image.ext
-RewriteRule ^uploads/([0-9]+)x([0-9]+)/([A-Za-z0-9-]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image.php?src=../uploads/posts/$3/$4.$5&w=$1&h=$2 [L]
-
-# mcpehub.com/avatar/250x250/image.ext
-RewriteRule ^avatar/([0-9]+)x([0-9]+)/(.*)\.(jpg|jpeg|png|gif)$ /core/image.php?src=../uploads/avatars/$3.$4&w=$1&h=$2 [L]
-
-# Externally redirect direct client requests for .php files to non-.php URLs
-rewriteCond %{THE_REQUEST} ^GET\ /([^/]+/)*[^.]+\.php(\?[^\ ]*)?\ HTTP/
-rewriteRule ^(([^/]+/)*[^.]+)\.php$ http://mcpehub.com/$1 [R=301,L]
-
-# Internally rewrite extensionless page URLs to.php files
-# if no extension or trailing slash on requested URL
-RewriteCond %{REQUEST_URI} !(\.¦/$)
-# and if filename exists when .php is appended
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule (.+) /$1.php [L]
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
