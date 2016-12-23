@@ -1,1 +1,5 @@
+*.codekit
+*.codekit3
+/assets/styles
+/assets/scripts
 config.php
