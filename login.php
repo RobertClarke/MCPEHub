@@ -7,7 +7,7 @@
 require_once('core.php');
 
 // START PREVENT FUTURE LOGINS TEMP CODE
-/*show_header('Sign In', FALSE, ['body_id' => 'login', 'body_class' => 'boxed']);
+show_header('Sign In', FALSE, ['body_id' => 'login', 'body_class' => 'boxed']);
 
 ?>
 <div class="header"><h1>Sign In</h1></div>
@@ -21,7 +21,7 @@ require_once('core.php');
 </div>
 <?php
 show_footer();
-die();*/
+die();
 // END PREVENT FUTURE LOGINS TEMP CODE
 
 if ( $user->logged_in() ) redirect('/dashboard');
