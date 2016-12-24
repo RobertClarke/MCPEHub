@@ -18,7 +18,7 @@ $urlParts = explode('/', $url);
 
 // User visiting just `mcpehub.com/`
 if ( !isset($urlParts[1]) || $urlParts[1] === 'index.php' ) {
-	redirect($domain);
+	redirect($domain.'/pe');
 }
 
 switch ( $urlParts[1] ) {
